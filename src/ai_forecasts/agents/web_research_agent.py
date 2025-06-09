@@ -23,7 +23,9 @@ class WebResearchAgent:
         })
         
         # Check if we need to use Wayback Machine constraints
-        if cutoff_date and cutoff_date < datetime.now() - timedelta(days=30):
+        from datetime import timezone
+        now = datetime.now(timezone.utc)
+        if cutoff_date and cutoff_date < now - timedelta(days=30):
             return self._research_with_wayback_constraints(topic, time_horizon, cutoff_date)
         
         # Create research prompt

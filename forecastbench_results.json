@@ -1,0 +1,307 @@
+{
+  "results": [
+    {
+      "question_id": "WDTGAL",
+      "question": "Will the total dollar amount of deposits in the US Treasury's general accounts of Federal Reserve Banks, other than reserve balances, have increased by {resolution_date} as compared to its value on {forecast_due_date}?",
+      "freeze_date": "2025-05-29T00:00:00+00:00",
+      "freeze_value": "475886.0",
+      "cutoff_date": "2025-05-22T00:00:00+00:00",
+      "prediction": {
+        "evaluations": [
+          {
+            "outcome": "Will the total dollar amount of deposits in the US Treasury's general accounts of Federal Reserve Banks, other than reserve balances, have increased by {resolution_date} as compared to its value on {forecast_due_date}?",
+            "feasibility_score": 0.75,
+            "probability": 0.45,
+            "confidence": "medium",
+            "preconditions": [
+              "Continued growth in federal government spending and borrowing",
+              "Stable or rising interest rates on Treasury securities",
+              "Absence of major disruptions to the financial system or economy"
+            ],
+            "causal_path": [
+              "Increased federal government spending and borrowing",
+              "Treasury issues more debt to fund spending",
+              "Treasury deposits the borrowed funds in its general accounts at the Federal Reserve",
+              "The increased deposits in Treasury's general accounts offset any decline in reserve balances"
+            ],
+            "blocking_factors": [
+              "Unexpected decline in federal government spending and borrowing",
+              "Significant drop in interest rates on Treasury securities",
+              "Major economic or financial crisis that reduces demand for Treasury securities"
+            ],
+            "historical_analogies": [
+              "The increase in Treasury's general account balances during the COVID-19 pandemic, as the federal government borrowed heavily to fund relief and stimulus measures",
+              "The gradual increase in Treasury's general account balances during periods of sustained economic growth and rising government debt levels"
+            ],
+            "timeline_estimate": "12-18 months",
+            "key_milestones": [
+              "Continued growth in federal government spending and borrowing",
+              "Issuance of new Treasury securities to fund the deficit",
+              "Deposits of borrowed funds into Treasury's general accounts"
+            ],
+            "reasoning": "The feasibility and probability of this outcome are moderately high, as the current economic and fiscal conditions suggest continued growth in federal government spending and borrowing. This would lead to an increase in Treasury's general account balances at the Federal Reserve, as the borrowed funds are deposited there. However, the probability is not higher due to the potential for unexpected changes in government spending or interest rates, which could disrupt this causal pathway. The timeline estimate is based on the typical pace of changes in Treasury's general account balances, which tend to occur gradually over the course of a year or more."
+          }
+        ],
+        "mode": "targeted",
+        "initial_conditions_summary": "Current state research completed",
+        "time_horizon": "1 year",
+        "outcomes_of_interest": [
+          "Will the total dollar amount of deposits in the US Treasury's general accounts of Federal Reserve Banks, other than reserve balances, have increased by {resolution_date} as compared to its value on {forecast_due_date}?"
+        ],
+        "generated_at": "2025-06-09T21:40:01.575298",
+        "validations": {
+          "validation_results": {
+            "logical_consistency": 0.8,
+            "probability_calibration": 0.8,
+            "uncertainty_quantification": 0.8,
+            "overall_quality_score": 0.8
+          },
+          "assumption_tracking": [
+            "Quick validation performed"
+          ],
+          "consistency_issues": [],
+          "validation_summary": "Basic validation completed"
+        },
+        "validated_at": "2025-06-09T21:40:01.575320",
+        "processing_metadata": {
+          "mode_used": "targeted",
+          "processed_at": "2025-06-09T21:40:01.575327",
+          "validation_applied": true
+        }
+      },
+      "evaluation": {
+        "error": "No outcomes in prediction"
+      },
+      "url": "https://fred.stlouisfed.org/series/WDTGAL"
+    },
+    {
+      "question_id": [
+        "2STfASZBTwoFuI6UGXSK",
+        "hPU6PpN0Zg"
+      ],
+      "question": "We are presenting you with two probability questions. Please predict the probability that both will happen, that one will happen but not the other, and that neither will happen. In other words, for each resolution date please provide 4 predictions.",
+      "freeze_date": "2025-05-29T00:00:00+00:00",
+      "freeze_value": "N/A",
+      "cutoff_date": "2025-05-22T00:00:00+00:00",
+      "prediction": {
+        "evaluations": [
+          {
+            "outcome": "Both probabilities happen",
+            "feasibility_score": 0.45,
+            "probability": 0.18,
+            "confidence": "low",
+            "preconditions": [
+              "Both outcomes are technically/practically feasible",
+              "Conditions for both outcomes are met concurrently",
+              "No significant blocking factors for either outcome"
+            ],
+            "causal_path": [
+              "Conditions for Outcome 1 are satisfied",
+              "Conditions for Outcome 2 are satisfied",
+              "Both outcomes occur within the 1-year timeframe"
+            ],
+            "blocking_factors": [
+              "Conflicting requirements between the two outcomes",
+              "Unexpected events or changes that disrupt one or both outcomes",
+              "Lack of resources or coordination to enable both outcomes"
+            ],
+            "historical_analogies": [
+              "Concurrent technology breakthroughs or regulatory changes",
+              "Alignment of multiple business/organizational objectives"
+            ],
+            "timeline_estimate": "12-18 months",
+            "key_milestones": [
+              "Conditions for Outcome 1 are met",
+              "Conditions for Outcome 2 are met",
+              "Both outcomes are achieved within the timeframe"
+            ],
+            "reasoning": "For both probabilities to occur, the conditions and causal pathways for each individual outcome must be satisfied concurrently, which is less likely than either outcome occurring independently. There are additional coordination and alignment challenges that make this a relatively low-probability scenario."
+          },
+          {
+            "outcome": "One probability happens, the other does not",
+            "feasibility_score": 0.75,
+            "probability": 0.55,
+            "confidence": "medium",
+            "preconditions": [
+              "At least one of the outcomes is technically/practically feasible",
+              "Conditions for at least one outcome are met",
+              "Blocking factors prevent the other outcome from occurring"
+            ],
+            "causal_path": [
+              "Conditions for Outcome 1 are satisfied",
+              "Conditions for Outcome 2 are not met",
+              "Outcome 1 occurs within the 1-year timeframe"
+            ],
+            "blocking_factors": [
+              "Unexpected events or changes that disrupt the conditions for one outcome",
+              "Lack of resources or coordination to enable one of the outcomes",
+              "Conflicting requirements or priorities that prevent one outcome"
+            ],
+            "historical_analogies": [
+              "Technological advancements that enable one innovation but not another",
+              "Regulatory changes that benefit one industry/application but not another"
+            ],
+            "timeline_estimate": "9-12 months",
+            "key_milestones": [
+              "Conditions for Outcome 1 are met",
+              "Conditions for Outcome 2 are not met",
+              "Outcome 1 is achieved within the timeframe"
+            ],
+            "reasoning": "It is more likely that one of the two probabilities will occur, while the other does not, as the conditions and causal pathways for each outcome are independent. If the conditions for one outcome are met while the other is not, then that first outcome has a reasonable chance of happening within the 1-year timeframe."
+          },
+          {
+            "outcome": "Neither probability happens",
+            "feasibility_score": 0.65,
+            "probability": 0.27,
+            "confidence": "medium",
+            "preconditions": [
+              "At least one of the outcomes is not technically/practically feasible",
+              "Conditions for both outcomes are not met",
+              "Blocking factors prevent both outcomes from occurring"
+            ],
+            "causal_path": [
+              "Conditions for Outcome 1 are not satisfied",
+              "Conditions for Outcome 2 are not satisfied",
+              "Neither outcome occurs within the 1-year timeframe"
+            ],
+            "blocking_factors": [
+              "Technological or resource limitations that prevent both outcomes",
+              "Regulatory or market changes that undermine the conditions for both outcomes",
+              "Lack of coordination or alignment to enable either outcome"
+            ],
+            "historical_analogies": [
+              "Failed technology or product launches due to technical or market challenges",
+              "Abandoned initiatives due to shifting priorities or resource constraints"
+            ],
+            "timeline_estimate": "12-18 months",
+            "key_milestones": [
+              "Conditions for Outcome 1 are not met",
+              "Conditions for Outcome 2 are not met",
+              "Neither outcome is achieved within the timeframe"
+            ],
+            "reasoning": "It is also possible that neither of the two probabilities will occur if the necessary conditions are not met for either outcome. This could be due to technical or practical limitations, resource constraints, or other blocking factors that prevent both outcomes from being realized within the 1-year timeframe."
+          }
+        ],
+        "mode": "targeted",
+        "initial_conditions_summary": "Current state research completed",
+        "time_horizon": "1 year",
+        "outcomes_of_interest": [
+          "We are presenting you with two probability questions. Please predict the probability that both will happen, that one will happen but not the other, and that neither will happen. In other words, for each resolution date please provide 4 predictions."
+        ],
+        "generated_at": "2025-06-09T21:40:11.238467",
+        "validations": {
+          "validation_results": {
+            "logical_consistency": 0.8,
+            "probability_calibration": 0.8,
+            "uncertainty_quantification": 0.8,
+            "overall_quality_score": 0.8
+          },
+          "assumption_tracking": [
+            "Quick validation performed"
+          ],
+          "consistency_issues": [],
+          "validation_summary": "Basic validation completed"
+        },
+        "validated_at": "2025-06-09T21:40:11.238492",
+        "processing_metadata": {
+          "mode_used": "targeted",
+          "processed_at": "2025-06-09T21:40:11.238500",
+          "validation_applied": true
+        }
+      },
+      "evaluation": {
+        "error": "No outcomes in prediction"
+      },
+      "url": "N/A"
+    },
+    {
+      "question_id": "LhX5FOZNhVvaI79gtvni",
+      "question": "Will there be a new human moon landing by the end of 2025?",
+      "freeze_date": "2025-05-29T00:00:00+00:00",
+      "freeze_value": "0.025220368072871",
+      "cutoff_date": "2025-05-22T00:00:00+00:00",
+      "prediction": {
+        "evaluations": [
+          {
+            "outcome": "Will there be a new human moon landing by the end of 2025?",
+            "feasibility_score": 0.75,
+            "probability": 0.45,
+            "confidence": "medium",
+            "preconditions": [
+              "Successful completion of current state research by 2025-05-22",
+              "Sufficient funding and political will to support a new moon mission",
+              "Availability of necessary launch vehicles, spacecraft, and supporting infrastructure",
+              "Recruitment and training of a qualified astronaut crew"
+            ],
+            "causal_path": [
+              "Ongoing research and development of new lunar exploration technologies",
+              "Securing government and/or private funding for a new moon mission",
+              "Finalizing mission objectives, timeline, and logistical planning",
+              "Procurement and integration of required hardware and systems",
+              "Selection and preparation of the astronaut crew",
+              "Successful launch, lunar landing, and return to Earth"
+            ],
+            "blocking_factors": [
+              "Lack of sufficient funding or political commitment to a new moon mission",
+              "Delays or technical issues with the development of critical mission components",
+              "Unforeseen safety or operational challenges during the mission",
+              "Potential geopolitical tensions or conflicts that could disrupt the mission"
+            ],
+            "historical_analogies": [
+              "The Apollo program's successful human landings on the moon in the 1960s and 1970s",
+              "The more recent robotic lunar exploration missions by various space agencies"
+            ],
+            "timeline_estimate": "12-18 months",
+            "key_milestones": [
+              "Finalization of mission plan and budget approval",
+              "Completion of hardware development and integration",
+              "Astronaut selection and training",
+              "Successful launch and lunar landing",
+              "Safe return of the astronauts to Earth"
+            ],
+            "reasoning": "The feasibility of a new human moon landing by the end of 2025 is relatively high, as the current state of research and development in space technology has advanced significantly since the last Apollo missions. However, the probability of this outcome occurring within the given timeframe is more moderate, as it would require a concerted effort by space agencies and governments to secure the necessary funding, resources, and political will to execute such an ambitious mission in a relatively short time. Key preconditions include the successful completion of ongoing research, the availability of suitable launch vehicles and spacecraft, the recruitment and training of qualified astronauts, and the resolution of any technical or logistical challenges that may arise during the mission planning and execution. While historical precedents like the Apollo program demonstrate the potential for human lunar exploration, there are also several blocking factors, such as funding constraints, geopolitical tensions, and potential operational issues, that could delay or prevent the realization of this outcome by the end of 2025. Overall, this assessment suggests a medium-level probability with a medium level of confidence in the feasibility of a new human moon landing by the end of 2025."
+          }
+        ],
+        "mode": "targeted",
+        "initial_conditions_summary": "Current state research completed",
+        "time_horizon": "1 year",
+        "outcomes_of_interest": [
+          "Will there be a new human moon landing by the end of 2025?"
+        ],
+        "generated_at": "2025-06-09T21:40:16.990268",
+        "validations": {
+          "validation_results": {
+            "logical_consistency": 0.8,
+            "probability_calibration": 0.8,
+            "uncertainty_quantification": 0.8,
+            "overall_quality_score": 0.8
+          },
+          "assumption_tracking": [
+            "Quick validation performed"
+          ],
+          "consistency_issues": [],
+          "validation_summary": "Basic validation completed"
+        },
+        "validated_at": "2025-06-09T21:40:16.990290",
+        "processing_metadata": {
+          "mode_used": "targeted",
+          "processed_at": "2025-06-09T21:40:16.990297",
+          "validation_applied": true
+        }
+      },
+      "evaluation": {
+        "error": "No outcomes in prediction"
+      },
+      "url": "https://manifold.markets/Treldman/will-there-be-a-new-human-moon-land"
+    }
+  ],
+  "metrics": {
+    "error": "No valid evaluations"
+  },
+  "summary": {
+    "total_questions": 3,
+    "successful_predictions": 3,
+    "failed_predictions": 0,
+    "success_rate": 1.0
+  }
+}

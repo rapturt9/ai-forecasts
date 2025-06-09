@@ -13,19 +13,42 @@ class ForecastAgent:
     def __init__(self, llm_client):
         self.llm = llm_client
     
-    def _create_forecast_prompt(self, initial_conditions: str, time_horizon: str, constraints: List[str] = None) -> str:
+    def _create_forecast_prompt(self, initial_conditions: str, time_horizon: str, constraints: List[str] = None, research_context: Dict[str, Any] = None) -> str:
         """Create a forecasting prompt"""
         
         constraints_text = ""
         if constraints:
             constraints_text = f"\nConstraints to consider: {', '.join(constraints)}"
         
+        # Add research context if available
+        research_text = ""
+        if research_context:
+            research_text = f"""
+
+CURRENT RESEARCH CONTEXT:
+Current State: {research_context.get('current_state', 'Not available')}
+
+Recent Developments:
+{chr(10).join(f"• {dev}" for dev in research_context.get('recent_developments', []))}
+
+Key Players:
+{chr(10).join(f"• {player.get('name', 'Unknown')}: {player.get('recent_activity', 'No recent activity')}" for player in research_context.get('current_players', []))}
+
+Key Trends:
+{chr(10).join(f"• {trend}" for trend in research_context.get('key_trends', []))}
+
+Market Dynamics:
+• Competition: {research_context.get('market_dynamics', {}).get('competitive_landscape', 'Not analyzed')}
+• Technology: {research_context.get('market_dynamics', {}).get('technological_factors', 'Not analyzed')}
+• Regulation: {research_context.get('market_dynamics', {}).get('regulatory_environment', 'Not analyzed')}
+"""
+        
         return f"""You are an expert forecaster with deep knowledge of reference class forecasting, base rates, and probabilistic reasoning. You excel at identifying the most probable outcomes and quantifying uncertainty.
 
 Analyze the following situation and generate probability forecasts:
 
 Initial conditions: {initial_conditions}
-Time horizon: {time_horizon}{constraints_text}
+Time horizon: {time_horizon}{constraints_text}{research_text}
 
 Your task is to identify and rank the 5-7 most probable outcomes within this timeframe.
 
@@ -65,7 +88,7 @@ Return your analysis as a JSON object with this structure:
     }}
 }}"""
     
-    def analyze(self, initial_conditions: str, time_horizon: str, constraints: List[str] = None) -> Dict[str, Any]:
+    def analyze(self, initial_conditions: str, time_horizon: str, constraints: List[str] = None, research_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """Generate forecast analysis"""
         
         agent_logger.log("forecast_agent", "Starting forecast analysis", {
@@ -75,7 +98,7 @@ Return your analysis as a JSON object with this structure:
         })
         
         # Create prompt and get LLM response
-        prompt = self._create_forecast_prompt(initial_conditions, time_horizon, constraints)
+        prompt = self._create_forecast_prompt(initial_conditions, time_horizon, constraints, research_context)
         
         agent_logger.log("forecast_agent", "Generated forecast prompt", {
             "prompt_length": len(prompt)

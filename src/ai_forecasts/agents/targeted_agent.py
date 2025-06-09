@@ -91,7 +91,8 @@ Return your analysis as a JSON object:
         initial_conditions: str, 
         outcomes_of_interest: List[str], 
         time_horizon: str,
-        constraints: List[str] = None
+        constraints: List[str] = None,
+        research_context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Generate targeted outcome analysis"""
         

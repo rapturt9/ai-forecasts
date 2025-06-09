@@ -18,7 +18,7 @@ st.set_page_config(
 )
 
 # Constants
-API_BASE_URL = "http://localhost:12000"
+API_BASE_URL = "http://localhost:12002"
 
 def main():
     """Main Streamlit application"""
@@ -78,7 +78,7 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the pure forecasting mode interface"""
     
     st.header("🎯 Forecast Likely Outcomes")
-    st.markdown("Predict the most probable outcomes given current conditions.")
+    st.markdown("Predict the most probable outcomes based on current global developments. The system will automatically research current conditions.")
     
     # Sample examples
     st.markdown("**📋 Quick Examples:**")
@@ -86,19 +86,16 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
     
     with col1:
         if st.button("🤖 AI Development", key="forecast_ai_example"):
-            st.session_state.forecast_initial = "OpenAI has released GPT-4, Google has Bard, Anthropic has Claude. Competition is intensifying in the LLM space with new models being released monthly."
             st.session_state.forecast_horizon = "1 year"
             st.rerun()
     
     with col2:
         if st.button("🏢 Tech Industry", key="forecast_tech_example"):
-            st.session_state.forecast_initial = "Major tech companies are laying off employees while simultaneously investing heavily in AI. Remote work policies are being reversed by some companies."
             st.session_state.forecast_horizon = "6 months"
             st.rerun()
     
     with col3:
         if st.button("🌍 Global Economy", key="forecast_economy_example"):
-            st.session_state.forecast_initial = "Inflation is cooling but still above target rates. Central banks are maintaining high interest rates. Geopolitical tensions continue to affect supply chains."
             st.session_state.forecast_horizon = "2 years"
             st.rerun()
     
@@ -106,14 +103,6 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
     
     with st.form("forecast_form"):
         # Input fields
-        initial_conditions = st.text_area(
-            "Initial Conditions (optional)",
-            value=st.session_state.get('forecast_initial', ''),
-            placeholder="Describe the current situation... (leave blank for current global state)",
-            height=100,
-            help="Leave blank to use current global state as of today's date"
-        )
-        
         col1, col2 = st.columns(2)
         with col1:
             horizon_options = ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"]
@@ -122,15 +111,19 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
             time_horizon = st.selectbox(
                 "Time Horizon",
                 horizon_options,
-                index=horizon_index
+                index=horizon_index,
+                help="How far into the future to forecast"
             )
         
         with col2:
             constraints = st.text_area(
                 "Constraints (optional)",
                 placeholder="e.g., budget < $1M, no regulatory changes",
-                height=100
+                height=100,
+                help="Any specific constraints or assumptions to consider"
             )
+        
+        st.info("💡 The system will automatically research current global developments to inform the forecast.")
         
         submitted = st.form_submit_button("Generate Forecast", type="primary")
     
@@ -139,9 +132,6 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
         request_data = {
             "time_horizon": time_horizon
         }
-        
-        if initial_conditions.strip():
-            request_data["initial_conditions"] = initial_conditions
         
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
@@ -158,7 +148,7 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the targeted forecasting mode interface"""
     
     st.header("📊 Evaluate Specific Outcomes")
-    st.markdown("Assess the probability and feasibility of specific outcomes of interest.")
+    st.markdown("Assess the probability and feasibility of specific outcomes based on current developments. The system will automatically research relevant context.")
     
     # Sample examples
     st.markdown("**📋 Quick Examples:**")
@@ -166,41 +156,30 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
     
     with col1:
         if st.button("🤖 AI Milestones", key="targeted_ai_example"):
-            st.session_state.targeted_initial = "Current state of AI: GPT-4 level models are widely available, AI safety research is accelerating, and major tech companies are racing to develop AGI."
-            st.session_state.targeted_outcomes = "AGI achieved by 2025\nAI safety breakthrough announced\nMajor AI regulation passed\nAI winter begins"
+            st.session_state.targeted_outcomes = "GPT-5 released by OpenAI\nAGI achieved by any company\nMajor AI safety breakthrough\nComprehensive AI regulation passed"
             st.session_state.targeted_horizon = "2 years"
             st.rerun()
     
     with col2:
         if st.button("💰 Market Events", key="targeted_market_example"):
-            st.session_state.targeted_initial = "Current economic conditions: High interest rates, cooling inflation, geopolitical tensions, and tech sector volatility."
-            st.session_state.targeted_outcomes = "Stock market crash (>20% drop)\nRecession declared\nFed cuts rates below 3%\nCrypto reaches new all-time high"
+            st.session_state.targeted_outcomes = "Stock market crash (>20% drop)\nRecession declared in US\nFed cuts rates below 3%\nBitcoin reaches $100k"
             st.session_state.targeted_horizon = "1 year"
             st.rerun()
     
     with col3:
-        if st.button("🏢 Company Success", key="targeted_company_example"):
-            st.session_state.targeted_initial = "Small AI startup with 10 employees, $5M funding, working on enterprise AI solutions in a competitive market."
-            st.session_state.targeted_outcomes = "Reach $10M ARR\nRaise Series A ($20M+)\nGet acquired by big tech\nRun out of funding"
-            st.session_state.targeted_horizon = "2 years"
+        if st.button("🌍 Global Events", key="targeted_global_example"):
+            st.session_state.targeted_outcomes = "Climate tipping point reached\nMajor breakthrough in fusion energy\nNew pandemic declared\nSpace tourism becomes mainstream"
+            st.session_state.targeted_horizon = "3 years"
             st.rerun()
     
     st.divider()
     
     with st.form("targeted_form"):
         # Input fields
-        initial_conditions = st.text_area(
-            "Initial Conditions (optional)",
-            value=st.session_state.get('targeted_initial', ''),
-            placeholder="Describe the current situation... (leave blank for current global state)",
-            height=100,
-            help="Leave blank to use current global state as of today's date"
-        )
-        
         outcomes_text = st.text_area(
             "Outcomes to Evaluate",
             value=st.session_state.get('targeted_outcomes', ''),
-            placeholder="Enter one outcome per line:\n- AI breakthrough announced\n- New regulation passed\n- Market crash occurs",
+            placeholder="Enter one outcome per line:\n- GPT-5 released by OpenAI\n- Major AI regulation passed\n- Bitcoin reaches $100k",
             height=120,
             help="Enter each outcome on a separate line"
         )
@@ -213,15 +192,19 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
             time_horizon = st.selectbox(
                 "Time Horizon",
                 horizon_options,
-                index=horizon_index
+                index=horizon_index,
+                help="How far into the future to evaluate"
             )
         
         with col2:
             constraints = st.text_area(
                 "Constraints (optional)",
-                placeholder="e.g., budget < $1M",
-                height=100
+                placeholder="e.g., budget < $1M, no regulatory changes",
+                height=100,
+                help="Any specific constraints or assumptions to consider"
             )
+        
+        st.info("💡 The system will automatically research current context relevant to these outcomes.")
         
         submitted = st.form_submit_button("Evaluate Outcomes", type="primary")
     
@@ -239,9 +222,6 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
             "time_horizon": time_horizon
         }
         
-        if initial_conditions.strip():
-            request_data["initial_conditions"] = initial_conditions
-        
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
         
@@ -257,32 +237,29 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the strategy generation mode interface"""
     
     st.header("🚀 Find Path to Desired Outcome")
-    st.markdown("Generate optimal strategies to achieve your desired outcome.")
+    st.markdown("Generate optimal strategies to achieve your desired outcome based on current market conditions. The system will automatically research relevant context.")
     
     # Sample examples
     st.markdown("**📋 Quick Examples:**")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🚀 Startup Growth", key="strategy_startup_example"):
-            st.session_state.strategy_initial = "Small AI startup with 5 engineers, $2M funding, working on language model applications"
-            st.session_state.strategy_desired = "Become a leading AI company with 100+ employees and $50M+ revenue within 2 years"
-            st.session_state.strategy_constraints = "Limited budget, competitive market, need to hire talent, regulatory uncertainty"
+        if st.button("🚀 AI Startup Success", key="strategy_startup_example"):
+            st.session_state.strategy_desired = "Launch a successful AI startup that reaches $10M ARR within 2 years"
+            st.session_state.strategy_constraints = "Limited initial funding, competitive market, need to hire top talent"
             st.session_state.strategy_horizon = "2 years"
             st.rerun()
     
     with col2:
-        if st.button("🎓 Career Transition", key="strategy_career_example"):
-            st.session_state.strategy_initial = "Software engineer with 5 years experience, currently working at a traditional tech company"
-            st.session_state.strategy_desired = "Become an AI research scientist at a top AI lab within 18 months"
+        if st.button("🎓 AI Career Transition", key="strategy_career_example"):
+            st.session_state.strategy_desired = "Transition from software engineering to AI research scientist role at a top lab"
             st.session_state.strategy_constraints = "Need to maintain current income, limited time for study, no PhD"
             st.session_state.strategy_horizon = "18 months"
             st.rerun()
     
     with col3:
-        if st.button("🏢 Digital Transformation", key="strategy_transform_example"):
-            st.session_state.strategy_initial = "Traditional manufacturing company with 500 employees, minimal AI adoption"
-            st.session_state.strategy_desired = "Become an AI-first organization with 30% efficiency gains and new AI-powered products"
+        if st.button("🏢 AI Adoption", key="strategy_transform_example"):
+            st.session_state.strategy_desired = "Transform traditional company into AI-first organization with 30% efficiency gains"
             st.session_state.strategy_constraints = "Legacy systems, change resistance, limited AI expertise, budget constraints"
             st.session_state.strategy_horizon = "3 years"
             st.rerun()
@@ -291,19 +268,12 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
     
     with st.form("strategy_form"):
         # Input fields
-        initial_conditions = st.text_area(
-            "Current Situation (optional)",
-            value=st.session_state.get('strategy_initial', ''),
-            placeholder="Describe where you are now... (leave blank for general context)",
-            height=100,
-            help="Leave blank to use general current context"
-        )
-        
         desired_outcome = st.text_area(
             "Desired Outcome",
             value=st.session_state.get('strategy_desired', ''),
-            placeholder="Describe what you want to achieve...",
-            height=80
+            placeholder="Describe what you want to achieve...\nExample: Launch a successful AI startup that reaches $10M ARR",
+            height=100,
+            help="Be specific about your goal and success metrics"
         )
         
         col1, col2 = st.columns(2)
@@ -314,7 +284,8 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
             time_horizon = st.selectbox(
                 "Time Horizon",
                 horizon_options,
-                index=horizon_index
+                index=horizon_index,
+                help="How long you have to achieve this outcome"
             )
         
         with col2:
@@ -322,8 +293,11 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
                 "Constraints",
                 value=st.session_state.get('strategy_constraints', ''),
                 placeholder="e.g., limited budget, small team, regulatory requirements",
-                height=100
+                height=100,
+                help="Any limitations or constraints to consider"
             )
+        
+        st.info("💡 The system will automatically research current market conditions and opportunities relevant to your goal.")
         
         submitted = st.form_submit_button("Generate Strategy", type="primary")
     
@@ -337,9 +311,6 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
             "desired_outcome": desired_outcome,
             "time_horizon": time_horizon
         }
-        
-        if initial_conditions.strip():
-            request_data["initial_conditions"] = initial_conditions
         
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]

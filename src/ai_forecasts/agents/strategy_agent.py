@@ -118,7 +118,8 @@ Return your analysis as a JSON object:
         desired_outcome: str, 
         time_horizon: str,
         constraints: List[str] = None,
-        forecast_context: Optional[Dict[str, Any]] = None
+        forecast_context: Optional[Dict[str, Any]] = None,
+        research_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Generate strategic analysis"""
         

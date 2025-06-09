@@ -1,3 +1,7 @@
-nohup: ignoring input
-INFO:     Will watch for changes in these directories: ['/workspace/ai-forecasts']
-ERROR:    [Errno 98] Address already in use
+INFO:     Started server process [6468]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:12002 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57070 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34834 - "POST /forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39932 - "POST /forecast HTTP/1.1" 500 Internal Server Error

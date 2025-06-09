@@ -3,7 +3,7 @@
 from typing import Dict, Any, List, Optional
 import json
 from datetime import datetime
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
 
 
 class StrategyAgent:

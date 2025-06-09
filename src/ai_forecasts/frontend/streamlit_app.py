@@ -101,7 +101,7 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
             constraints = st.text_area(
                 "Constraints (optional)",
                 placeholder="e.g., budget < $1M, no regulatory changes",
-                height=60
+                height=100
             )
         
         submitted = st.form_submit_button("Generate Forecast", type="primary")
@@ -159,7 +159,7 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
             constraints = st.text_area(
                 "Constraints (optional)",
                 placeholder="e.g., budget < $1M",
-                height=60
+                height=100
             )
         
         submitted = st.form_submit_button("Evaluate Outcomes", type="primary")
@@ -226,7 +226,7 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
             constraints = st.text_area(
                 "Constraints",
                 placeholder="e.g., limited budget, small team, regulatory requirements",
-                height=60
+                height=100
             )
         
         submitted = st.form_submit_button("Generate Strategy", type="primary")
@@ -383,7 +383,7 @@ def render_forecast_results(results: Dict[str, Any]):
     
     st.subheader("🎯 Predicted Outcomes")
     
-    forecasts = results.get("forecasts", [])
+    forecasts = results.get("outcomes", [])
     
     if not forecasts:
         st.warning("No forecasts generated")

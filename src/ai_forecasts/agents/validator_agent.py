@@ -3,7 +3,7 @@
 from typing import Dict, Any, List
 import json
 from datetime import datetime
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
 
 
 class ValidatorAgent:

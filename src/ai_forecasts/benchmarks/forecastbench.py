@@ -263,7 +263,7 @@ class ForecastBenchRunner:
         self.benchmark = ForecastBenchBenchmark(orchestrator)
         self.logger = agent_logger
     
-    def run_quick_test(self, num_questions: int = 5) -> Dict[str, Any]:
+    def run_quick_test(self, num_questions: int = 10) -> Dict[str, Any]:
         """Run a quick test with a few questions"""
         self.logger.log("benchmark_runner", f"Starting quick test with {num_questions} questions")
         

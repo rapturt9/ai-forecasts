@@ -4,6 +4,7 @@ from typing import Dict, Any, List
 import json
 from datetime import datetime
 from langchain_core.messages import HumanMessage
+from ..utils.agent_logger import agent_logger
 
 
 class ForecastAgent:
@@ -67,31 +68,54 @@ Return your analysis as a JSON object with this structure:
     def analyze(self, initial_conditions: str, time_horizon: str, constraints: List[str] = None) -> Dict[str, Any]:
         """Generate forecast analysis"""
         
+        agent_logger.log("forecast_agent", "Starting forecast analysis", {
+            "time_horizon": time_horizon,
+            "has_constraints": bool(constraints),
+            "initial_conditions_length": len(initial_conditions) if initial_conditions else 0
+        })
+        
         # Create prompt and get LLM response
         prompt = self._create_forecast_prompt(initial_conditions, time_horizon, constraints)
         
+        agent_logger.log("forecast_agent", "Generated forecast prompt", {
+            "prompt_length": len(prompt)
+        })
+        
         try:
             # Get response from LLM
+            agent_logger.log("forecast_agent", "Sending request to LLM...")
             messages = [HumanMessage(content=prompt)]
             response = self.llm.invoke(messages)
             result = response.content
             
+            agent_logger.log("forecast_agent", "Received LLM response", {
+                "response_length": len(result)
+            })
+            
             # Try to extract JSON from the response
+            agent_logger.log("forecast_agent", "Parsing JSON response...")
             json_start = result.find('{')
             json_end = result.rfind('}') + 1
             
             if json_start != -1 and json_end > json_start:
                 json_str = result[json_start:json_end]
                 forecast_data = json.loads(json_str)
+                agent_logger.log("forecast_agent", "Successfully parsed JSON response")
             else:
                 # If no JSON found, try parsing the whole response
                 forecast_data = json.loads(result)
+                agent_logger.log("forecast_agent", "Parsed full response as JSON")
             
             # Add metadata
             forecast_data["initial_conditions_summary"] = initial_conditions
             forecast_data["time_horizon"] = time_horizon
             forecast_data["mode"] = "forecast"
             forecast_data["generated_at"] = datetime.now().isoformat()
+            
+            num_outcomes = len(forecast_data.get("outcomes", []))
+            agent_logger.log("forecast_agent", f"Forecast analysis completed successfully", {
+                "outcomes_generated": num_outcomes
+            })
             
             return forecast_data
             

@@ -5,6 +5,7 @@ from datetime import datetime
 
 from ..models.schemas import ForecastRequest, ForecastMode
 from ..utils.llm_client import LLMClient
+from ..utils.agent_logger import agent_logger
 from .forecast_agent import ForecastAgent
 from .targeted_agent import TargetedAgent
 from .strategy_agent import StrategyAgent
@@ -53,11 +54,16 @@ class ForecastOrchestrator:
         mode = self._classify_mode(request)
         initial_conditions = self._prepare_initial_conditions(request)
         
-        print(f"Processing request in {mode.value} mode...")
+        agent_logger.log("orchestrator", f"Processing request in {mode.value} mode", {
+            "mode": mode.value,
+            "has_initial_conditions": bool(request.initial_conditions),
+            "time_horizon": request.time_horizon
+        })
         
         try:
             # Route to appropriate agent(s)
             if mode == ForecastMode.PURE_FORECAST:
+                agent_logger.log("orchestrator", "Routing to forecast agent")
                 results = self.forecast_agent.analyze(
                     initial_conditions=initial_conditions,
                     time_horizon=request.time_horizon,
@@ -65,6 +71,9 @@ class ForecastOrchestrator:
                 )
             
             elif mode == ForecastMode.TARGETED:
+                agent_logger.log("orchestrator", "Routing to targeted agent", {
+                    "outcomes_count": len(request.outcomes_of_interest)
+                })
                 results = self.targeted_agent.analyze(
                     initial_conditions=initial_conditions,
                     outcomes_of_interest=request.outcomes_of_interest,
@@ -74,7 +83,7 @@ class ForecastOrchestrator:
             
             elif mode == ForecastMode.STRATEGY:
                 # First get forecast context to inform strategy
-                print("Generating forecast context for strategy...")
+                agent_logger.log("orchestrator", "Generating forecast context for strategy...")
                 forecast_context = self.forecast_agent.analyze(
                     initial_conditions=initial_conditions,
                     time_horizon=request.time_horizon,
@@ -82,7 +91,7 @@ class ForecastOrchestrator:
                 )
                 
                 # Then generate strategy
-                print("Generating strategic recommendations...")
+                agent_logger.log("orchestrator", "Generating strategic recommendations...")
                 results = self.strategy_agent.generate(
                     initial_conditions=initial_conditions,
                     desired_outcome=request.desired_outcome,
@@ -99,8 +108,9 @@ class ForecastOrchestrator:
             
             # Validate and enhance results
             if use_validation:
-                print("Validating results...")
+                agent_logger.log("orchestrator", "Running validation checks...")
                 results = self.validator_agent.quick_check(results)
+                agent_logger.log("orchestrator", "Validation completed")
             
             # Add processing metadata
             results["processing_metadata"] = {
@@ -108,6 +118,8 @@ class ForecastOrchestrator:
                 "processed_at": datetime.now().isoformat(),
                 "validation_applied": use_validation
             }
+            
+            agent_logger.log("orchestrator", "Request processing completed successfully")
             
             return results
             

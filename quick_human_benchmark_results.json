@@ -1,0 +1,125 @@
+{
+  "benchmark_type": "quick_human_forecasting_2024",
+  "num_questions": 10,
+  "timestamp": "2025-06-09T22:39:10.572727",
+  "metrics": {
+    "brier_score": 0.04454949319556775,
+    "num_predictions": 10,
+    "individual_scores": [
+      0.06421862429039418,
+      0.04409999999999959,
+      0.042668045152746206,
+      0.039687264214250006,
+      0.10167233969470527,
+      0.02509791865985587,
+      0.036577484064335766,
+      0.052648879500556724,
+      0.021285121705276383,
+      0.01753925467355753
+    ],
+    "predictions": [
+      {
+        "question_id": "0750nMx1Fqq4CWdoBHdX",
+        "question": "Will the OpenAI board fire Sam Altman again in 2024?",
+        "prediction": 0.35,
+        "actual_outcome": 0.096586061373108,
+        "brier_score": 0.06421862429039418,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "cLxfTH5GDfmqeNJwClVF",
+        "question": "Will the majority of new cars sold worldwide be electric before the end of 2030?",
+        "prediction": 0.45,
+        "actual_outcome": 0.659999999999999,
+        "brier_score": 0.04409999999999959,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "TPkEjiNb1wVCIGFnPcDD",
+        "question": "Will the average global temperature in 2024 exceed 2023?",
+        "prediction": 0.55,
+        "actual_outcome": 0.7565624485542961,
+        "brier_score": 0.042668045152746206,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "2ZLAoe3EAFVhcFAXXfPp",
+        "question": "Will Lionel Messi retire before the end of 2024?",
+        "prediction": 0.35,
+        "actual_outcome": 0.150783373650064,
+        "brier_score": 0.039687264214250006,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "iPG19DGNrWEkbUBjfk6L",
+        "question": "Will Ding Liren repeat as World Chess Champion?",
+        "prediction": 0.55,
+        "actual_outcome": 0.23113899627783702,
+        "brier_score": 0.10167233969470527,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "iokMHn6kkmntt9E0aHHz",
+        "question": "Will Taylor Swift release Reputation (Taylor's Version) before the end of 2024?",
+        "prediction": 0.65,
+        "actual_outcome": 0.8084232263901221,
+        "brier_score": 0.02509791865985587,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "q6wJThcy6TJnQKrbjALm",
+        "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+        "prediction": 0.5,
+        "actual_outcome": 0.6912524093033491,
+        "brier_score": 0.036577484064335766,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "VB1RhUVlnNfhclAh4LvR",
+        "question": "Will the U.S. win the gold medal in the Men's Basketball at the 2024 Summer Olympics in Paris?",
+        "prediction": 0.65,
+        "actual_outcome": 0.8794534364540151,
+        "brier_score": 0.052648879500556724,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "KCFbp1TH0RYN4j5zYdmh",
+        "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+        "prediction": 0.5,
+        "actual_outcome": 0.6458942140911571,
+        "brier_score": 0.021285121705276383,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      },
+      {
+        "question_id": "0yVJeShTMcm0FA8UrcCL",
+        "question": "Will over 70% of Manifold users think that Elon Musk does not deserve 100 billion dollars?",
+        "prediction": 0.45,
+        "actual_outcome": 0.582435851164092,
+        "brier_score": 0.01753925467355753,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "success": true
+      }
+    ]
+  },
+  "questions_tested": [
+    "0750nMx1Fqq4CWdoBHdX",
+    "cLxfTH5GDfmqeNJwClVF",
+    "TPkEjiNb1wVCIGFnPcDD",
+    "2ZLAoe3EAFVhcFAXXfPp",
+    "iPG19DGNrWEkbUBjfk6L",
+    "iokMHn6kkmntt9E0aHHz",
+    "q6wJThcy6TJnQKrbjALm",
+    "VB1RhUVlnNfhclAh4LvR",
+    "KCFbp1TH0RYN4j5zYdmh",
+    "0yVJeShTMcm0FA8UrcCL"
+  ]
+}

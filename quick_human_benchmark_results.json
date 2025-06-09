@@ -1,29 +1,29 @@
 {
   "benchmark_type": "quick_human_forecasting_2024",
   "num_questions": 10,
-  "timestamp": "2025-06-09T22:39:10.572727",
+  "timestamp": "2025-06-10T00:00:57.195171",
   "metrics": {
-    "brier_score": 0.04454949319556775,
+    "brier_score": 0.06947969858024823,
     "num_predictions": 10,
     "individual_scores": [
-      0.06421862429039418,
+      0.1627428058784618,
       0.04409999999999959,
-      0.042668045152746206,
+      0.16529302457446468,
       0.039687264214250006,
-      0.10167233969470527,
+      0.17544454043913785,
       0.02509791865985587,
-      0.036577484064335766,
+      0.0017017612733310399,
       0.052648879500556724,
       0.021285121705276383,
-      0.01753925467355753
+      0.006795669557148332
     ],
     "predictions": [
       {
         "question_id": "0750nMx1Fqq4CWdoBHdX",
         "question": "Will the OpenAI board fire Sam Altman again in 2024?",
-        "prediction": 0.35,
+        "prediction": 0.5,
         "actual_outcome": 0.096586061373108,
-        "brier_score": 0.06421862429039418,
+        "brier_score": 0.1627428058784618,
         "freeze_datetime": "2024-07-12T00:00:00+00:00",
         "success": true
       },
@@ -39,9 +39,9 @@
       {
         "question_id": "TPkEjiNb1wVCIGFnPcDD",
         "question": "Will the average global temperature in 2024 exceed 2023?",
-        "prediction": 0.55,
+        "prediction": 0.35,
         "actual_outcome": 0.7565624485542961,
-        "brier_score": 0.042668045152746206,
+        "brier_score": 0.16529302457446468,
         "freeze_datetime": "2024-07-12T00:00:00+00:00",
         "success": true
       },
@@ -57,9 +57,9 @@
       {
         "question_id": "iPG19DGNrWEkbUBjfk6L",
         "question": "Will Ding Liren repeat as World Chess Champion?",
-        "prediction": 0.55,
+        "prediction": 0.65,
         "actual_outcome": 0.23113899627783702,
-        "brier_score": 0.10167233969470527,
+        "brier_score": 0.17544454043913785,
         "freeze_datetime": "2024-07-12T00:00:00+00:00",
         "success": true
       },
@@ -75,9 +75,9 @@
       {
         "question_id": "q6wJThcy6TJnQKrbjALm",
         "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
-        "prediction": 0.5,
+        "prediction": 0.65,
         "actual_outcome": 0.6912524093033491,
-        "brier_score": 0.036577484064335766,
+        "brier_score": 0.0017017612733310399,
         "freeze_datetime": "2024-07-12T00:00:00+00:00",
         "success": true
       },
@@ -102,9 +102,9 @@
       {
         "question_id": "0yVJeShTMcm0FA8UrcCL",
         "question": "Will over 70% of Manifold users think that Elon Musk does not deserve 100 billion dollars?",
-        "prediction": 0.45,
+        "prediction": 0.5,
         "actual_outcome": 0.582435851164092,
-        "brier_score": 0.01753925467355753,
+        "brier_score": 0.006795669557148332,
         "freeze_datetime": "2024-07-12T00:00:00+00:00",
         "success": true
       }

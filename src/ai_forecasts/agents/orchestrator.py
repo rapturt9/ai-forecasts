@@ -16,7 +16,7 @@ from .web_research_agent import WebResearchAgent
 class ForecastOrchestrator:
     """Main orchestrator that coordinates multiple agents to process forecast requests"""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "anthropic/claude-3-haiku"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "openai/gpt-4o"):
         """Initialize the orchestrator with LLM client and agents"""
         
         # Initialize LLM client

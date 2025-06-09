@@ -7,10 +7,12 @@ An AI-powered system that performs bidirectional analysis: forecasting probable 
 ### Three Operating Modes
 
 1. **Pure Forecasting Mode**
+
    - Input: Initial conditions only
    - Output: Probability distribution of most notable outcomes
 
 2. **Targeted Forecasting Mode**
+
    - Input: Initial conditions + specific outcomes of interest
    - Output: Probability assessments for specified outcomes
 
@@ -36,17 +38,20 @@ An AI-powered system that performs bidirectional analysis: forecasting probable 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd ai-forecasts
 ```
 
 2. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env
 # Edit .env with your OpenRouter API key
@@ -55,16 +60,19 @@ cp .env.example .env
 ### Running the System
 
 1. **Start the API server:**
+
 ```bash
 python run_api.py
 ```
 
 2. **Start the web interface:**
+
 ```bash
 python run_frontend.py
 ```
 
 3. **Run the demo:**
+
 ```bash
 python demo.py
 ```
@@ -164,6 +172,7 @@ print(f"Success Rate: {strategy['overall_probability']:.1%}")
 **POST /forecast**
 
 Request body:
+
 ```json
 {
   "initial_conditions": "string (optional)",
@@ -177,6 +186,7 @@ Request body:
 ### Response Formats
 
 **Pure Forecasting Response:**
+
 ```json
 {
   "mode": "forecast",
@@ -184,7 +194,7 @@ Request body:
     {
       "description": "string",
       "probability": 0.65,
-      "confidence_interval": [0.45, 0.80],
+      "confidence_interval": [0.45, 0.8],
       "key_drivers": ["string"],
       "early_indicators": ["string"]
     }
@@ -197,6 +207,7 @@ Request body:
 ```
 
 **Strategy Response:**
+
 ```json
 {
   "mode": "strategy",
@@ -219,11 +230,13 @@ Request body:
 ## 🧪 Testing
 
 Run the test suite:
+
 ```bash
 python -m pytest tests/ -v
 ```
 
 Run the demo:
+
 ```bash
 python demo.py
 ```
@@ -234,15 +247,15 @@ python demo.py
 
 - `OPENROUTER_API_KEY`: Your OpenRouter API key
 - `OPENROUTER_BASE_URL`: OpenRouter API base URL (default: https://openrouter.ai/api/v1)
-- `DEFAULT_MODEL`: Default LLM model (default: anthropic/claude-3-haiku)
+- `DEFAULT_MODEL`: Default LLM model (default: anthropic/claude-opus-4)
 
 ### Model Selection
 
 The system supports any OpenRouter-compatible model. Popular choices:
-- `anthropic/claude-3-haiku` (fast, cost-effective)
-- `anthropic/claude-3-sonnet` (balanced performance)
-- `anthropic/claude-3-opus` (highest quality)
-- `openai/gpt-4` (alternative high-quality option)
+
+- `anthropic/claude-opus-4`
+- `anthropic/google/gemini-2.5-pro-preview`
+- `openai/o4-mini-high`
 
 ## 📈 Benchmarking
 
@@ -275,6 +288,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Support
 
 For questions or issues:
+
 1. Check the API documentation at `/docs`
 2. Review the examples in this README
 3. Run the demo script for a complete walkthrough

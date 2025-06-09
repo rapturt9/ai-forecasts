@@ -37,7 +37,7 @@ def get_orchestrator():
     global orchestrator
     if orchestrator is None:
         api_key = os.getenv("OPENROUTER_API_KEY")
-        model = os.getenv("DEFAULT_MODEL", "anthropic/claude-3-haiku")
+        model = os.getenv("DEFAULT_MODEL", "openai/gpt-4o")
         orchestrator = ForecastOrchestrator(api_key=api_key, model=model)
     return orchestrator
 

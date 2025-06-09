@@ -9,6 +9,7 @@ from datetime import datetime
 
 from ..models.schemas import ForecastRequest
 from ..agents.orchestrator import ForecastOrchestrator
+from ..utils.agent_logger import agent_logger
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -91,9 +92,22 @@ async def forecast(request: ForecastRequest, background_tasks: BackgroundTasks):
     - Strategy Generation: Find paths to desired outcomes
     """
     try:
+        # Start logging session
+        mode = "forecast"
+        if request.outcomes_of_interest:
+            mode = "targeted"
+        elif request.desired_outcome:
+            mode = "strategy"
+        
+        agent_logger.start_session(mode, request.dict())
+        
         # Get orchestrator and process request
         orch = get_orchestrator()
         results = orch.process_request(request, use_validation=True)
+        
+        # Add logging information to results
+        results["agent_logs"] = agent_logger.get_logs()
+        results["processing_summary"] = agent_logger.get_summary()
         
         # Check if processing was successful
         if results.get("success", True) is False:

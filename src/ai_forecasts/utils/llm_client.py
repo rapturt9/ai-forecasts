@@ -26,16 +26,14 @@ class LLMClient:
             raise ValueError("OpenRouter API key is required")
         
         self.client = ChatOpenAI(
-            openai_api_key=self.api_key,
-            openai_api_base=self.base_url,
-            model_name=model,
+            api_key=self.api_key,
+            base_url=self.base_url,
+            model=model,
             temperature=temperature,
             max_tokens=max_tokens,
-            model_kwargs={
-                "extra_headers": {
-                    "HTTP-Referer": "https://ai-forecasts.com",
-                    "X-Title": "AI Forecasting System"
-                }
+            default_headers={
+                "HTTP-Referer": "https://ai-forecasts.com",
+                "X-Title": "AI Forecasting System"
             }
         )
     

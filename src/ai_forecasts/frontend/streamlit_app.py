@@ -18,7 +18,7 @@ st.set_page_config(
 )
 
 # Constants
-API_BASE_URL = "http://localhost:12000"
+API_BASE_URL = "http://localhost:12002"
 
 def main():
     """Main Streamlit application"""
@@ -29,6 +29,27 @@ def main():
     An AI-powered system that performs bidirectional analysis: forecasting probable outcomes 
     from initial conditions AND recommending optimal strategies to achieve desired outcomes.
     """)
+    
+    # Quick mode explanation
+    with st.expander("📖 How to use this system", expanded=False):
+        st.markdown("""
+        **Choose your analysis mode:**
+        
+        🎯 **Forecast Outcomes**: *"What's likely to happen?"*
+        - Get probability distributions for likely future outcomes
+        - Optionally focus on specific outcomes you're interested in
+        - Based on automatic research of current global developments
+        
+        📊 **Evaluate Specific Outcomes**: *"What outcomes are we trying to predict?"*
+        - Enter specific outcomes you want to evaluate
+        - Get detailed probability assessments and feasibility analysis
+        - Understand preconditions and blocking factors
+        
+        🚀 **Find Path to Desired Outcome**: *"Given an outcome, what are the most probable strategies?"*
+        - Describe what you want to achieve
+        - Get multiple strategic paths with step-by-step implementation plans
+        - Includes gap analysis and risk assessment
+        """)
     
     # Sidebar for mode selection and configuration
     with st.sidebar:
@@ -78,31 +99,63 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the pure forecasting mode interface"""
     
     st.header("🎯 Forecast Likely Outcomes")
-    st.markdown("Predict the most probable outcomes given current conditions.")
+    st.markdown("Predict the most probable outcomes based on current global developments. The system will automatically research current conditions and generate a comprehensive forecast.")
+    
+    # Optional outcomes input
+    st.markdown("### 🎯 Optional: Specify Outcomes to Focus On")
+    with st.expander("🔍 Focus on specific outcomes (optional)", expanded=False):
+        st.info("💡 **Tip**: If you have specific outcomes in mind, enter them here to get more targeted analysis while still receiving a comprehensive forecast.")
+        focus_outcomes = st.text_area(
+            "Outcomes to prioritize in the forecast",
+            placeholder="Enter specific outcomes you're interested in (one per line):\n- AI breakthrough announcements\n- Major tech company acquisitions\n- Regulatory changes in AI",
+            height=100,
+            help="If specified, the forecast will pay special attention to these outcomes while still providing a comprehensive analysis"
+        )
+    
+    # Sample examples
+    st.markdown("**📋 Quick Examples:**")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("🤖 AI Development", key="forecast_ai_example"):
+            st.session_state.forecast_horizon = "1 year"
+            st.rerun()
+    
+    with col2:
+        if st.button("🏢 Tech Industry", key="forecast_tech_example"):
+            st.session_state.forecast_horizon = "6 months"
+            st.rerun()
+    
+    with col3:
+        if st.button("🌍 Global Economy", key="forecast_economy_example"):
+            st.session_state.forecast_horizon = "2 years"
+            st.rerun()
+    
+    st.divider()
     
     with st.form("forecast_form"):
         # Input fields
-        initial_conditions = st.text_area(
-            "Initial Conditions",
-            placeholder="Describe the current situation...",
-            height=100,
-            help="Leave blank to use current date as baseline"
-        )
-        
         col1, col2 = st.columns(2)
         with col1:
+            horizon_options = ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"]
+            default_horizon = st.session_state.get('forecast_horizon', "1 year")
+            horizon_index = horizon_options.index(default_horizon) if default_horizon in horizon_options else 3
             time_horizon = st.selectbox(
                 "Time Horizon",
-                ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"],
-                index=3
+                horizon_options,
+                index=horizon_index,
+                help="How far into the future to forecast"
             )
         
         with col2:
             constraints = st.text_area(
                 "Constraints (optional)",
                 placeholder="e.g., budget < $1M, no regulatory changes",
-                height=60
+                height=100,
+                help="Any specific constraints or assumptions to consider"
             )
+        
+        st.info("💡 The system will automatically research current global developments to inform the forecast.")
         
         submitted = st.form_submit_button("Generate Forecast", type="primary")
     
@@ -112,11 +165,13 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
             "time_horizon": time_horizon
         }
         
-        if initial_conditions.strip():
-            request_data["initial_conditions"] = initial_conditions
-        
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
+        
+        # Add focus outcomes if specified
+        if focus_outcomes.strip():
+            focus_list = [line.strip().lstrip("- ") for line in focus_outcomes.split("\n") if line.strip()]
+            request_data["outcomes_of_interest"] = focus_list
         
         # Make API call
         with st.spinner("Generating forecast..."):
@@ -130,45 +185,70 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the targeted forecasting mode interface"""
     
     st.header("📊 Evaluate Specific Outcomes")
-    st.markdown("Assess the probability and feasibility of specific outcomes of interest.")
+    st.markdown("**What outcomes are we trying to predict?** Enter specific outcomes you want to evaluate, and the system will assess their probability, feasibility, and provide detailed analysis based on current developments.")
+    
+    # Sample examples
+    st.markdown("**📋 Quick Examples:**")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("🤖 AI Milestones", key="targeted_ai_example"):
+            st.session_state.targeted_outcomes = "GPT-5 released by OpenAI\nAGI achieved by any company\nMajor AI safety breakthrough\nComprehensive AI regulation passed"
+            st.session_state.targeted_horizon = "2 years"
+            st.rerun()
+    
+    with col2:
+        if st.button("💰 Market Events", key="targeted_market_example"):
+            st.session_state.targeted_outcomes = "Stock market crash (>20% drop)\nRecession declared in US\nFed cuts rates below 3%\nBitcoin reaches $100k"
+            st.session_state.targeted_horizon = "1 year"
+            st.rerun()
+    
+    with col3:
+        if st.button("🌍 Global Events", key="targeted_global_example"):
+            st.session_state.targeted_outcomes = "Climate tipping point reached\nMajor breakthrough in fusion energy\nNew pandemic declared\nSpace tourism becomes mainstream"
+            st.session_state.targeted_horizon = "3 years"
+            st.rerun()
+    
+    st.divider()
     
     with st.form("targeted_form"):
         # Input fields
-        initial_conditions = st.text_area(
-            "Initial Conditions",
-            placeholder="Describe the current situation...",
-            height=100
-        )
-        
+        st.markdown("#### 🎯 What outcomes are we trying to predict?")
+        st.info("💡 **Enter specific outcomes** you want to evaluate. The system will assess probability, feasibility, and provide detailed analysis for each.")
         outcomes_text = st.text_area(
-            "Outcomes to Evaluate",
-            placeholder="Enter one outcome per line:\n- AI breakthrough announced\n- New regulation passed\n- Market crash occurs",
+            "Outcomes to evaluate (one per line)",
+            value=st.session_state.get('targeted_outcomes', ''),
+            placeholder="Enter one outcome per line:\n- GPT-5 released by OpenAI\n- Major AI regulation passed\n- Bitcoin reaches $100k",
             height=120,
-            help="Enter each outcome on a separate line"
+            help="Enter each specific outcome you want to evaluate on a separate line.",
+            label_visibility="collapsed"
         )
         
         col1, col2 = st.columns(2)
         with col1:
+            horizon_options = ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"]
+            default_horizon = st.session_state.get('targeted_horizon', "1 year")
+            horizon_index = horizon_options.index(default_horizon) if default_horizon in horizon_options else 3
             time_horizon = st.selectbox(
                 "Time Horizon",
-                ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"],
-                index=3
+                horizon_options,
+                index=horizon_index,
+                help="How far into the future to evaluate"
             )
         
         with col2:
             constraints = st.text_area(
                 "Constraints (optional)",
-                placeholder="e.g., budget < $1M",
-                height=60
+                placeholder="e.g., budget < $1M, no regulatory changes",
+                height=100,
+                help="Any specific constraints or assumptions to consider"
             )
+        
+        st.info("💡 The system will automatically research current context relevant to these outcomes.")
         
         submitted = st.form_submit_button("Evaluate Outcomes", type="primary")
     
     if submitted:
-        if not initial_conditions.strip():
-            st.error("Please provide initial conditions")
-            return None
-        
         if not outcomes_text.strip():
             st.error("Please provide outcomes to evaluate")
             return None
@@ -178,7 +258,6 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
         
         # Prepare request
         request_data = {
-            "initial_conditions": initial_conditions,
             "outcomes_of_interest": outcomes,
             "time_horizon": time_horizon
         }
@@ -198,51 +277,80 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the strategy generation mode interface"""
     
     st.header("🚀 Find Path to Desired Outcome")
-    st.markdown("Generate optimal strategies to achieve your desired outcome.")
+    st.markdown("**Given an outcome, what are the most probable strategies to achieve it?** Describe your desired outcome, and the system will generate optimal strategies with step-by-step implementation plans based on current market conditions.")
+    
+    # Sample examples
+    st.markdown("**📋 Quick Examples:**")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("🚀 AI Startup Success", key="strategy_startup_example"):
+            st.session_state.strategy_desired = "Launch a successful AI startup that reaches $10M ARR within 2 years"
+            st.session_state.strategy_constraints = "Limited initial funding, competitive market, need to hire top talent"
+            st.session_state.strategy_horizon = "2 years"
+            st.rerun()
+    
+    with col2:
+        if st.button("🎓 AI Career Transition", key="strategy_career_example"):
+            st.session_state.strategy_desired = "Transition from software engineering to AI research scientist role at a top lab"
+            st.session_state.strategy_constraints = "Need to maintain current income, limited time for study, no PhD"
+            st.session_state.strategy_horizon = "18 months"
+            st.rerun()
+    
+    with col3:
+        if st.button("🏢 AI Adoption", key="strategy_transform_example"):
+            st.session_state.strategy_desired = "Transform traditional company into AI-first organization with 30% efficiency gains"
+            st.session_state.strategy_constraints = "Legacy systems, change resistance, limited AI expertise, budget constraints"
+            st.session_state.strategy_horizon = "3 years"
+            st.rerun()
+    
+    st.divider()
     
     with st.form("strategy_form"):
         # Input fields
-        initial_conditions = st.text_area(
-            "Current Situation",
-            placeholder="Describe where you are now...",
-            height=100
-        )
-        
+        st.markdown("#### 🚀 What outcome do you want to achieve?")
+        st.info("💡 **Describe your desired outcome** with specific goals and success metrics. The system will generate multiple strategic paths to achieve this outcome.")
         desired_outcome = st.text_area(
-            "Desired Outcome",
-            placeholder="Describe what you want to achieve...",
-            height=80
+            "Desired outcome",
+            value=st.session_state.get('strategy_desired', ''),
+            placeholder="Describe what you want to achieve...\nExample: Launch a successful AI startup that reaches $10M ARR",
+            height=100,
+            help="Be specific about your goal and success metrics.",
+            label_visibility="collapsed"
         )
         
         col1, col2 = st.columns(2)
         with col1:
+            horizon_options = ["1 month", "3 months", "6 months", "1 year", "18 months", "2 years", "3 years", "5 years"]
+            default_horizon = st.session_state.get('strategy_horizon', "1 year")
+            horizon_index = horizon_options.index(default_horizon) if default_horizon in horizon_options else 3
             time_horizon = st.selectbox(
                 "Time Horizon",
-                ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"],
-                index=3
+                horizon_options,
+                index=horizon_index,
+                help="How long you have to achieve this outcome"
             )
         
         with col2:
             constraints = st.text_area(
                 "Constraints",
+                value=st.session_state.get('strategy_constraints', ''),
                 placeholder="e.g., limited budget, small team, regulatory requirements",
-                height=60
+                height=100,
+                help="Any limitations or constraints to consider"
             )
+        
+        st.info("💡 The system will automatically research current market conditions and opportunities relevant to your goal.")
         
         submitted = st.form_submit_button("Generate Strategy", type="primary")
     
     if submitted:
-        if not initial_conditions.strip():
-            st.error("Please describe the current situation")
-            return None
-        
         if not desired_outcome.strip():
             st.error("Please describe the desired outcome")
             return None
         
         # Prepare request
         request_data = {
-            "initial_conditions": initial_conditions,
             "desired_outcome": desired_outcome,
             "time_horizon": time_horizon
         }
@@ -368,6 +476,10 @@ def render_results(results: Dict[str, Any], show_raw: bool):
     elif mode == "strategy":
         render_strategy_results(results)
     
+    # Agent computation logs
+    if "agent_logs" in results or "processing_summary" in results:
+        render_agent_logs(results)
+    
     # Validation results
     if "validations" in results:
         render_validation_results(results["validations"])
@@ -383,7 +495,7 @@ def render_forecast_results(results: Dict[str, Any]):
     
     st.subheader("🎯 Predicted Outcomes")
     
-    forecasts = results.get("forecasts", [])
+    forecasts = results.get("outcomes", [])
     
     if not forecasts:
         st.warning("No forecasts generated")
@@ -618,6 +730,86 @@ def render_validation_results(validations: Dict[str, Any]):
             st.write("**Improvement Suggestions:**")
             for suggestion in suggestions:
                 st.write(f"• {suggestion}")
+
+
+def render_agent_logs(results: Dict[str, Any]):
+    """Render agent computation logs and processing summary"""
+    
+    with st.expander("🤖 Agent Computation Log", expanded=False):
+        # Processing summary
+        if "processing_summary" in results:
+            summary = results["processing_summary"]
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Total Time", f"{summary.get('total_time', 0):.2f}s")
+            with col2:
+                st.metric("Agents Used", summary.get('agent_count', 0))
+            with col3:
+                st.metric("Activities", len(summary.get('activities', [])))
+            
+            # Agents used
+            agents_used = summary.get('agents_used', [])
+            if agents_used:
+                st.write("**Agents Involved:**")
+                agent_colors = {
+                    'orchestrator': '🎯',
+                    'forecast_agent': '📊',
+                    'targeted_agent': '🎯',
+                    'strategy_agent': '🚀',
+                    'validator_agent': '✅'
+                }
+                
+                cols = st.columns(len(agents_used))
+                for i, agent in enumerate(agents_used):
+                    with cols[i]:
+                        icon = agent_colors.get(agent, '🤖')
+                        st.write(f"{icon} {agent.replace('_', ' ').title()}")
+        
+        # Detailed logs
+        if "agent_logs" in results:
+            logs = results["agent_logs"]
+            
+            st.write("**Detailed Activity Log:**")
+            
+            for log in logs:
+                timestamp = log.get('timestamp', '')
+                elapsed = log.get('elapsed_seconds', 0)
+                agent = log.get('agent', 'unknown')
+                message = log.get('message', '')
+                
+                # Format timestamp to show just time
+                try:
+                    from datetime import datetime
+                    dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    time_str = dt.strftime('%H:%M:%S')
+                except:
+                    time_str = timestamp
+                
+                # Color code by agent
+                agent_colors = {
+                    'orchestrator': '#1f77b4',
+                    'forecast_agent': '#ff7f0e', 
+                    'targeted_agent': '#2ca02c',
+                    'strategy_agent': '#d62728',
+                    'validator_agent': '#9467bd'
+                }
+                
+                color = agent_colors.get(agent, '#7f7f7f')
+                
+                st.markdown(f"""
+                <div style="
+                    padding: 8px 12px; 
+                    margin: 4px 0; 
+                    border-left: 4px solid {color}; 
+                    background-color: rgba(128,128,128,0.1);
+                    border-radius: 4px;
+                ">
+                    <strong style="color: {color};">{agent.replace('_', ' ').title()}</strong> 
+                    <span style="color: #666; font-size: 0.9em;">({elapsed:.2f}s)</span><br>
+                    {message}
+                </div>
+                """, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 from typing import Dict, Any, List
 import json
 from datetime import datetime
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
 
 
 class TargetedAgent:
@@ -91,7 +91,8 @@ Return your analysis as a JSON object:
         initial_conditions: str, 
         outcomes_of_interest: List[str], 
         time_horizon: str,
-        constraints: List[str] = None
+        constraints: List[str] = None,
+        research_context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Generate targeted outcome analysis"""
         
@@ -104,13 +105,27 @@ Return your analysis as a JSON object:
             response = self.llm.invoke(messages)
             result = response.content
             
-            # Try to extract JSON from the response
+            # Try to extract JSON from the response - look for complete JSON object
             json_start = result.find('{')
-            json_end = result.rfind('}') + 1
-            
-            if json_start != -1 and json_end > json_start:
-                json_str = result[json_start:json_end]
-                analysis_data = json.loads(json_str)
+            if json_start != -1:
+                # Find the matching closing brace by counting braces
+                brace_count = 0
+                json_end = json_start
+                for i, char in enumerate(result[json_start:], json_start):
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                        if brace_count == 0:
+                            json_end = i + 1
+                            break
+                
+                if json_end > json_start:
+                    json_str = result[json_start:json_end]
+                    analysis_data = json.loads(json_str)
+                else:
+                    # If no complete JSON found, try parsing the whole response
+                    analysis_data = json.loads(result)
             else:
                 # If no JSON found, try parsing the whole response
                 analysis_data = json.loads(result)

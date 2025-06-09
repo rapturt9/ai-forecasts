@@ -385,3 +385,4 @@ INFO:     Finished server process [12280]
 INFO:     Started server process [12306]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
+INFO:     10.2.9.135:35118 - "GET / HTTP/1.1" 200 OK

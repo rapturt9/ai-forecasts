@@ -56,6 +56,18 @@ class AgentLogger:
             "activities": [f"{log['agent']}: {log['message']}" for log in self.logs],
             "agents_used": list(agents)
         }
+    
+    def info(self, message: str, details: Dict[str, Any] = None):
+        """Log an info message"""
+        self.log("system", message, details)
+    
+    def warning(self, message: str, details: Dict[str, Any] = None):
+        """Log a warning message"""
+        self.log("warning", message, details)
+    
+    def error(self, message: str, details: Dict[str, Any] = None):
+        """Log an error message"""
+        self.log("error", message, details)
 
 
 # Global logger instance

@@ -30,6 +30,27 @@ def main():
     from initial conditions AND recommending optimal strategies to achieve desired outcomes.
     """)
     
+    # Quick mode explanation
+    with st.expander("📖 How to use this system", expanded=False):
+        st.markdown("""
+        **Choose your analysis mode:**
+        
+        🎯 **Forecast Outcomes**: *"What's likely to happen?"*
+        - Get probability distributions for likely future outcomes
+        - Optionally focus on specific outcomes you're interested in
+        - Based on automatic research of current global developments
+        
+        📊 **Evaluate Specific Outcomes**: *"What outcomes are we trying to predict?"*
+        - Enter specific outcomes you want to evaluate
+        - Get detailed probability assessments and feasibility analysis
+        - Understand preconditions and blocking factors
+        
+        🚀 **Find Path to Desired Outcome**: *"Given an outcome, what are the most probable strategies?"*
+        - Describe what you want to achieve
+        - Get multiple strategic paths with step-by-step implementation plans
+        - Includes gap analysis and risk assessment
+        """)
+    
     # Sidebar for mode selection and configuration
     with st.sidebar:
         st.header("Configuration")
@@ -78,7 +99,18 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the pure forecasting mode interface"""
     
     st.header("🎯 Forecast Likely Outcomes")
-    st.markdown("Predict the most probable outcomes based on current global developments. The system will automatically research current conditions.")
+    st.markdown("Predict the most probable outcomes based on current global developments. The system will automatically research current conditions and generate a comprehensive forecast.")
+    
+    # Optional outcomes input
+    st.markdown("### 🎯 Optional: Specify Outcomes to Focus On")
+    with st.expander("🔍 Focus on specific outcomes (optional)", expanded=False):
+        st.info("💡 **Tip**: If you have specific outcomes in mind, enter them here to get more targeted analysis while still receiving a comprehensive forecast.")
+        focus_outcomes = st.text_area(
+            "Outcomes to prioritize in the forecast",
+            placeholder="Enter specific outcomes you're interested in (one per line):\n- AI breakthrough announcements\n- Major tech company acquisitions\n- Regulatory changes in AI",
+            height=100,
+            help="If specified, the forecast will pay special attention to these outcomes while still providing a comprehensive analysis"
+        )
     
     # Sample examples
     st.markdown("**📋 Quick Examples:**")
@@ -136,6 +168,11 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
         
+        # Add focus outcomes if specified
+        if focus_outcomes.strip():
+            focus_list = [line.strip().lstrip("- ") for line in focus_outcomes.split("\n") if line.strip()]
+            request_data["outcomes_of_interest"] = focus_list
+        
         # Make API call
         with st.spinner("Generating forecast..."):
             results = make_api_call("/forecast", request_data, use_validation)
@@ -148,7 +185,7 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the targeted forecasting mode interface"""
     
     st.header("📊 Evaluate Specific Outcomes")
-    st.markdown("Assess the probability and feasibility of specific outcomes based on current developments. The system will automatically research relevant context.")
+    st.markdown("**What outcomes are we trying to predict?** Enter specific outcomes you want to evaluate, and the system will assess their probability, feasibility, and provide detailed analysis based on current developments.")
     
     # Sample examples
     st.markdown("**📋 Quick Examples:**")
@@ -176,12 +213,15 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
     
     with st.form("targeted_form"):
         # Input fields
+        st.markdown("#### 🎯 What outcomes are we trying to predict?")
+        st.info("💡 **Enter specific outcomes** you want to evaluate. The system will assess probability, feasibility, and provide detailed analysis for each.")
         outcomes_text = st.text_area(
-            "Outcomes to Evaluate",
+            "Outcomes to evaluate (one per line)",
             value=st.session_state.get('targeted_outcomes', ''),
             placeholder="Enter one outcome per line:\n- GPT-5 released by OpenAI\n- Major AI regulation passed\n- Bitcoin reaches $100k",
             height=120,
-            help="Enter each outcome on a separate line"
+            help="Enter each specific outcome you want to evaluate on a separate line.",
+            label_visibility="collapsed"
         )
         
         col1, col2 = st.columns(2)
@@ -237,7 +277,7 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
     """Render the strategy generation mode interface"""
     
     st.header("🚀 Find Path to Desired Outcome")
-    st.markdown("Generate optimal strategies to achieve your desired outcome based on current market conditions. The system will automatically research relevant context.")
+    st.markdown("**Given an outcome, what are the most probable strategies to achieve it?** Describe your desired outcome, and the system will generate optimal strategies with step-by-step implementation plans based on current market conditions.")
     
     # Sample examples
     st.markdown("**📋 Quick Examples:**")
@@ -268,12 +308,15 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
     
     with st.form("strategy_form"):
         # Input fields
+        st.markdown("#### 🚀 What outcome do you want to achieve?")
+        st.info("💡 **Describe your desired outcome** with specific goals and success metrics. The system will generate multiple strategic paths to achieve this outcome.")
         desired_outcome = st.text_area(
-            "Desired Outcome",
+            "Desired outcome",
             value=st.session_state.get('strategy_desired', ''),
             placeholder="Describe what you want to achieve...\nExample: Launch a successful AI startup that reaches $10M ARR",
             height=100,
-            help="Be specific about your goal and success metrics"
+            help="Be specific about your goal and success metrics.",
+            label_visibility="collapsed"
         )
         
         col1, col2 = st.columns(2)

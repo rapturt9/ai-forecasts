@@ -145,9 +145,9 @@ class ForecastOrchestrator:
         except Exception as e:
             # Return error response
             return {
-                "mode": mode.value,
+                "mode": mode.value if 'mode' in locals() else "unknown",
                 "error": str(e),
-                "initial_conditions_summary": initial_conditions,
+                "initial_conditions_summary": "Error occurred during processing",
                 "time_horizon": request.time_horizon,
                 "processed_at": datetime.now().isoformat(),
                 "success": False

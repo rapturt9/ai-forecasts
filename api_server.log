@@ -6,3 +6,9 @@ INFO:     127.0.0.1:57070 - "GET /health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:34834 - "POST /forecast HTTP/1.1" 200 OK
 INFO:     127.0.0.1:39932 - "POST /forecast HTTP/1.1" 500 Internal Server Error
 INFO:     127.0.0.1:59494 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33214 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37878 - "POST /forecast HTTP/1.1" 500 Internal Server Error
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6468]

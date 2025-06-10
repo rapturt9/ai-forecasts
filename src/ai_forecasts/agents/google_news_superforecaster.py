@@ -47,7 +47,7 @@ class GoogleNewsSuperforecaster:
         
         # Configure LLM for CrewAI with proper headers
         self.llm = LLM(
-            model="openrouter/openai/gpt-4o-2024-11-20",
+            model="openai/gpt-4o-2024-11-20",
             api_key=openrouter_api_key,
             base_url="https://openrouter.ai/api/v1",
             temperature=0.7,
@@ -446,7 +446,7 @@ class GoogleNewsSuperforecaster:
             Question: {question}
             Background: {background}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
-            News Research Summary: {json.dumps(news_research_data, indent=2)[:2000]}...
+            News Research Summary: {json.dumps(news_research_data, indent=2, default=str)[:2000]}...
             Information cutoff: {cutoff_str}
             
             Your task is to:
@@ -471,7 +471,7 @@ class GoogleNewsSuperforecaster:
             Analyze base rates and historical precedents using the Google News research data:
             
             Question: {question}
-            Historical News Research: {json.dumps(news_research_data.get('search_results', {}).get('base_rate_research', {}), indent=2)}
+            Historical News Research: {json.dumps(news_research_data.get('search_results', {}).get('base_rate_research', {}), indent=2, default=str)}
             News Coordination: {{news_coordination_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
@@ -499,7 +499,7 @@ class GoogleNewsSuperforecaster:
             Analyze current conditions and recent developments using Google News research:
             
             Question: {question}
-            Current News Research: {json.dumps(news_research_data.get('search_results', {}).get('current_context', {}), indent=2)}
+            Current News Research: {json.dumps(news_research_data.get('search_results', {}).get('current_context', {}), indent=2, default=str)}
             News Coordination: {{news_coordination_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
@@ -526,7 +526,7 @@ class GoogleNewsSuperforecaster:
             Aggregate and analyze expert opinions from Google News research:
             
             Question: {question}
-            Expert Opinion News: {json.dumps(news_research_data.get('search_results', {}).get('expert_opinions', {}), indent=2)}
+            Expert Opinion News: {json.dumps(news_research_data.get('search_results', {}).get('expert_opinions', {}), indent=2, default=str)}
             News Coordination: {{news_coordination_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
@@ -553,7 +553,7 @@ class GoogleNewsSuperforecaster:
             Analyze contrarian viewpoints and potential disconfirming evidence from Google News:
             
             Question: {question}
-            Contrarian News Research: {json.dumps(news_research_data.get('search_results', {}).get('contrarian_views', {}), indent=2)}
+            Contrarian News Research: {json.dumps(news_research_data.get('search_results', {}).get('contrarian_views', {}), indent=2, default=str)}
             News Coordination: {{news_coordination_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             

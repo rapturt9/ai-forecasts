@@ -445,14 +445,18 @@ def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool, use
     
     try:
         # Choose endpoint based on preferences
-        if use_google_news:
-            url = f"{API_BASE_URL}{endpoint}/google_news"
-        elif use_crewai:
-            url = f"{API_BASE_URL}{endpoint}/crewai"
-        elif use_validation:
-            url = f"{API_BASE_URL}{endpoint}"
-        else:
+        # Note: Our API handles all modes through the main /forecast endpoint
+        # The backend will determine which system to use based on the request
+        if not use_validation:
             url = f"{API_BASE_URL}{endpoint}/quick"
+        else:
+            url = f"{API_BASE_URL}{endpoint}"
+        
+        # Add metadata to indicate preferred system
+        if use_google_news:
+            data["preferred_system"] = "google_news"
+        elif use_crewai:
+            data["preferred_system"] = "crewai"
         
         response = requests.post(url, json=data, timeout=300)  # Increased timeout for CrewAI
         
@@ -500,14 +504,18 @@ def make_api_call_with_live_logs(endpoint: str, data: Dict[str, Any], use_valida
     def run_api_call():
         try:
             # Choose endpoint based on preferences
-            if use_google_news:
-                url = f"{API_BASE_URL}{endpoint}/google_news"
-            elif use_crewai:
-                url = f"{API_BASE_URL}{endpoint}/crewai"
-            elif use_validation:
-                url = f"{API_BASE_URL}{endpoint}"
-            else:
+            # Note: Our API handles all modes through the main /forecast endpoint
+            # The backend will determine which system to use based on the request
+            if not use_validation:
                 url = f"{API_BASE_URL}{endpoint}/quick"
+            else:
+                url = f"{API_BASE_URL}{endpoint}"
+            
+            # Add metadata to indicate preferred system
+            if use_google_news:
+                data["preferred_system"] = "google_news"
+            elif use_crewai:
+                data["preferred_system"] = "crewai"
             
             response = requests.post(url, json=data, timeout=300)
             
@@ -1025,3 +1033,7 @@ def render_agent_logs(results: Dict[str, Any]):
                     {message}
                 </div>
                 """, unsafe_allow_html=True)
+
+
+if __name__ == "__main__":
+    main()

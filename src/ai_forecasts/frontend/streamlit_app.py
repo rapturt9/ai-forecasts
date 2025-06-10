@@ -705,213 +705,306 @@ def render_results(results: Dict[str, Any], show_raw: bool, show_agent_logs: boo
 def render_crewai_results(results: Dict[str, Any]):
     """Render CrewAI multi-agent superforecaster results"""
     
-    forecast = results.get("forecast", {})
-    agent_analysis = results.get("agent_analysis", {})
-    
-    # Main forecast display
-    st.subheader("🎯 Superforecaster Analysis")
-    
-    # Key metrics
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        probability = forecast.get("probability", 0)
-        st.metric(
-            "Probability",
-            f"{probability:.1%}",
-            help="Final probability estimate from multi-agent analysis"
-        )
-    
-    with col2:
-        confidence = forecast.get("confidence_level", "Unknown")
-        st.metric(
-            "Confidence",
-            confidence,
-            help="Confidence level in the forecast"
-        )
-    
-    with col3:
-        base_rate = forecast.get("base_rate", 0)
-        st.metric(
-            "Base Rate",
-            f"{base_rate:.1%}",
-            help="Historical base rate for similar situations"
-        )
-    
-    with col4:
-        evidence_quality = forecast.get("evidence_quality", 0)
-        st.metric(
-            "Evidence Quality",
-            f"{evidence_quality:.1%}",
-            help="Quality score of available evidence"
-        )
-    
-    # Main reasoning
-    if forecast.get("reasoning"):
-        st.subheader("🧠 Reasoning")
-        st.write(forecast["reasoning"])
-    
-    # Methodology components
-    methodology = forecast.get("methodology_components", {})
-    if methodology:
-        st.subheader("🔬 Methodology Components")
+    try:
+        forecast = results.get("forecast", {})
+        agent_analysis = results.get("agent_analysis", {})
         
-        for component, details in methodology.items():
-            with st.expander(f"📋 {component.replace('_', ' ').title()}", expanded=False):
-                if isinstance(details, dict):
-                    for key, value in details.items():
-                        st.write(f"**{key.replace('_', ' ').title()}:** {value}")
-                else:
-                    st.write(details)
-    
-    # Agent analysis breakdown
-    if agent_analysis:
-        st.subheader("🤖 Agent Analysis Breakdown")
+        # Main forecast display
+        st.subheader("🎯 Superforecaster Analysis")
         
-        for agent_name, analysis in agent_analysis.items():
-            with st.expander(f"🔍 {agent_name.replace('_', ' ').title()}", expanded=False):
-                if isinstance(analysis, dict):
-                    for key, value in analysis.items():
-                        if isinstance(value, list):
-                            st.write(f"**{key.replace('_', ' ').title()}:**")
-                            for item in value:
-                                st.write(f"• {item}")
-                        else:
+        # Key metrics
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            probability = forecast.get("probability", 0)
+            st.metric(
+                "Probability",
+                f"{probability:.1%}",
+                help="Final probability estimate from multi-agent analysis"
+            )
+        
+        with col2:
+            confidence = forecast.get("confidence_level", "Unknown")
+            st.metric(
+                "Confidence",
+                confidence,
+                help="Confidence level in the forecast"
+            )
+        
+        with col3:
+            base_rate = forecast.get("base_rate", 0)
+            st.metric(
+                "Base Rate",
+                f"{base_rate:.1%}",
+                help="Historical base rate for similar situations"
+            )
+        
+        with col4:
+            evidence_quality = forecast.get("evidence_quality", 0)
+            st.metric(
+                "Evidence Quality",
+                f"{evidence_quality:.1%}",
+                help="Quality score of available evidence"
+            )
+        
+        # Main reasoning
+        if forecast.get("reasoning"):
+            st.subheader("🧠 Reasoning")
+            st.write(forecast["reasoning"])
+        
+        # Methodology components
+        methodology = forecast.get("methodology_components", {})
+        if methodology:
+            st.subheader("🔬 Methodology Components")
+            
+            for component, details in methodology.items():
+                with st.expander(f"📋 {component.replace('_', ' ').title()}", expanded=False):
+                    if isinstance(details, dict):
+                        for key, value in details.items():
                             st.write(f"**{key.replace('_', ' ').title()}:** {value}")
-                else:
-                    st.write(analysis)
+                    else:
+                        st.write(details)
+        
+        # Agent analysis breakdown
+        if agent_analysis:
+            st.subheader("🤖 Agent Analysis Breakdown")
+            
+            for agent_name, analysis in agent_analysis.items():
+                with st.expander(f"🔍 {agent_name.replace('_', ' ').title()}", expanded=False):
+                    if isinstance(analysis, dict):
+                        for key, value in analysis.items():
+                            if isinstance(value, list):
+                                st.write(f"**{key.replace('_', ' ').title()}:**")
+                                for item in value:
+                                    st.write(f"• {item}")
+                            else:
+                                st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                    else:
+                        st.write(analysis)
+    
+    except Exception as e:
+        st.error(f"Unable to parse CrewAI results: {str(e)}")
+        st.write("**Raw Analysis Output:**")
+        
+        # Show detailed error information
+        st.markdown("### ⚠️ Error Details")
+        st.code(f"Exception: {type(e).__name__}\nMessage: {str(e)}")
+        
+        # Show raw output as fallback
+        if "reasoning" in results:
+            st.markdown("### 🧠 Analysis Reasoning")
+            st.text(results["reasoning"])
+        
+        if "full_analysis" in results and results["full_analysis"]:
+            st.markdown("### 📊 Full Analysis")
+            st.json(results["full_analysis"])
+        
+        # Show the complete raw results for debugging
+        st.markdown("### 📋 Complete Raw Results")
+        st.json(results)
+        
+        # Show any other relevant fields
+        for key, value in results.items():
+            if key not in ["reasoning", "full_analysis", "agent_logs", "processing_summary"]:
+                if isinstance(value, (str, int, float, bool)) and value:
+                    st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                elif isinstance(value, (dict, list)) and value:
+                    st.write(f"**{key.replace('_', ' ').title()}:**")
+                    st.json(value)
 
 
 
 def render_targeted_results(results: Dict[str, Any]):
     """Render targeted forecasting results"""
     
-    st.subheader("📊 Outcome Evaluations")
-    
-    evaluations = results.get("evaluations", [])
-    
-    if not evaluations:
-        st.warning("No evaluations generated")
-        return
-    
-    # Summary metrics
-    if evaluations:
-        col1, col2, col3 = st.columns(3)
+    try:
+        st.subheader("📊 Outcome Evaluations")
         
-        avg_prob = sum(e.get("probability", 0) for e in evaluations) / len(evaluations)
-        avg_feasibility = sum(e.get("feasibility_score", 0) for e in evaluations) / len(evaluations)
-        high_confidence = sum(1 for e in evaluations if e.get("confidence") == "high")
+        evaluations = results.get("evaluations", [])
         
-        with col1:
-            st.metric("Average Probability", f"{avg_prob:.1%}")
-        with col2:
-            st.metric("Average Feasibility", f"{avg_feasibility:.1%}")
-        with col3:
-            st.metric("High Confidence", f"{high_confidence}/{len(evaluations)}")
-    
-    # Detailed evaluations
-    for i, evaluation in enumerate(evaluations, 1):
-        with st.expander(f"#{i}: {evaluation['outcome']}", expanded=True):
+        if not evaluations:
+            st.warning("No evaluations generated")
+            return
+        
+        # Summary metrics
+        if evaluations:
             col1, col2, col3 = st.columns(3)
             
+            avg_prob = sum(e.get("probability", 0) for e in evaluations) / len(evaluations)
+            avg_feasibility = sum(e.get("feasibility_score", 0) for e in evaluations) / len(evaluations)
+            high_confidence = sum(1 for e in evaluations if e.get("confidence") == "high")
+            
             with col1:
-                st.metric("Probability", f"{evaluation.get('probability', 0):.1%}")
+                st.metric("Average Probability", f"{avg_prob:.1%}")
             with col2:
-                st.metric("Feasibility", f"{evaluation.get('feasibility_score', 0):.1%}")
+                st.metric("Average Feasibility", f"{avg_feasibility:.1%}")
             with col3:
-                confidence = evaluation.get("confidence", "unknown")
-                st.metric("Confidence", confidence.title())
-            
-            if evaluation.get("preconditions"):
-                st.write("**Preconditions:**")
-                for condition in evaluation["preconditions"]:
-                    st.write(f"• {condition}")
-            
-            if evaluation.get("blocking_factors"):
-                st.write("**Blocking Factors:**")
-                for blocker in evaluation["blocking_factors"]:
-                    st.write(f"• {blocker}")
+                st.metric("High Confidence", f"{high_confidence}/{len(evaluations)}")
+        
+        # Detailed evaluations
+        for i, evaluation in enumerate(evaluations, 1):
+            with st.expander(f"#{i}: {evaluation['outcome']}", expanded=True):
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.metric("Probability", f"{evaluation.get('probability', 0):.1%}")
+                with col2:
+                    st.metric("Feasibility", f"{evaluation.get('feasibility_score', 0):.1%}")
+                with col3:
+                    confidence = evaluation.get("confidence", "unknown")
+                    st.metric("Confidence", confidence.title())
+                
+                if evaluation.get("preconditions"):
+                    st.write("**Preconditions:**")
+                    for condition in evaluation["preconditions"]:
+                        st.write(f"• {condition}")
+                
+                if evaluation.get("blocking_factors"):
+                    st.write("**Blocking Factors:**")
+                    for blocker in evaluation["blocking_factors"]:
+                        st.write(f"• {blocker}")
+    
+    except Exception as e:
+        st.error(f"Unable to parse targeted results: {str(e)}")
+        st.write("**Raw Analysis Output:**")
+        
+        # Show detailed error information
+        st.markdown("### ⚠️ Error Details")
+        st.code(f"Exception: {type(e).__name__}\nMessage: {str(e)}")
+        
+        # Show raw output as fallback
+        if "reasoning" in results:
+            st.markdown("### 🧠 Analysis Reasoning")
+            st.text(results["reasoning"])
+        
+        if "full_analysis" in results and results["full_analysis"]:
+            st.markdown("### 📊 Full Analysis")
+            st.json(results["full_analysis"])
+        
+        # Show the complete raw results for debugging
+        st.markdown("### 📋 Complete Raw Results")
+        st.json(results)
+        
+        # Show any other relevant fields
+        for key, value in results.items():
+            if key not in ["reasoning", "full_analysis", "agent_logs", "processing_summary"]:
+                if isinstance(value, (str, int, float, bool)) and value:
+                    st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                elif isinstance(value, (dict, list)) and value:
+                    st.write(f"**{key.replace('_', ' ').title()}:**")
+                    st.json(value)
 
 
 def render_strategy_results(results: Dict[str, Any]):
     """Render strategy generation results"""
     
-    st.subheader("🚀 Strategic Recommendations")
-    
-    # Feasibility score
-    feasibility = results.get("feasibility_score", 0)
-    st.metric("Overall Feasibility", f"{feasibility:.1%}")
-    
-    # Gap analysis
-    gap_analysis = results.get("gap_analysis", {})
-    if gap_analysis:
-        st.subheader("📋 Gap Analysis")
+    try:
+        st.subheader("🚀 Strategic Recommendations")
         
-        col1, col2, col3 = st.columns(3)
+        # Feasibility score
+        feasibility = results.get("feasibility_score", 0)
+        st.metric("Overall Feasibility", f"{feasibility:.1%}")
         
-        with col1:
-            st.write("**Required Changes:**")
-            for change in gap_analysis.get("required_changes", []):
-                st.write(f"• {change}")
-        
-        with col2:
-            st.write("**Needed Resources:**")
-            for resource in gap_analysis.get("needed_resources", []):
-                st.write(f"• {resource}")
-        
-        with col3:
-            st.write("**Capability Gaps:**")
-            for gap in gap_analysis.get("capability_gaps", []):
-                st.write(f"• {gap}")
-    
-    # Recommended strategy
-    recommended = results.get("recommended_strategy")
-    if recommended:
-        st.subheader("⭐ Recommended Strategy")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Success Probability", f"{recommended.get('overall_probability', 0):.1%}")
-        with col2:
-            st.metric("Timeline", recommended.get("timeline", "Not specified"))
-        
-        # Strategy steps
-        steps = recommended.get("steps", [])
-        if steps:
-            st.write("**Implementation Steps:**")
+        # Gap analysis
+        gap_analysis = results.get("gap_analysis", {})
+        if gap_analysis:
+            st.subheader("📋 Gap Analysis")
             
-            for step in steps:
-                with st.expander(f"Phase {step.get('phase', '?')}: {step.get('action', 'Unknown')}"):
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.write("**Required Changes:**")
+                for change in gap_analysis.get("required_changes", []):
+                    st.write(f"• {change}")
+            
+            with col2:
+                st.write("**Needed Resources:**")
+                for resource in gap_analysis.get("needed_resources", []):
+                    st.write(f"• {resource}")
+            
+            with col3:
+                st.write("**Capability Gaps:**")
+                for gap in gap_analysis.get("capability_gaps", []):
+                    st.write(f"• {gap}")
+        
+        # Recommended strategy
+        recommended = results.get("recommended_strategy")
+        if recommended:
+            st.subheader("⭐ Recommended Strategy")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Success Probability", f"{recommended.get('overall_probability', 0):.1%}")
+            with col2:
+                st.metric("Timeline", recommended.get("timeline", "Not specified"))
+            
+            # Strategy steps
+            steps = recommended.get("steps", [])
+            if steps:
+                st.write("**Implementation Steps:**")
+                
+                for step in steps:
+                    with st.expander(f"Phase {step.get('phase', '?')}: {step.get('action', 'Unknown')}"):
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.write(f"**Timeline:** {step.get('timeline', 'Not specified')}")
+                            st.write(f"**Success Criteria:** {step.get('success_criteria', 'Not specified')}")
+                        
+                        with col2:
+                            if step.get("dependencies"):
+                                st.write("**Dependencies:**")
+                                for dep in step["dependencies"]:
+                                    st.write(f"• {dep}")
+        
+        # Alternative strategies
+        alternatives = results.get("strategies", [])
+        if len(alternatives) > 1:
+            st.subheader("🔄 Alternative Strategies")
+            
+            for strategy in alternatives[1:]:  # Skip the first one (recommended)
+                with st.expander(f"{strategy.get('path_name', 'Alternative Strategy')}"):
                     col1, col2 = st.columns(2)
                     
                     with col1:
-                        st.write(f"**Timeline:** {step.get('timeline', 'Not specified')}")
-                        st.write(f"**Success Criteria:** {step.get('success_criteria', 'Not specified')}")
-                    
+                        st.metric("Success Probability", f"{strategy.get('overall_probability', 0):.1%}")
                     with col2:
-                        if step.get("dependencies"):
-                            st.write("**Dependencies:**")
-                            for dep in step["dependencies"]:
-                                st.write(f"• {dep}")
+                        st.metric("Timeline", strategy.get("timeline", "Not specified"))
+                    
+                    if strategy.get("advantages"):
+                        st.write("**Advantages:**")
+                        for adv in strategy["advantages"]:
+                            st.write(f"• {adv}")
     
-    # Alternative strategies
-    alternatives = results.get("strategies", [])
-    if len(alternatives) > 1:
-        st.subheader("🔄 Alternative Strategies")
+    except Exception as e:
+        st.error(f"Unable to parse strategy results: {str(e)}")
+        st.write("**Raw Analysis Output:**")
         
-        for strategy in alternatives[1:]:  # Skip the first one (recommended)
-            with st.expander(f"{strategy.get('path_name', 'Alternative Strategy')}"):
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.metric("Success Probability", f"{strategy.get('overall_probability', 0):.1%}")
-                with col2:
-                    st.metric("Timeline", strategy.get("timeline", "Not specified"))
-                
-                if strategy.get("advantages"):
-                    st.write("**Advantages:**")
-                    for adv in strategy["advantages"]:
-                        st.write(f"• {adv}")
+        # Show detailed error information
+        st.markdown("### ⚠️ Error Details")
+        st.code(f"Exception: {type(e).__name__}\nMessage: {str(e)}")
+        
+        # Show raw output as fallback
+        if "reasoning" in results:
+            st.markdown("### 🧠 Analysis Reasoning")
+            st.text(results["reasoning"])
+        
+        if "full_analysis" in results and results["full_analysis"]:
+            st.markdown("### 📊 Full Analysis")
+            st.json(results["full_analysis"])
+        
+        # Show the complete raw results for debugging
+        st.markdown("### 📋 Complete Raw Results")
+        st.json(results)
+        
+        # Show any other relevant fields
+        for key, value in results.items():
+            if key not in ["reasoning", "full_analysis", "agent_logs", "processing_summary"]:
+                if isinstance(value, (str, int, float, bool)) and value:
+                    st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                elif isinstance(value, (dict, list)) and value:
+                    st.write(f"**{key.replace('_', ' ').title()}:**")
+                    st.json(value)
 
 
 def render_validation_results(validations: Dict[str, Any]):

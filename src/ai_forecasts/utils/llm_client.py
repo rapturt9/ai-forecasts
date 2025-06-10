@@ -14,7 +14,7 @@ class LLMClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "openai/gpt-4o-2024-11-20",
+        model: str = os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20"),
         temperature: float = 0.7,
         max_tokens: int = 4000
     ):

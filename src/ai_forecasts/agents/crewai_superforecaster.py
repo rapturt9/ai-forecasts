@@ -12,7 +12,7 @@ from crewai import Agent, Task, Crew, Process
 from crewai.llm import LLM
 from ..utils.agent_logger import agent_logger
 from ..utils.llm_client import LLMClient
-
+import os
 
 @dataclass
 class ForecastResult:
@@ -38,7 +38,7 @@ class CrewAISuperforecaster:
         
         # Configure LLM for CrewAI with proper headers
         self.llm = LLM(
-            model="openai/gpt-4o-2024-11-20",
+            model=os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20"),
             api_key=openrouter_api_key,
             base_url="https://openrouter.ai/api/v1",
             temperature=0.7,

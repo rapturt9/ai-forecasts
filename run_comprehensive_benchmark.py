@@ -100,7 +100,7 @@ class ComprehensiveBenchmarkRunner:
         
         print(f"Loaded {len(self.questions)} valid questions from {filename}")
     
-    def select_test_questions(self, num_questions: int = 5) -> List[Dict]:
+    def select_test_questions(self, num_questions: int = 10) -> List[Dict]:
         """Select diverse questions for comprehensive testing"""
         # Filter for high-quality, clear questions
         good_questions = []
@@ -113,7 +113,7 @@ class ComprehensiveBenchmarkRunner:
                 good_questions.append(q)
         
         # Use random sampling for better coverage
-        random.seed(42)
+        random.seed(10)
         return random.sample(good_questions, min(num_questions, len(good_questions)))
     
     def make_prediction(self, question: Dict) -> Dict[str, Any]:
@@ -372,7 +372,7 @@ class ComprehensiveBenchmarkRunner:
             "most_used_agent": max(agent_usage.items(), key=lambda x: x[1])[0] if agent_usage else None
         }
     
-    def run_comprehensive_benchmark(self, num_questions: int = 5) -> Dict[str, Any]:
+    def run_comprehensive_benchmark(self, num_questions: int = 10) -> Dict[str, Any]:
         """Run comprehensive benchmark with CrewAI multi-agent superforecaster system"""
         
         print("🚀 Starting Comprehensive AI Forecasting Benchmark")
@@ -441,7 +441,7 @@ def main():
     """Run the comprehensive AI forecasting benchmark"""
     try:
         runner = ComprehensiveBenchmarkRunner()
-        results = runner.run_comprehensive_benchmark(num_questions=5)
+        results = runner.run_comprehensive_benchmark(num_questions=10)
         
         # Print results
         print(f"\n" + "="*70)
@@ -478,15 +478,36 @@ def main():
             print(f"   Agent Usage: {agent_perf['agent_usage_frequency']}")
             
             print(f"\n📋 Individual Results:")
-            for pred in results["metrics"]["predictions"]:
-                print(f"  • {pred['question'][:80]}...")
-                print(f"    Prediction: {pred['prediction']:.3f} | Actual: {pred['actual_outcome']:.3f} | Brier: {pred['brier_score']:.4f}")
+            for i, pred in enumerate(results["metrics"]["predictions"], 1):
+                print(f"\n  {i}. {pred['question'][:80]}...")
+                print(f"    🎯 Prediction: {pred['prediction']:.3f} | Actual: {pred['actual_outcome']:.3f} | Brier: {pred['brier_score']:.4f}")
                 
                 # Show methodology details if available
                 if pred.get('methodology_details'):
                     md = pred['methodology_details']
-                    print(f"    Confidence: {md.get('confidence_level', 'unknown')}, Base Rate: {md.get('base_rate', 0.5):.3f}")
-                    print(f"    Evidence Quality: {md.get('evidence_quality', 0.5):.3f}, Methodology: {md.get('methodology_completeness', 0.5):.3f}")
+                    print(f"    📊 Confidence: {md.get('confidence_level', 'unknown')}, Base Rate: {md.get('base_rate', 0.5):.3f}")
+                    print(f"    🔬 Evidence Quality: {md.get('evidence_quality', 0.5):.3f}, Methodology: {md.get('methodology_completeness', 0.5):.3f}")
+                
+                # Show reasoning if available
+                if pred.get('reasoning'):
+                    reasoning = pred['reasoning']
+                    # Truncate very long reasoning for display
+                    if len(reasoning) > 300:
+                        reasoning = reasoning[:300] + "..."
+                    print(f"    💭 Reasoning: {reasoning}")
+                
+                # Show full analysis summary if available
+                if pred.get('full_analysis') and isinstance(pred['full_analysis'], dict):
+                    analysis = pred['full_analysis']
+                    if 'probability' in analysis and 'base_rate' in analysis:
+                        print(f"    📈 Analysis: Base rate {analysis.get('base_rate', 'N/A'):.3f} → Final {analysis.get('probability', pred['prediction']):.3f}")
+                    
+                    # Show key insights if available
+                    if 'key_uncertainties' in analysis:
+                        uncertainties = analysis['key_uncertainties']
+                        if uncertainties and len(uncertainties) > 0:
+                            print(f"    ❓ Key Uncertainties: {', '.join(uncertainties[:2])}")
+                
                 print()
         else:
             print(f"❌ Error: {results['metrics']['error']}")

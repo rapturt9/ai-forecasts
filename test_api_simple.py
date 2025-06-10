@@ -29,7 +29,7 @@ def test_openrouter_api():
     }
     
     data = {
-        "model": "openai/gpt-4o-mini",
+        "model": os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20"),
         "messages": [
             {
                 "role": "user", 

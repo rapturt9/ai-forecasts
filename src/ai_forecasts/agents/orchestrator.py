@@ -11,12 +11,12 @@ from .targeted_agent import TargetedAgent
 from .strategy_agent import StrategyAgent
 from .validator_agent import ValidatorAgent
 from .web_research_agent import WebResearchAgent
-
+import os
 
 class ForecastOrchestrator:
     """Main orchestrator that coordinates multiple agents to process forecast requests"""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "openai/gpt-4o-2024-11-20"):
+    def __init__(self, api_key: Optional[str] = None, model: str = os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20")):
         """Initialize the orchestrator with LLM client and agents"""
         
         # Initialize LLM client

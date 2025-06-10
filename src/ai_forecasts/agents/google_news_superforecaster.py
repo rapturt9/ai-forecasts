@@ -14,6 +14,7 @@ from crewai import Agent, Task, Crew, Process
 from crewai.llm import LLM
 from ..utils.agent_logger import agent_logger
 from ..utils.llm_client import LLMClient
+from ..utils.google_news_tool import GoogleNewsTool, EnhancedGoogleNewsTool
 
 
 @dataclass
@@ -47,7 +48,7 @@ class GoogleNewsSuperforecaster:
         
         # Configure LLM for CrewAI with proper headers
         self.llm = LLM(
-            model="openai/gpt-4o-2024-11-20",
+            model=os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20"),
             api_key=openrouter_api_key,
             base_url="https://openrouter.ai/api/v1",
             temperature=0.7,
@@ -80,6 +81,22 @@ class GoogleNewsSuperforecaster:
     def _setup_news_research_agents(self):
         """Setup specialized forecasting agents with Google News research integration"""
         
+        # Create Google News search tools with proper timeframe
+        search_timeframe = {
+            "start": "06/01/2024",
+            "end": datetime.now().strftime("%m/%d/%Y")
+        }
+        
+        google_news_tool = GoogleNewsTool(
+            serp_api_key=self.serp_api_key,
+            search_timeframe=search_timeframe
+        )
+        
+        enhanced_news_tool = EnhancedGoogleNewsTool(
+            serp_api_key=self.serp_api_key,
+            search_timeframe=search_timeframe
+        )
+        
         # News Research Coordinator - Manages comprehensive news research
         self.news_research_coordinator = Agent(
             role='News Research Coordinator',
@@ -89,10 +106,12 @@ class GoogleNewsSuperforecaster:
             time filtering, evaluate source credibility, look for diverse perspectives, and 
             identify both supporting and contradicting evidence. You excel at finding recent 
             developments, expert opinions, base rate information, and leading indicators from 
-            timestamped news articles.""",
+            timestamped news articles. You have access to Google News search tools to find 
+            real-time information.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
+            tools=[google_news_tool, enhanced_news_tool]
         )
         
         # Historical News Analyst - Finds historical precedents via timestamped news search
@@ -103,10 +122,12 @@ class GoogleNewsSuperforecaster:
             through timestamped Google News research. You search for similar past events, 
             calculate base rates from available news data, and identify reference classes. 
             You excel at finding news coverage of historical events, expert analysis, and 
-            data that inform base rate calculations.""",
+            data that inform base rate calculations. Use Google News search tools to find 
+            historical data and precedents.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
+            tools=[enhanced_news_tool]
         )
         
         # Current News Context Analyst - Analyzes recent news developments
@@ -117,10 +138,12 @@ class GoogleNewsSuperforecaster:
             developments, and emerging trends through comprehensive Google News research with 
             precise time filtering. You track breaking news, expert opinions, policy changes, 
             and market indicators. You excel at identifying how current conditions differ from 
-            historical precedents based on news coverage.""",
+            historical precedents based on news coverage. Use Google News search tools to find 
+            the most recent and relevant information.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
+            tools=[google_news_tool, enhanced_news_tool]
         )
         
         # Expert Opinion News Aggregator - Gathers expert predictions from news sources
@@ -131,10 +154,12 @@ class GoogleNewsSuperforecaster:
             predictions, and analysis from credible news sources through Google News. You 
             search for expert interviews, industry reports, academic commentary, and 
             professional forecasts covered in news media. You excel at weighing different 
-            expert opinions and identifying consensus vs. contrarian views from news coverage.""",
+            expert opinions and identifying consensus vs. contrarian views from news coverage. 
+            Use Google News search tools to find expert opinions and professional forecasts.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
+            tools=[enhanced_news_tool]
         )
         
         # Contrarian News Research Agent - Looks for opposing viewpoints in news
@@ -145,10 +170,12 @@ class GoogleNewsSuperforecaster:
             disconfirming evidence through Google News research. You actively seek out opposing 
             opinions, skeptical analysis, and evidence that challenges the mainstream view as 
             covered in news media. You excel at identifying potential blind spots and cognitive 
-            biases in forecasting through diverse news perspectives.""",
+            biases in forecasting through diverse news perspectives. Use Google News search tools 
+            to find contrarian viewpoints and opposing opinions.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
+            tools=[enhanced_news_tool]
         )
         
         # Synthesis and Calibration Expert - Integrates all news research
@@ -159,10 +186,12 @@ class GoogleNewsSuperforecaster:
             Google News research following superforecaster methodology. You integrate base rates, 
             current context, expert opinions, and contrarian views from timestamped news sources. 
             You excel at proper calibration, avoiding overconfidence, and producing well-reasoned 
-            probability estimates that account for uncertainty.""",
+            probability estimates that account for uncertainty. You can also use Google News search 
+            to verify and cross-check information from other agents.""",
             verbose=True,
             allow_delegation=True,
-            llm=self.llm
+            llm=self.llm,
+            tools=[google_news_tool]
         )
     
     def forecast_with_google_news(
@@ -177,21 +206,25 @@ class GoogleNewsSuperforecaster:
         Generate a forecast using comprehensive Google News research and superforecaster methodology
         """
         
-        self.logger.info(f"🚀 Starting Google News Superforecaster analysis")
-        self.logger.info(f"📋 Question: {question}")
-        self.logger.info(f"📅 Is benchmark: {is_benchmark}")
+        self.logger.log("news_research_coordinator", f"🚀 Starting Google News Superforecaster analysis")
+        self.logger.log("news_research_coordinator", f"📋 Question: {question}")
+        self.logger.log("news_research_coordinator", f"📅 Is benchmark: {is_benchmark}")
         
         # Determine search timeframe
         search_timeframe = self._determine_search_timeframe(cutoff_date, is_benchmark)
-        self.logger.info(f"🕒 Search timeframe: {search_timeframe['start']} to {search_timeframe['end']}")
+        self.logger.log("news_research_coordinator", f"🕒 Search timeframe: {search_timeframe['start']} to {search_timeframe['end']}")
         
         # First, conduct comprehensive Google News research
+        self.logger.log("news_search_engine", "🔍 Conducting comprehensive Google News research")
         news_research_data = self._conduct_comprehensive_news_research(question, search_timeframe, is_benchmark)
+        self.logger.log("news_search_engine", f"📰 Found {news_research_data.get('total_articles', 0)} articles across search strategies")
         
         # Create tasks for each agent using the news research data
+        self.logger.log("task_orchestrator", "📋 Creating specialized agent tasks")
         tasks = self._create_news_research_tasks(question, background, cutoff_date, time_horizon, news_research_data, search_timeframe)
         
         # Create and run the crew
+        self.logger.log("crew_manager", "🤖 Initializing 6-agent superforecaster crew")
         crew = Crew(
             agents=[
                 self.news_research_coordinator,
@@ -441,217 +474,286 @@ class GoogleNewsSuperforecaster:
         # Task 1: News Research Coordination
         news_coordination_task = Task(
             description=f"""
-            Coordinate and synthesize the comprehensive Google News research conducted for this forecasting question:
+            CRITICAL: Use the Google News Search tool to conduct comprehensive research for the forecasting question.
             
             Question: {question}
-            Background: {background}
-            Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
-            News Research Summary: {json.dumps(news_research_data, indent=2, default=str)[:2000]}...
-            Information cutoff: {cutoff_str}
+            Search Period: {search_timeframe['start']} to {search_timeframe['end']}
             
-            Your task is to:
-            1. Review all Google News findings across different search strategies
-            2. Assess the quality and credibility of news sources
-            3. Identify the most relevant and reliable news coverage
-            4. Note any gaps or limitations in the news research
-            5. Organize findings by relevance, recency, and reliability
-            6. Prepare a news research summary for other agents
+            Your task:
+            1. Use the Google News Search tool to search for information about the question
+            2. Search for multiple angles: direct topic, recent developments, expert opinions
+            3. Evaluate source credibility and coverage quality
+            4. Identify key findings and information gaps
             
-            Focus on news source credibility and temporal relevance within the search timeframe.
+            Search queries to execute (use the tool for each):
+            - "{question}" 
+            - "{question} latest news"
+            - "{question} expert analysis"
+            - "{question} recent developments"
             
-            Output your coordination summary in JSON format.
+            Output this JSON structure:
+            {{
+                "research_quality": "high/medium/low",
+                "key_findings": ["finding 1", "finding 2", "finding 3"],
+                "source_credibility": "assessment of news sources found",
+                "coverage_gaps": ["gap 1", "gap 2"],
+                "recommendations": "brief guidance for other agents",
+                "total_articles_found": "number of articles discovered",
+                "search_success": "whether Google News searches were successful"
+            }}
             """,
             agent=self.news_research_coordinator,
-            expected_output="JSON summary of Google News research coordination with quality assessment and organized findings"
+            expected_output="JSON research coordination summary with Google News search results"
         )
         
         # Task 2: Historical News Analysis
         historical_news_task = Task(
             description=f"""
-            Analyze base rates and historical precedents using the Google News research data:
+            CRITICAL: Use the Enhanced Google News Search tool to find historical precedents and base rates.
             
             Question: {question}
-            Historical News Research: {json.dumps(news_research_data.get('search_results', {}).get('base_rate_research', {}), indent=2, default=str)}
-            News Coordination: {{news_coordination_task.output}}
-            Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
-            **CRITICAL: You must identify specific numerical base rates from the news research**
+            Your task:
+            1. Use Enhanced Google News Search with search_type "historical" to find precedents
+            2. Search for specific historical data, statistics, and success rates
+            3. Look for similar past cases and their outcomes
+            4. Calculate base rates from credible news sources
             
-            **STEP 1: REFERENCE CLASS IDENTIFICATION**
-            - Find the most relevant reference class from news coverage
-            - Look for historical statistics, success rates, or precedent data
-            - Identify sample size and time period for the reference class
+            Execute these searches using the Enhanced Google News Search tool:
+            - {{"query": "{question}", "search_type": "historical"}}
+            - Use Google News Search for: "{question} historical precedents"
+            - Use Google News Search for: "{question} success rate statistics"
+            - Use Google News Search for: "{question} past examples data"
             
-            **STEP 2: BASE RATE EXTRACTION**
-            - Extract specific percentages or ratios from news sources
-            - If exact numbers aren't available, estimate based on described patterns
-            - Consider multiple reference classes and their different base rates
+            Steps:
+            1. Find historical statistics, success rates, or precedent data from news sources
+            2. Extract exact numbers with sample sizes from credible sources  
+            3. Calculate confidence-weighted average if multiple rates exist
+            4. Assess quality and temporal relevance of sources
             
-            **STEP 3: QUALITY ASSESSMENT**
-            - Evaluate source credibility (academic studies > news analysis > opinion)
-            - Assess recency and relevance of historical data
-            - Consider sample size and representativeness
-            
-            **STEP 4: BASE RATE SELECTION**
-            - Choose the most applicable base rate for this specific question
-            - If multiple base rates exist, weight them by quality and relevance
-            - Provide confidence level in the base rate estimate
-            
-            **OUTPUT FORMAT (EXACT JSON):**
+            Output this JSON:
             {{
                 "primary_base_rate": 0.XX,
-                "base_rate_source": "specific news article or study cited",
-                "reference_class": "exact description of what the base rate represents",
-                "sample_size": "number of cases or time period",
-                "alternative_base_rates": [
-                    {{"rate": 0.XX, "source": "source", "description": "what it measures"}}
-                ],
-                "quality_assessment": "high/medium/low",
-                "confidence_in_base_rate": "high/medium/low",
-                "historical_trends": "any trends over time mentioned in news",
-                "relevance_to_question": "how well the reference class matches current question"
+                "base_rate_range": {{"min": 0.XX, "max": 0.XX}},
+                "source": "specific credible source with details from news search",
+                "reference_class": "what the base rate represents",
+                "sample_size": "number of cases found in news sources",
+                "confidence": "high/medium/low",
+                "reasoning": "explanation based on news search findings",
+                "news_sources_used": ["list of news sources found"],
+                "search_success": "whether news searches found relevant data"
             }}
             
-            **EXAMPLES OF GOOD BASE RATES:**
-            - "55% of chess champions successfully defend their title in first attempt"
-            - "23% of IPOs in tech sector exceed initial valuation after 1 year"
-            - "67% of incumbent politicians win re-election in similar conditions"
-            
-            Focus on finding concrete numbers, not vague statements. If no exact base rate exists, estimate based on described patterns and clearly state your reasoning.
+            If no exact base rate found in news, estimate from patterns and state confidence as "low".
             """,
             agent=self.historical_news_analyst,
-            expected_output="JSON analysis with base rate calculations, reference classes, and confidence assessments from news sources",
+            expected_output="JSON base rate analysis based on Google News search results",
             context=[news_coordination_task]
         )
         
-        # Task 3: Current News Context Analysis
+        # Task 3: Current News Context Analysis  
         current_news_task = Task(
             description=f"""
-            Analyze current conditions and recent developments using Google News research:
+            CRITICAL: Use Google News Search tools to find current factors affecting the probability.
             
             Question: {question}
-            Current News Research: {json.dumps(news_research_data.get('search_results', {}).get('current_context', {}), indent=2, default=str)}
-            News Coordination: {{news_coordination_task.output}}
-            Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
-            **CRITICAL: Identify specific factors that should adjust the base rate up or down**
+            Your task:
+            1. Use Google News Search to find recent developments and current context
+            2. Use Enhanced Google News Search with search_type "current" for comprehensive coverage
+            3. Identify specific factors that could increase or decrease probability
+            4. Rate each factor's impact and evidence quality
             
-            **STEP 1: FACTOR IDENTIFICATION**
-            - List 3-5 specific current factors from news that could influence the outcome
-            - Focus on recent developments, performance indicators, or changing conditions
-            - Distinguish between factors that increase vs decrease probability
+            Execute these searches:
+            - Use Google News Search for: "{question} recent developments"
+            - Use Google News Search for: "{question} latest news" 
+            - Use Enhanced Google News Search: {{"query": "{question}", "search_type": "current"}}
+            - Use Google News Search for: "{question} current status"
             
-            **STEP 2: FACTOR IMPACT ASSESSMENT**
-            - For each factor, assess its impact strength:
-              * Strong impact: Could change probability by 10-20%
-              * Moderate impact: Could change probability by 5-10%
-              * Weak impact: Could change probability by 1-5%
+            For each factor found:
+            1. Estimate impact magnitude (strong: ±10-20%, moderate: ±3-10%, weak: ±1-3%)
+            2. Rate evidence quality (high: 0.8-1.0, medium: 0.5-0.8, low: 0.2-0.5)
+            3. Explain causal mechanism briefly
             
-            **STEP 3: EVIDENCE STRENGTH EVALUATION**
-            - Rate the evidence quality for each factor:
-              * High: Multiple credible sources, recent, directly relevant
-              * Medium: Some credible sources, somewhat recent/relevant
-              * Low: Limited sources, older, indirectly relevant
-            
-            **STEP 4: DIRECTIONAL ANALYSIS**
-            - Determine if each factor pushes probability higher or lower than base rate
-            - Consider interaction effects between factors
-            - Assess overall momentum/trajectory
-            
-            **OUTPUT FORMAT (EXACT JSON):**
+            Output this JSON:
             {{
                 "positive_factors": [
                     {{
-                        "factor": "specific factor name",
-                        "description": "detailed description from news",
-                        "impact_strength": "strong/moderate/weak",
-                        "evidence_quality": "high/medium/low",
-                        "estimated_impact": "+X%",
-                        "news_sources": ["source1", "source2"]
+                        "factor": "specific factor with details from news",
+                        "impact": "+X%",
+                        "evidence_quality": 0.X,
+                        "mechanism": "how it affects outcome",
+                        "news_source": "source from Google News search"
                     }}
                 ],
                 "negative_factors": [
                     {{
-                        "factor": "specific factor name", 
-                        "description": "detailed description from news",
-                        "impact_strength": "strong/moderate/weak",
-                        "evidence_quality": "high/medium/low",
-                        "estimated_impact": "-X%",
-                        "news_sources": ["source1", "source2"]
+                        "factor": "specific factor with details from news", 
+                        "impact": "-X%",
+                        "evidence_quality": 0.X,
+                        "mechanism": "how it affects outcome",
+                        "news_source": "source from Google News search"
                     }}
                 ],
-                "overall_momentum": "strongly positive/positive/neutral/negative/strongly negative",
-                "key_recent_events": [
-                    {{"date": "YYYY-MM-DD", "event": "description", "impact": "positive/negative/neutral"}}
-                ],
-                "current_vs_historical": "how current conditions compare to historical precedents",
-                "uncertainty_factors": ["factors that make prediction more uncertain"]
+                "net_adjustment": "+/-X%",
+                "confidence": "high/medium/low",
+                "news_sources_consulted": ["list of news sources searched"],
+                "search_success": "whether searches found relevant current information"
             }}
-            
-            **EXAMPLE FACTORS:**
-            - Recent performance metrics (wins/losses, approval ratings, financial results)
-            - Competitive landscape changes (new competitors, market shifts)
-            - External conditions (economic, political, technological changes)
-            - Preparation/training indicators (investment, team changes, strategy shifts)
-            
-            Be specific about numbers, dates, and measurable changes mentioned in the news.
             """,
             agent=self.current_news_analyst,
-            expected_output="JSON analysis of current conditions, recent developments, and trend assessment from news sources",
+            expected_output="JSON analysis of current factors from Google News searches",
             context=[news_coordination_task]
         )
         
         # Task 4: Expert Opinion News Aggregation
         expert_news_task = Task(
             description=f"""
-            Aggregate and analyze expert opinions from Google News research:
+            CRITICAL: Use Enhanced Google News Search tool to find and analyze expert opinions.
             
             Question: {question}
-            Expert Opinion News: {json.dumps(news_research_data.get('search_results', {}).get('expert_opinions', {}), indent=2, default=str)}
-            News Coordination: {{news_coordination_task.output}}
-            Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
+            
+            Your task:
+            1. Use Enhanced Google News Search with search_type "expert_opinions" to find expert analysis
+            2. Search for expert predictions, analyst forecasts, and professional commentary
+            3. Evaluate expert credibility and track records based on news coverage
+            4. Synthesize expert consensus and disagreements
+            
+            Execute these searches:
+            - Use Enhanced Google News Search: {{"query": "{question}", "search_type": "expert_opinions"}}
+            - Use Google News Search for: "{question} expert predictions"
+            - Use Google News Search for: "{question} analyst forecast" 
+            - Use Google News Search for: "{question} professional analysis"
             
             Your analysis should include:
-            1. Identify credible expert sources and their predictions from news coverage
-            2. Assess expert track records and expertise relevance
-            3. Look for consensus vs. disagreement among experts in news
-            4. Weight expert opinions by credibility and expertise
-            5. Identify any expert biases or conflicts of interest
-            6. Synthesize expert consensus and range of opinions from news sources
+            1. Identify credible expert sources with their track records from news coverage
+            2. Assess expert predictions with confidence intervals and reasoning quality
+            3. Analyze expert consensus vs. disagreement patterns 
+            4. Weight expert opinions by: Track record, Expertise relevance, Reasoning quality, Independence
+            5. Identify potential expert biases from news reporting
+            6. Compare expert predictions to base rates
             
-            Focus on expert credibility and prediction track records as reported in news.
+            **EXPERT WEIGHTING CRITERIA:**
+            - Track Record Weight: Excellent (1.0) > Good (0.8) > Average (0.6) > Poor (0.3) > Unknown (0.4)
+            - Relevance Weight: Directly relevant expertise (1.0) > Related field (0.7) > General expertise (0.4)
+            - Reasoning Quality: Detailed evidence-based (1.0) > Some reasoning (0.7) > Opinion only (0.3)
+            - Independence: Independent analysis (1.0) > Some potential bias (0.7) > Clear conflicts (0.4)
             
-            Output your analysis in JSON format with expert opinion synthesis.
+            **OUTPUT FORMAT (EXACT JSON):**
+            {{
+                "expert_predictions": [
+                    {{
+                        "expert_name": "name and credentials from news",
+                        "prediction": "specific prediction with probability or direction",
+                        "prediction_confidence": "expert's stated confidence from news",
+                        "reasoning_quality": "excellent/good/average/poor with explanation",
+                        "track_record": "assessment based on news coverage",
+                        "expertise_relevance": "direct/related/general with explanation",
+                        "expert_weight": 0.XX,
+                        "news_source": "source where expert opinion was found",
+                        "publication_date": "when the expert opinion was published"
+                    }}
+                ],
+                "consensus_analysis": {{
+                    "expert_agreement_level": "strong/moderate/weak/none with details",
+                    "consensus_direction": "positive/negative/neutral toward the outcome",
+                    "consensus_strength": 0.XX,
+                    "expert_disagreement_areas": ["areas where experts disagree"]
+                }},
+                "meta_analysis": {{
+                    "total_experts_analyzed": "number",
+                    "weighted_expert_consensus": 0.XX,
+                    "highest_quality_expert_prediction": "prediction from most credible expert",
+                    "expert_vs_base_rate_deviation": "how experts compare to base rate"
+                }},
+                "news_sources_consulted": ["list of news sources with expert opinions"],
+                "search_success": "whether searches found expert opinions"
+            }}
+            
+            Output your analysis in JSON format with expert opinion synthesis from news sources.
             """,
             agent=self.expert_news_aggregator,
-            expected_output="JSON analysis of expert opinions with credibility assessment and consensus evaluation from news sources",
+            expected_output="JSON analysis of expert opinions from Google News searches",
             context=[news_coordination_task]
         )
         
         # Task 5: Contrarian News Research Analysis
         contrarian_news_task = Task(
             description=f"""
-            Analyze contrarian viewpoints and potential disconfirming evidence from Google News:
+            CRITICAL: Use Enhanced Google News Search tool to find contrarian viewpoints and opposing evidence.
             
             Question: {question}
-            Contrarian News Research: {json.dumps(news_research_data.get('search_results', {}).get('contrarian_views', {}), indent=2, default=str)}
-            News Coordination: {{news_coordination_task.output}}
-            Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
+            
+            Your task:
+            1. Use Enhanced Google News Search with search_type "contrarian" to find opposing views
+            2. Search for skeptical analysis, criticism, and evidence challenging mainstream views
+            3. Identify potential cognitive biases in mainstream coverage
+            4. Evaluate quality of contrarian arguments from news sources
+            
+            Execute these searches:
+            - Use Enhanced Google News Search: {{"query": "{question}", "search_type": "contrarian"}}
+            - Use Google News Search for: "{question} skeptical view"
+            - Use Google News Search for: "{question} criticism"
+            - Use Google News Search for: "why {question} unlikely"
             
             Your analysis should include:
-            1. Identify skeptical viewpoints and opposing arguments from news coverage
-            2. Evaluate the strength of contrarian evidence in news sources
-            3. Look for potential blind spots in mainstream thinking
-            4. Assess cognitive biases that might affect judgment
-            5. Consider low-probability but high-impact scenarios from news
-            6. Identify what could make the mainstream view wrong
+            1. Identify high-quality skeptical viewpoints from credible news sources
+            2. Evaluate contrarian evidence strength using same rigor as mainstream evidence
+            3. Systematically identify cognitive biases affecting mainstream consensus:
+               - Anchoring on initial information or conventional wisdom
+               - Availability bias from recent/memorable events  
+               - Confirmation bias in evidence selection
+               - Groupthink and expert herding behavior
+               - Overconfidence in predictions and models
+            4. Analyze structural blind spots in mainstream analysis
+            5. Evaluate low-probability, high-impact scenarios from news coverage
+            6. Stress-test mainstream predictions against contrarian scenarios
             
-            Focus on challenging assumptions and identifying potential surprises from news coverage.
+            **CONTRARIAN EVIDENCE EVALUATION CRITERIA:**
+            - Source Quality: Independent analysis > Echo chamber thinking
+            - Reasoning Depth: Mechanistic explanations > Surface-level objections  
+            - Evidence Base: Specific data/precedents > General skepticism
+            - Predictive Track Record: Previously correct contrarians > Perennial pessimists/optimists
             
-            Output your analysis in JSON format with contrarian perspective assessment.
+            **OUTPUT FORMAT (EXACT JSON):**
+            {{
+                "contrarian_arguments": [
+                    {{
+                        "argument": "specific contrarian viewpoint from news",
+                        "evidence_quality": "high/medium/low with score (0.0-1.0)",
+                        "source_credibility": "assessment of news source quality",
+                        "news_source": "specific news outlet reporting this view",
+                        "mechanistic_explanation": "detailed reasoning for why mainstream view might be wrong",
+                        "strength_assessment": "strong/moderate/weak with justification"
+                    }}
+                ],
+                "cognitive_bias_analysis": {{
+                    "anchoring_bias": {{"detected": "yes/no", "description": "examples from news coverage"}},
+                    "availability_bias": {{"detected": "yes/no", "description": "overweighting recent events"}},
+                    "confirmation_bias": {{"detected": "yes/no", "description": "selective evidence consideration"}},
+                    "groupthink": {{"detected": "yes/no", "description": "expert consensus without independent analysis"}},
+                    "overall_bias_risk": "high/medium/low with explanation"
+                }},
+                "alternative_interpretations": [
+                    {{
+                        "interpretation": "alternative way to understand evidence from news",
+                        "supporting_evidence": "evidence from news sources supporting this view",
+                        "plausibility_assessment": "high/medium/low with reasoning"
+                    }}
+                ],
+                "contrarian_synthesis": {{
+                    "overall_contrarian_strength": "strong/moderate/weak with assessment",
+                    "most_compelling_contrarian_point": "strongest argument against mainstream view",
+                    "probability_adjustment": "suggested adjustment to mainstream probability"
+                }},
+                "news_sources_consulted": ["list of news sources with contrarian views"],
+                "search_success": "whether searches found contrarian viewpoints"
+            }}
+            
+            Output your analysis in JSON format with contrarian perspective assessment from news sources.
             """,
             agent=self.contrarian_news_researcher,
-            expected_output="JSON analysis of contrarian views, potential blind spots, and disconfirming evidence from news sources",
+            expected_output="JSON analysis of contrarian views from Google News searches",
             context=[news_coordination_task]
         )
         
@@ -672,65 +774,133 @@ class GoogleNewsSuperforecaster:
             
             Follow this EXACT superforecaster process:
             
-            **STEP 1: BASE RATE ANALYSIS (Outside View)**
-            - Extract the base rate from historical analysis (e.g., "55% of champions defend titles")
-            - Identify the reference class size and quality
-            - Start with this base rate as your initial estimate
+            **STEP 1: ADVANCED BASE RATE INTEGRATION (Outside View)**
+            - Use the confidence-weighted base rate from historical analysis
+            - Incorporate base rate uncertainty range into initial probability distribution
+            - Consider multiple reference classes and compute weighted ensemble base rate
+            - Account for temporal trends in base rates (are success rates changing over time?)
             
-            **STEP 2: SPECIFIC FACTOR ADJUSTMENTS (Inside View)**
-            - List 3-5 specific factors from current news that could move probability up or down
-            - For each factor, estimate its impact: Strong (+/-15%), Moderate (+/-8%), Weak (+/-3%)
-            - Apply adjustments incrementally to base rate
+            **STEP 2: SYSTEMATIC FACTOR ADJUSTMENTS (Inside View with Interaction Effects)**
+            - Apply factors from current analysis with their confidence-weighted impacts
+            - Consider interaction effects between factors (multiplicative vs additive)
+            - Use decay functions for temporal factors (recent factors weighted more heavily)
+            - Apply uncertainty propagation: High uncertainty factors get discounted
             
-            **STEP 3: EVIDENCE QUALITY WEIGHTING**
-            - High quality evidence (credible sources, recent, relevant): Weight 100%
-            - Medium quality evidence: Weight 60%
-            - Low quality evidence: Weight 30%
-            - Adjust your estimate based on evidence quality
+            **STEP 3: MULTI-DIMENSIONAL EVIDENCE WEIGHTING**
+            - Weight evidence by: Source credibility × Recency × Relevance × Independence
+            - Aggregate evidence quality score: Σ(Evidence_Quality × Factor_Impact) / Σ(Factor_Impact)
+            - Apply evidence coherence bonus: Consistent evidence across sources gets 5-10% weight boost
+            - Penalize contradictory evidence: Conflicting high-quality sources add uncertainty
             
-            **STEP 4: EXPERT CONSENSUS INTEGRATION**
-            - If experts agree: Move 5-10% toward consensus
-            - If experts disagree: Stay closer to base rate
-            - Weight expert opinions by track record and expertise
+            **STEP 4: SOPHISTICATED EXPERT INTEGRATION**
+            - Use expert track record weights combined with expertise relevance
+            - If expert consensus (>70% agreement): Adjust 8-15% toward consensus based on quality
+            - If expert disagreement (<40% agreement): Stay closer to base rate but add uncertainty
+            - If mixed consensus (40-70% agreement): Moderate adjustment (3-8%) toward plurality view
+            - Apply expert calibration correction based on known overconfidence patterns
             
-            **STEP 5: CONTRARIAN ADJUSTMENT**
-            - Consider if contrarian views reveal blind spots
-            - If strong contrarian evidence: Adjust 3-8% toward uncertainty
-            - If weak contrarian evidence: Minimal adjustment (1-2%)
+            **STEP 5: ENHANCED CONTRARIAN ANALYSIS**
+            - Evaluate contrarian view quality using same criteria as mainstream evidence
+            - Strong contrarian evidence (multiple independent sources): Adjust 5-12% toward uncertainty
+            - Moderate contrarian evidence (some credible sources): Adjust 2-6% toward uncertainty  
+            - Weak contrarian evidence (limited/poor sources): Minimal adjustment (0.5-2%)
+            - Consider whether contrarian views reveal systematic blind spots vs isolated objections
             
-            **STEP 6: FINAL CALIBRATION**
-            - Avoid overconfidence: Don't go below 5% or above 95% unless overwhelming evidence
-            - Round to nearest 1% (e.g., 0.23, 0.67, 0.84)
-            - Ensure probability reflects true uncertainty
+            **STEP 6: ROBUST CALIBRATION AND UNCERTAINTY QUANTIFICATION**
+            - Compute prediction interval: [P - uncertainty_range, P + uncertainty_range]
+            - Avoid overconfidence: If evidence quality <0.7, don't go below 10% or above 90%
+            - Apply reference class forecasting check: Does final probability deviate >30% from base rate? If yes, provide strong justification
+            - Use logarithmic probability adjustments for extreme values to avoid overconfidence
+            - Final probability should reflect true epistemic uncertainty given evidence quality
+            
+            **STEP 7: SYSTEMATIC ERROR CHECKING**
+            - Check for anchoring bias: Did you adjust sufficiently from base rate given evidence?
+            - Check for availability bias: Are you overweighting recent/memorable events?
+            - Check for confirmation bias: Did you fairly evaluate disconfirming evidence?
+            - Check for scope insensitivity: Are probability adjustments proportional to evidence strength?
             
             **OUTPUT FORMAT (EXACT JSON):**
             {{
-                "probability": 0.XX,
-                "base_rate": 0.XX,
-                "base_rate_source": "specific historical data from news",
-                "adjustments": [
-                    {{"factor": "specific factor 1", "impact": "+/-X%", "reasoning": "evidence from news"}},
-                    {{"factor": "specific factor 2", "impact": "+/-X%", "reasoning": "evidence from news"}}
+                "probability": 0.XXX,
+                "probability_interval": {{"min": 0.XXX, "max": 0.XXX}},
+                "base_rate": 0.XXX,
+                "base_rate_confidence": 0.XX,
+                "base_rate_source": "detailed description of historical data with sample size and time period",
+                "adjustment_calculation": {{
+                    "initial_base_rate": 0.XXX,
+                    "factor_adjustments": [
+                        {{
+                            "factor": "specific factor name",
+                            "raw_impact": "+/-X.X%", 
+                            "confidence_weight": 0.XX,
+                            "weighted_impact": "+/-X.X%",
+                            "reasoning": "detailed evidence and causal mechanism"
+                        }}
+                    ],
+                    "evidence_quality_multiplier": 0.XX,
+                    "expert_consensus_adjustment": "+/-X.X%",
+                    "contrarian_adjustment": "+/-X.X%",
+                    "final_calculation": "step-by-step arithmetic showing: base_rate ± adjustments = final_probability"
+                }},
+                "evidence_assessment": {{
+                    "overall_evidence_quality": 0.XX,
+                    "evidence_coherence": "high/medium/low - how well evidence sources agree",
+                    "evidence_completeness": "assessment of information gaps and missing data",
+                    "source_independence": "degree to which sources are independent vs echoing each other"
+                }},
+                "expert_analysis": {{
+                    "expert_consensus": "strong_agree/moderate_agree/mixed/moderate_disagree/strong_disagree",
+                    "expert_quality_score": 0.XX,
+                    "consensus_direction": "probability direction experts favor",
+                    "expert_vs_base_rate_deviation": "+/-X.X% from base rate"
+                }},
+                "contrarian_assessment": {{
+                    "contrarian_strength": "strong/moderate/weak/negligible",
+                    "contrarian_quality": 0.XX,
+                    "blind_spots_identified": ["potential issues with mainstream analysis"],
+                    "contrarian_impact_on_uncertainty": "+/-X.X%"
+                }},
+                "uncertainty_analysis": {{
+                    "confidence_level": "high (0.8-1.0)/medium (0.5-0.8)/low (0.2-0.5)",
+                    "key_uncertainties": ["uncertainty 1 with impact assessment", "uncertainty 2 with impact assessment"],
+                    "information_quality": "assessment of overall information adequacy",
+                    "prediction_difficulty": "inherent difficulty of this type of prediction"
+                }},
+                "calibration_checks": {{
+                    "reference_class_consistency": "how final probability compares to similar historical cases",
+                    "extreme_probability_justification": "if <15% or >85%, provide strong justification",
+                    "anchoring_bias_check": "assessment of whether adjustments from base rate are sufficient",
+                    "overconfidence_check": "assessment of whether uncertainty is adequately reflected"
+                }},
+                "reasoning": "comprehensive step-by-step explanation of the entire calculation process",
+                "alternative_scenarios": [
+                    {{"scenario": "optimistic case", "probability": 0.XXX, "key_assumptions": ["assumption 1", "assumption 2"]}},
+                    {{"scenario": "pessimistic case", "probability": 0.XXX, "key_assumptions": ["assumption 1", "assumption 2"]}}
                 ],
-                "evidence_quality": "high/medium/low",
-                "expert_consensus": "agree/disagree/mixed",
-                "contrarian_strength": "strong/moderate/weak",
-                "confidence_level": "high/medium/low",
-                "reasoning": "step-by-step calculation showing base rate + adjustments = final probability",
-                "key_uncertainties": ["uncertainty 1", "uncertainty 2"],
-                "news_research_quality": "assessment of Google News coverage completeness"
+                "news_research_quality": "detailed assessment of Google News coverage completeness and quality"
             }}
             
             **EXAMPLE CALCULATION:**
-            Base rate: 55% (historical championship defense rate)
-            - Current poor performance: -12% (strong negative factor)
-            - Strong competition: -8% (moderate negative factor)  
-            - Training preparation: +3% (weak positive factor)
-            Expert consensus: Mixed (no adjustment)
-            Contrarian views: Moderate (-3% toward uncertainty)
-            Final: 55% - 12% - 8% + 3% - 3% = 35% → 0.35
+            Base rate: 55% (historical championship defense, 80% confidence, n=50 cases)
+            Adjustments:
+            - Current poor performance: -8% (strong factor, 0.9 evidence quality, -8% × 0.9 = -7.2%)
+            - Strong competition: -5% (moderate factor, 0.7 evidence quality, -5% × 0.7 = -3.5%)  
+            - Training preparation: +2% (weak factor, 0.6 evidence quality, +2% × 0.6 = +1.2%)
+            Evidence quality multiplier: 0.85 (high overall quality)
+            Expert consensus: Moderate agreement toward pessimistic (-3%)
+            Contrarian views: Weak (+1% toward uncertainty)
+            Calculation: 0.55 + (-0.072 - 0.035 + 0.012) × 0.85 - 0.03 + 0.01 = 0.55 - 0.081 - 0.03 + 0.01 = 0.449
+            Final: 0.45 (with interval 0.40-0.50 reflecting uncertainty)
             
-            Be precise, show your work, and avoid round numbers like 0.50 unless truly justified.
+            Be extremely precise, show detailed mathematical work, and provide robust confidence intervals. 
+            Avoid round numbers like 0.50 unless truly justified by balanced evidence.
+            
+            **MANDATORY CALIBRATION CHECKS:**
+            1. If predicting <15% or >85%: Provide overwhelming evidence and historical precedent
+            2. If deviating >25% from base rate: Justify with strong, independent evidence sources
+            3. If evidence quality <0.7: Keep probability within 20-80% range to reflect uncertainty
+            4. If expert disagreement >40%: Add extra uncertainty and stay closer to base rate
+            5. Cross-check: Do similar historical cases support this probability level?
             """,
             agent=self.synthesis_expert,
             expected_output="JSON final forecast with probability, reasoning, confidence assessment, and Google News research integration following superforecaster methodology",

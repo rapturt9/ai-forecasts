@@ -1,0 +1,6 @@
+2025-06-10 06:50:51,294 - ERROR - Could not initialize AgentOps client - API Key is missing.
+	    Find your API key at https://app.agentops.ai/settings/projects
+2025-06-10 06:50:51,475 - WARNING -  WARNING: agentops is out of date. Please update with the command: 'pip install --upgrade agentops'
+2025-06-10 06:51:58,955 - ERROR - Could not initialize AgentOps client - API Key is missing.
+	    Find your API key at https://app.agentops.ai/settings/projects
+2025-06-10 06:51:59,119 - WARNING -  WARNING: agentops is out of date. Please update with the command: 'pip install --upgrade agentops'

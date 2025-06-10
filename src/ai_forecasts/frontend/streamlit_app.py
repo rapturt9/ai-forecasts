@@ -35,11 +35,6 @@ def main():
         st.markdown("""
         **Choose your analysis mode:**
         
-        🎯 **Forecast Outcomes**: *"What's likely to happen?"*
-        - Get probability distributions for likely future outcomes
-        - Optionally focus on specific outcomes you're interested in
-        - Based on automatic research of current global developments
-        
         📊 **Evaluate Specific Outcomes**: *"What outcomes are we trying to predict?"*
         - Enter specific outcomes you want to evaluate
         - Get detailed probability assessments and feasibility analysis
@@ -59,7 +54,6 @@ def main():
         mode = st.radio(
             "Select Analysis Mode:",
             [
-                "🎯 Forecast Outcomes",
                 "📊 Evaluate Specific Outcomes", 
                 "🚀 Find Path to Desired Outcome"
             ],
@@ -78,11 +72,12 @@ def main():
     # Main content area
     col1, col2 = st.columns([2, 1])
     
+    # Initialize results variable
+    results = None
+    
     with col1:
         # Input form based on selected mode
-        if "Forecast Outcomes" in mode:
-            results = render_forecast_mode(use_validation, use_crewai)
-        elif "Evaluate Specific Outcomes" in mode:
+        if "Evaluate Specific Outcomes" in mode:
             results = render_targeted_mode(use_validation, use_crewai)
         elif "Find Path to Desired Outcome" in mode:
             results = render_strategy_mode(use_validation, use_crewai)
@@ -92,7 +87,7 @@ def main():
         render_help_panel(mode)
     
     # Display results if available
-    if 'results' in locals() and results:
+    if results:
         st.divider()
         render_results(results, show_raw_output, show_agent_logs)
 
@@ -373,20 +368,7 @@ def render_help_panel(mode: str):
     
     st.subheader("💡 Tips & Examples")
     
-    if "Forecast Outcomes" in mode:
-        st.markdown("""
-        **Example Initial Conditions:**
-        - "OpenAI has released GPT-4, competition is increasing"
-        - "New AI regulation is being debated in Congress"
-        - "Major tech companies are investing heavily in AI"
-        
-        **Tips:**
-        - Be specific about the current situation
-        - Include relevant context and recent developments
-        - Consider multiple perspectives and stakeholders
-        """)
-    
-    elif "Evaluate Specific Outcomes" in mode:
+    if "Evaluate Specific Outcomes" in mode:
         st.markdown("""
         **Example Outcomes:**
         - AI breakthrough in reasoning announced
@@ -488,7 +470,7 @@ def render_results(results: Dict[str, Any], show_raw: bool, show_agent_logs: boo
         render_strategy_results(results)
     
     # Agent computation logs
-    if show_agent_logs and ("agent_logs" in results or "processing_summary" in results):
+    if show_agent_logs:
         render_agent_logs(results)
     
     # Validation results
@@ -826,7 +808,7 @@ def render_validation_results(validations: Dict[str, Any]):
 def render_agent_logs(results: Dict[str, Any]):
     """Render agent computation logs and processing summary"""
     
-    with st.expander("🤖 Agent Computation Log", expanded=False):
+    with st.expander("🤖 Agent Computation Log", expanded=True):
         # Processing summary
         if "processing_summary" in results:
             summary = results["processing_summary"]

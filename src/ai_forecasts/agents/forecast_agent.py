@@ -165,7 +165,7 @@ Return your analysis as a JSON object with this structure:
                     "black_swan_events": ["Unexpected response format"],
                     "key_uncertainties": ["Unable to parse forecast results"]
                 },
-                "raw_output": result if 'result' in locals() else "No response received",
+                "raw_output": result,
                 "generated_at": datetime.now().isoformat()
             }
         except Exception as e:

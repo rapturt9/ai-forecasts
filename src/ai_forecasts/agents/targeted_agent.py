@@ -103,7 +103,7 @@ Return your analysis as a JSON object:
             # Get response from LLM
             messages = [HumanMessage(content=prompt)]
             response = self.llm.invoke(messages)
-            result = response.content
+            result = response.content response.content
             
             # Try to extract JSON from the response - look for complete JSON object
             json_start = result.find('{')
@@ -161,7 +161,7 @@ Return your analysis as a JSON object:
                         "reasoning": "The analysis was generated but could not be parsed"
                     } for outcome in outcomes_of_interest
                 ],
-                "raw_output": result if 'result' in locals() else "No response received",
+                "raw_output": result,
                 "generated_at": datetime.now().isoformat()
             }
         except Exception as e:

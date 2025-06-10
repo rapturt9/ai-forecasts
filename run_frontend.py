@@ -9,6 +9,10 @@ import time
 import threading
 import requests
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add src to path so we can import our modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -51,13 +55,23 @@ def main():
     print("🔮 AI Forecasting & Strategy System")
     print("=" * 50)
     
-    # Set the API key if not already set
-    if not os.getenv("OPENROUTER_API_KEY"):
-        # Set the provided API key
-        os.environ["OPENROUTER_API_KEY"] = "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"
-        print("✅ API key set from provided value")
+    # Check if API key is configured
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        print("❌ OPENROUTER_API_KEY not found!")
+        print("📝 Please create a .env file with your API key:")
+        print("   OPENROUTER_API_KEY=sk-or-v1-your-api-key-here")
+        print("💡 Or set it as an environment variable:")
+        print("   export OPENROUTER_API_KEY=sk-or-v1-your-api-key-here")
+        sys.exit(1)
     else:
-        print("✅ API key already configured")
+        print(f"✅ API key configured: {api_key[:20]}...")
+        
+    # Show configuration
+    model = os.getenv("DEFAULT_MODEL", "openai/gpt-4o")
+    base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+    print(f"🤖 Using model: {model}")
+    print(f"🌐 API endpoint: {base_url}")
     
     # Start API server
     api_process = start_api_server()

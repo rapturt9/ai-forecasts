@@ -69,10 +69,23 @@ class ForecastOrchestrator:
         mode = self._classify_mode(request)
         research_context = self._prepare_research_context(request, cutoff_date)
         
+        # Determine initial conditions to use
+        if request.initial_conditions:
+            # Use user-provided initial conditions
+            initial_conditions = request.initial_conditions
+            agent_logger.log("orchestrator", "Using user-provided initial conditions", {
+                "initial_conditions_preview": initial_conditions[:100] + "..." if len(initial_conditions) > 100 else initial_conditions
+            })
+        else:
+            # Use research context as baseline
+            initial_conditions = research_context.get("context_summary", f"Current state as of {cutoff_date or datetime.now().strftime('%Y-%m-%d')}")
+            agent_logger.log("orchestrator", "Using current state as initial conditions")
+        
         agent_logger.log("orchestrator", f"Processing request in {mode.value} mode", {
             "mode": mode.value,
             "research_topic": research_context.get("research_topic", "unknown"),
-            "time_horizon": request.time_horizon
+            "time_horizon": request.time_horizon,
+            "has_custom_initial_conditions": bool(request.initial_conditions)
         })
         
         try:
@@ -80,7 +93,7 @@ class ForecastOrchestrator:
             if mode == ForecastMode.PURE_FORECAST:
                 agent_logger.log("orchestrator", "Routing to forecast agent")
                 results = self.forecast_agent.analyze(
-                    initial_conditions=research_context.get("context_summary", "Current state research completed"),
+                    initial_conditions=initial_conditions,
                     time_horizon=request.time_horizon,
                     constraints=request.constraints,
                     research_context=research_context
@@ -91,7 +104,7 @@ class ForecastOrchestrator:
                     "outcomes_count": len(request.outcomes_of_interest)
                 })
                 results = self.targeted_agent.analyze(
-                    initial_conditions=research_context.get("context_summary", "Current state research completed"),
+                    initial_conditions=initial_conditions,
                     outcomes_of_interest=request.outcomes_of_interest,
                     time_horizon=request.time_horizon,
                     constraints=request.constraints,
@@ -102,7 +115,7 @@ class ForecastOrchestrator:
                 # First get forecast context to inform strategy
                 agent_logger.log("orchestrator", "Generating forecast context for strategy...")
                 forecast_context = self.forecast_agent.analyze(
-                    initial_conditions=research_context.get("context_summary", "Current state research completed"),
+                    initial_conditions=initial_conditions,
                     time_horizon=request.time_horizon,
                     constraints=request.constraints,
                     research_context=research_context
@@ -111,7 +124,7 @@ class ForecastOrchestrator:
                 # Then generate strategy
                 agent_logger.log("orchestrator", "Generating strategic recommendations...")
                 results = self.strategy_agent.generate(
-                    initial_conditions=research_context.get("context_summary", "Current state research completed"),
+                    initial_conditions=initial_conditions,
                     desired_outcome=request.desired_outcome,
                     time_horizon=request.time_horizon,
                     constraints=request.constraints,

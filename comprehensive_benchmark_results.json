@@ -1,0 +1,318 @@
+{
+  "benchmark_type": "comprehensive_ai_forecasting_2024",
+  "methodology": "crewai_multi_agent_superforecaster",
+  "num_questions": 5,
+  "timestamp": "2025-06-10T06:36:15.799271",
+  "metrics": {
+    "brier_score": 0.119757073207394,
+    "num_predictions": 5,
+    "individual_scores": [
+      0.07228623932248894,
+      0.021285121705276383,
+      0.1627428058784618,
+      0.13467174023894019,
+      0.20779945889180265
+    ],
+    "calibration_error": 0.2698414944260875,
+    "methodology_quality": {
+      "average_methodology_completeness": 0.8,
+      "average_evidence_quality": 0.7,
+      "average_confidence_level": 0.7,
+      "average_base_rate": 0.5
+    },
+    "performance_analysis": {
+      "best_brier": 0.021285121705276383,
+      "worst_brier": 0.20779945889180265,
+      "brier_std": 0.07377649945154659,
+      "predictions_under_0_05": 1,
+      "predictions_over_0_10": 3,
+      "accuracy_at_extremes": {
+        "count": 0,
+        "accuracy": 0.0
+      }
+    },
+    "agent_performance": {
+      "average_processing_time": 0.0,
+      "agent_usage_frequency": {
+        "session_start": 5
+      },
+      "most_used_agent": "session_start"
+    },
+    "predictions": [
+      {
+        "question_id": "iPG19DGNrWEkbUBjfk6L",
+        "question": "Will Ding Liren repeat as World Chess Champion?",
+        "prediction": 0.5,
+        "actual_outcome": 0.23113899627783702,
+        "brier_score": 0.07228623932248894,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "methodology": "targeted_agent",
+        "methodology_details": {
+          "confidence_level": "medium",
+          "base_rate": 0.5,
+          "evidence_quality": 0.7,
+          "methodology_completeness": 0.8,
+          "components_used": {
+            "targeted_analysis": true
+          }
+        },
+        "reasoning": "Fallback analysis",
+        "full_analysis": {
+          "error": "Could not parse result"
+        },
+        "agent_logs": [
+          {
+            "timestamp": "2025-06-10T06:36:14.990860",
+            "elapsed_seconds": 0.0,
+            "agent": "session_start",
+            "message": "Starting comprehensive_benchmark analysis",
+            "details": {
+              "session_type": "comprehensive_benchmark",
+              "request_data": {
+                "question_id": "iPG19DGNrWEkbUBjfk6L",
+                "question": "Will Ding Liren repeat as World Chess Champion?",
+                "method": "targeted"
+              }
+            }
+          }
+        ],
+        "processing_summary": {
+          "total_time": 0.0,
+          "agent_count": 1,
+          "activities": [
+            "session_start: Starting comprehensive_benchmark analysis"
+          ],
+          "agents_used": [
+            "session_start"
+          ]
+        },
+        "success": true
+      },
+      {
+        "question_id": "KCFbp1TH0RYN4j5zYdmh",
+        "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+        "prediction": 0.5,
+        "actual_outcome": 0.6458942140911571,
+        "brier_score": 0.021285121705276383,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "methodology": "targeted_agent",
+        "methodology_details": {
+          "confidence_level": "medium",
+          "base_rate": 0.5,
+          "evidence_quality": 0.7,
+          "methodology_completeness": 0.8,
+          "components_used": {
+            "targeted_analysis": true
+          }
+        },
+        "reasoning": "Fallback analysis",
+        "full_analysis": {
+          "error": "Could not parse result"
+        },
+        "agent_logs": [
+          {
+            "timestamp": "2025-06-10T06:36:15.218710",
+            "elapsed_seconds": 0.0,
+            "agent": "session_start",
+            "message": "Starting comprehensive_benchmark analysis",
+            "details": {
+              "session_type": "comprehensive_benchmark",
+              "request_data": {
+                "question_id": "KCFbp1TH0RYN4j5zYdmh",
+                "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+                "method": "targeted"
+              }
+            }
+          }
+        ],
+        "processing_summary": {
+          "total_time": 0.0,
+          "agent_count": 1,
+          "activities": [
+            "session_start: Starting comprehensive_benchmark analysis"
+          ],
+          "agents_used": [
+            "session_start"
+          ]
+        },
+        "success": true
+      },
+      {
+        "question_id": "0750nMx1Fqq4CWdoBHdX",
+        "question": "Will the OpenAI board fire Sam Altman again in 2024?",
+        "prediction": 0.5,
+        "actual_outcome": 0.096586061373108,
+        "brier_score": 0.1627428058784618,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "methodology": "targeted_agent",
+        "methodology_details": {
+          "confidence_level": "medium",
+          "base_rate": 0.5,
+          "evidence_quality": 0.7,
+          "methodology_completeness": 0.8,
+          "components_used": {
+            "targeted_analysis": true
+          }
+        },
+        "reasoning": "Fallback analysis",
+        "full_analysis": {
+          "error": "Could not parse result"
+        },
+        "agent_logs": [
+          {
+            "timestamp": "2025-06-10T06:36:15.419969",
+            "elapsed_seconds": 0.0,
+            "agent": "session_start",
+            "message": "Starting comprehensive_benchmark analysis",
+            "details": {
+              "session_type": "comprehensive_benchmark",
+              "request_data": {
+                "question_id": "0750nMx1Fqq4CWdoBHdX",
+                "question": "Will the OpenAI board fire Sam Altman again in 2024?",
+                "method": "targeted"
+              }
+            }
+          }
+        ],
+        "processing_summary": {
+          "total_time": 0.0,
+          "agent_count": 1,
+          "activities": [
+            "session_start: Starting comprehensive_benchmark analysis"
+          ],
+          "agents_used": [
+            "session_start"
+          ]
+        },
+        "success": true
+      },
+      {
+        "question_id": "KtGRsTouYWiDPaPhRC3o",
+        "question": "Will an artificial intelligence system play a major artistic role in the 2024 Olympic opening ceremonies?",
+        "prediction": 0.5,
+        "actual_outcome": 0.133023515414216,
+        "brier_score": 0.13467174023894019,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "methodology": "targeted_agent",
+        "methodology_details": {
+          "confidence_level": "medium",
+          "base_rate": 0.5,
+          "evidence_quality": 0.7,
+          "methodology_completeness": 0.8,
+          "components_used": {
+            "targeted_analysis": true
+          }
+        },
+        "reasoning": "Fallback analysis",
+        "full_analysis": {
+          "error": "Could not parse result"
+        },
+        "agent_logs": [
+          {
+            "timestamp": "2025-06-10T06:36:15.539240",
+            "elapsed_seconds": 0.0,
+            "agent": "session_start",
+            "message": "Starting comprehensive_benchmark analysis",
+            "details": {
+              "session_type": "comprehensive_benchmark",
+              "request_data": {
+                "question_id": "KtGRsTouYWiDPaPhRC3o",
+                "question": "Will an artificial intelligence system play a major artistic role in the 2024 Olympic opening ceremonies?",
+                "method": "targeted"
+              }
+            }
+          }
+        ],
+        "processing_summary": {
+          "total_time": 0.0,
+          "agent_count": 1,
+          "activities": [
+            "session_start: Starting comprehensive_benchmark analysis"
+          ],
+          "agents_used": [
+            "session_start"
+          ]
+        },
+        "success": true
+      },
+      {
+        "question_id": "HFuD5HPpd2ZR9gLk6nhj",
+        "question": "Will Doors of Stone, the third book of the Kingkiller Chronicle by Patrick Rothfuss, be released before 2025?",
+        "prediction": 0.5,
+        "actual_outcome": 0.044149740713244005,
+        "brier_score": 0.20779945889180265,
+        "freeze_datetime": "2024-07-12T00:00:00+00:00",
+        "methodology": "targeted_agent",
+        "methodology_details": {
+          "confidence_level": "medium",
+          "base_rate": 0.5,
+          "evidence_quality": 0.7,
+          "methodology_completeness": 0.8,
+          "components_used": {
+            "targeted_analysis": true
+          }
+        },
+        "reasoning": "Fallback analysis",
+        "full_analysis": {
+          "error": "Could not parse result"
+        },
+        "agent_logs": [
+          {
+            "timestamp": "2025-06-10T06:36:15.669682",
+            "elapsed_seconds": 0.0,
+            "agent": "session_start",
+            "message": "Starting comprehensive_benchmark analysis",
+            "details": {
+              "session_type": "comprehensive_benchmark",
+              "request_data": {
+                "question_id": "HFuD5HPpd2ZR9gLk6nhj",
+                "question": "Will Doors of Stone, the third book of the Kingkiller Chronicle by Patrick Rothfuss, be released before 2025?",
+                "method": "targeted"
+              }
+            }
+          }
+        ],
+        "processing_summary": {
+          "total_time": 0.0,
+          "agent_count": 1,
+          "activities": [
+            "session_start: Starting comprehensive_benchmark analysis"
+          ],
+          "agents_used": [
+            "session_start"
+          ]
+        },
+        "success": true
+      }
+    ]
+  },
+  "questions_tested": [
+    "iPG19DGNrWEkbUBjfk6L",
+    "KCFbp1TH0RYN4j5zYdmh",
+    "0750nMx1Fqq4CWdoBHdX",
+    "KtGRsTouYWiDPaPhRC3o",
+    "HFuD5HPpd2ZR9gLk6nhj"
+  ],
+  "system_info": {
+    "uses_gpt4o": true,
+    "multi_agent_system": true,
+    "crewai_framework": true,
+    "superforecaster_methodology": true,
+    "specialized_agents": [
+      "Base Rate Analyst",
+      "Evidence Researcher",
+      "Perspective Analyst",
+      "Uncertainty Quantifier",
+      "Synthesis Expert"
+    ],
+    "methodology_components": [
+      "Reference Class Forecasting",
+      "Evidence Evaluation",
+      "Multiple Perspectives",
+      "Uncertainty Quantification",
+      "Expert Synthesis"
+    ],
+    "time_bound_constraints": true,
+    "live_agent_logging": true
+  }
+}

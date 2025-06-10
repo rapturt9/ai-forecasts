@@ -110,25 +110,64 @@ def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
     
     with col1:
         if st.button("🤖 AI Milestones", key="targeted_ai_example"):
+            st.session_state.targeted_initial_conditions = ""
             st.session_state.targeted_outcomes = "GPT-5 released by OpenAI\nAGI achieved by any company\nMajor AI safety breakthrough\nComprehensive AI regulation passed"
             st.session_state.targeted_horizon = "2 years"
             st.rerun()
     
     with col2:
         if st.button("💰 Market Events", key="targeted_market_example"):
+            st.session_state.targeted_initial_conditions = ""
             st.session_state.targeted_outcomes = "Stock market crash (>20% drop)\nRecession declared in US\nFed cuts rates below 3%\nBitcoin reaches $100k"
             st.session_state.targeted_horizon = "1 year"
             st.rerun()
     
     with col3:
         if st.button("🌍 Global Events", key="targeted_global_example"):
+            st.session_state.targeted_initial_conditions = ""
             st.session_state.targeted_outcomes = "Climate tipping point reached\nMajor breakthrough in fusion energy\nNew pandemic declared\nSpace tourism becomes mainstream"
             st.session_state.targeted_horizon = "3 years"
+            st.rerun()
+    
+    st.markdown("**🔄 What-If Analysis Examples:**")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("💰 AI Investment Boost", key="targeted_investment_example"):
+            st.session_state.targeted_initial_conditions = "$1B additional investment in AI safety research announced by major tech companies"
+            st.session_state.targeted_outcomes = "AGI achieved safely\nMajor AI alignment breakthrough\nAI safety standards adopted globally"
+            st.session_state.targeted_horizon = "2 years"
+            st.rerun()
+    
+    with col2:
+        if st.button("📉 Economic Downturn", key="targeted_recession_example"):
+            st.session_state.targeted_initial_conditions = "Global economic recession begins with 20% market decline and widespread layoffs"
+            st.session_state.targeted_outcomes = "AI development slows significantly\nTech funding dries up\nAI regulation accelerates\nOpen source AI dominates"
+            st.session_state.targeted_horizon = "18 months"
+            st.rerun()
+    
+    with col3:
+        if st.button("🏛️ AI Regulation", key="targeted_regulation_example"):
+            st.session_state.targeted_initial_conditions = "Comprehensive AI regulation framework implemented globally with strict safety requirements"
+            st.session_state.targeted_outcomes = "AI development slows but becomes safer\nSmaller AI companies struggle\nOpen source AI restricted\nAI safety research accelerates"
+            st.session_state.targeted_horizon = "2 years"
             st.rerun()
     
     st.divider()
     
     with st.form("targeted_form"):
+        # Initial conditions field (optional)
+        st.markdown("#### 🌍 Initial Conditions (Optional)")
+        st.info("💡 **Modify the baseline scenario** to see how forecasts change. Leave empty to use current real-world conditions.")
+        initial_conditions = st.text_area(
+            "Initial conditions",
+            value=st.session_state.get('targeted_initial_conditions', ''),
+            placeholder="Example scenarios:\n- $1B additional investment in AI safety research\n- Major AI company receives $10B funding\n- New AI regulation framework implemented\n- Economic recession begins",
+            height=100,
+            help="Describe any modifications to current conditions you want to analyze. This enables 'what-if' analysis.",
+            label_visibility="collapsed"
+        )
+        
         # Input fields
         st.markdown("#### 🎯 What outcomes are we trying to predict?")
         st.info("💡 **Enter specific outcomes** you want to evaluate. The system will assess probability, feasibility, and provide detailed analysis for each.")
@@ -179,6 +218,9 @@ def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
             "time_horizon": time_horizon
         }
         
+        if initial_conditions.strip():
+            request_data["initial_conditions"] = initial_conditions.strip()
+        
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
         
@@ -203,6 +245,7 @@ def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
     
     with col1:
         if st.button("🚀 AI Startup Success", key="strategy_startup_example"):
+            st.session_state.strategy_initial_conditions = ""
             st.session_state.strategy_desired = "Launch a successful AI startup that reaches $10M ARR within 2 years"
             st.session_state.strategy_constraints = "Limited initial funding, competitive market, need to hire top talent"
             st.session_state.strategy_horizon = "2 years"
@@ -210,6 +253,7 @@ def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
     
     with col2:
         if st.button("🎓 AI Career Transition", key="strategy_career_example"):
+            st.session_state.strategy_initial_conditions = ""
             st.session_state.strategy_desired = "Transition from software engineering to AI research scientist role at a top lab"
             st.session_state.strategy_constraints = "Need to maintain current income, limited time for study, no PhD"
             st.session_state.strategy_horizon = "18 months"
@@ -217,14 +261,54 @@ def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
     
     with col3:
         if st.button("🏢 AI Adoption", key="strategy_transform_example"):
+            st.session_state.strategy_initial_conditions = ""
             st.session_state.strategy_desired = "Transform traditional company into AI-first organization with 30% efficiency gains"
             st.session_state.strategy_constraints = "Legacy systems, change resistance, limited AI expertise, budget constraints"
+            st.session_state.strategy_horizon = "3 years"
+            st.rerun()
+    
+    st.markdown("**🔄 What-If Strategy Examples:**")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("💰 With Major Funding", key="strategy_funding_example"):
+            st.session_state.strategy_initial_conditions = "$10M Series A funding secured from top-tier VC with strong AI portfolio"
+            st.session_state.strategy_desired = "Build the leading AI safety research company with global impact"
+            st.session_state.strategy_constraints = "Need to hire world-class researchers, establish credibility, deliver results within 2 years"
+            st.session_state.strategy_horizon = "2 years"
+            st.rerun()
+    
+    with col2:
+        if st.button("📉 During Recession", key="strategy_recession_example"):
+            st.session_state.strategy_initial_conditions = "Economic recession with 30% reduction in tech hiring and limited venture funding"
+            st.session_state.strategy_desired = "Successfully launch AI consulting business generating $500K revenue"
+            st.session_state.strategy_constraints = "Minimal startup capital, reduced market demand, increased competition for clients"
+            st.session_state.strategy_horizon = "18 months"
+            st.rerun()
+    
+    with col3:
+        if st.button("🏛️ With AI Regulation", key="strategy_regulation_example"):
+            st.session_state.strategy_initial_conditions = "Strict AI regulation implemented requiring safety certifications and compliance audits"
+            st.session_state.strategy_desired = "Build compliant AI product that captures 10% market share in regulated industry"
+            st.session_state.strategy_constraints = "High compliance costs, lengthy approval processes, limited AI capabilities allowed"
             st.session_state.strategy_horizon = "3 years"
             st.rerun()
     
     st.divider()
     
     with st.form("strategy_form"):
+        # Initial conditions field (optional)
+        st.markdown("#### 🌍 Initial Conditions (Optional)")
+        st.info("💡 **Modify the baseline scenario** to see how strategies change. Leave empty to use current real-world conditions.")
+        initial_conditions = st.text_area(
+            "Initial conditions",
+            value=st.session_state.get('strategy_initial_conditions', ''),
+            placeholder="Example scenarios:\n- $1B additional investment in AI safety research\n- Major AI company receives $10B funding\n- New AI regulation framework implemented\n- Economic recession begins",
+            height=100,
+            help="Describe any modifications to current conditions you want to analyze. This enables 'what-if' strategy analysis.",
+            label_visibility="collapsed"
+        )
+        
         # Input fields
         st.markdown("#### 🚀 What outcome do you want to achieve?")
         st.info("💡 **Describe your desired outcome** with specific goals and success metrics. The system will generate multiple strategic paths to achieve this outcome.")
@@ -273,6 +357,9 @@ def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
             "time_horizon": time_horizon
         }
         
+        if initial_conditions.strip():
+            request_data["initial_conditions"] = initial_conditions.strip()
+        
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
         
@@ -298,10 +385,17 @@ def render_help_panel(mode: str):
         - New AI regulation enacted
         - Tech stock market correction
         
+        **What-If Analysis:**
+        - Use Initial Conditions to modify the baseline scenario
+        - Compare forecasts with/without major investments
+        - Analyze impact of regulatory changes
+        - Test different economic conditions
+        
         **Tips:**
         - Be specific and measurable
         - Focus on outcomes you care about
         - Consider both positive and negative scenarios
+        - Use Initial Conditions for scenario planning
         """)
     
     elif "Find Path to Desired Outcome" in mode:
@@ -311,11 +405,18 @@ def render_help_panel(mode: str):
         - Research lab → AGI breakthrough
         - Company → AI transformation
         
+        **What-If Strategy Analysis:**
+        - Use Initial Conditions to test different starting scenarios
+        - Compare strategies with/without major funding
+        - Analyze paths during economic downturns
+        - Test impact of regulatory environments
+        
         **Tips:**
         - Be clear about your starting point
         - Define success criteria precisely
         - Include realistic constraints
         - Consider resource limitations
+        - Use Initial Conditions for scenario planning
         """)
     
     st.divider()

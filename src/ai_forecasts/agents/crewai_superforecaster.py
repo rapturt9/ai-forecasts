@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from crewai import Agent, Task, Crew, Process
 from crewai.llm import LLM
 from ..utils.agent_logger import agent_logger
+from ..utils.llm_client import LLMClient
 
 
 @dataclass
@@ -35,12 +36,16 @@ class CrewAISuperforecaster:
     def __init__(self, openrouter_api_key: str):
         self.logger = agent_logger
         
-        # Configure LLM for CrewAI
+        # Configure LLM for CrewAI with proper headers
         self.llm = LLM(
             model="openai/gpt-4o",
             api_key=openrouter_api_key,
             base_url="https://openrouter.ai/api/v1",
-            temperature=0.7
+            temperature=0.7,
+            default_headers={
+                "HTTP-Referer": "https://ai-forecasts.com",
+                "X-Title": "AI Forecasting System"
+            }
         )
         
         # Initialize specialized agents

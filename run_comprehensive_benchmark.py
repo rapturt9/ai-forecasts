@@ -19,6 +19,7 @@ import sys
 sys.path.append('src')
 
 from ai_forecasts.agents.crewai_superforecaster import CrewAISuperforecaster
+from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
 from ai_forecasts.agents.targeted_agent import TargetedAgent
 from ai_forecasts.utils.agent_logger import agent_logger
 from ai_forecasts.utils.llm_client import LLMClient
@@ -31,16 +32,26 @@ class ComprehensiveBenchmarkRunner:
         if not os.getenv("OPENROUTER_API_KEY"):
             os.environ["OPENROUTER_API_KEY"] = "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"
         
+        # Set SERP API key if not already set
+        if not os.getenv("SERP_API_KEY"):
+            os.environ["SERP_API_KEY"] = "8b66ef544709847671ce739cb89b51601505777ffdfcd82f0246419387922342"
+        
         self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+        self.serp_api_key = os.getenv("SERP_API_KEY")
+        
         if not self.openrouter_api_key:
             raise ValueError("OPENROUTER_API_KEY environment variable is required")
+        if not self.serp_api_key:
+            raise ValueError("SERP_API_KEY environment variable is required")
         
-        # For now, use TargetedAgent as it's more reliable
-        # TODO: Fix CrewAI authentication issues
-        print("🔄 Using TargetedAgent (CrewAI temporarily disabled due to auth issues)")
-        llm_client = LLMClient(api_key=self.openrouter_api_key).get_client()
-        self.superforecaster = TargetedAgent(llm_client)
-        self.use_crewai = False
+        # Use Google News Superforecaster with SERP API integration
+        print("🔄 Using Google News Superforecaster with SERP API")
+        print("📰 This system will search Google News with timestamps from June 2024 to freeze date")
+        self.superforecaster = GoogleNewsSuperforecaster(
+            openrouter_api_key=self.openrouter_api_key,
+            serp_api_key=self.serp_api_key
+        )
+        self.use_google_news = True
         
         self.logger = agent_logger
         self.questions = []
@@ -112,26 +123,27 @@ class ComprehensiveBenchmarkRunner:
         print(f"📅 Freeze date: {question['freeze_datetime']}")
         print(f"🎲 Actual outcome: {question['freeze_value']}")
         
-        if self.use_crewai:
-            print(f"🤖 Starting CrewAI multi-agent analysis...")
-        else:
-            print(f"🎯 Starting TargetedAgent analysis...")
+        if self.use_google_news:
+            print(f"📰 Starting Google News Superforecaster analysis...")
+            print(f"📅 Searching Google News from June 2024 to: {question['freeze_datetime']}")
         
         try:
             # Start logging session
             self.logger.start_session("comprehensive_benchmark", {
                 "question_id": question["id"],
                 "question": question["question"],
-                "method": "crewai" if self.use_crewai else "targeted"
+                "method": "google_news_superforecaster",
+                "freeze_date": question["freeze_datetime"].isoformat()
             })
             
-            if self.use_crewai:
-                # Use CrewAI superforecaster system
-                forecast_result = self.superforecaster.forecast(
+            if self.use_google_news:
+                # Use Google News Superforecaster system
+                forecast_result = self.superforecaster.forecast_with_google_news(
                     question=question["question"],
                     background=question["background"],
                     cutoff_date=question["freeze_datetime"],
-                    time_horizon="immediate"
+                    time_horizon="immediate",
+                    is_benchmark=True  # This is a benchmark question
                 )
                 
                 # Calculate methodology completeness score
@@ -142,7 +154,11 @@ class ComprehensiveBenchmarkRunner:
                     "base_rate": forecast_result.base_rate,
                     "evidence_quality": forecast_result.evidence_quality,
                     "methodology_completeness": methodology_score,
-                    "components_used": forecast_result.methodology_components
+                    "components_used": forecast_result.methodology_components,
+                    "news_research_summary": forecast_result.news_research_summary,
+                    "total_articles_found": forecast_result.total_articles_found,
+                    "search_queries_used": len(forecast_result.search_queries_used),
+                    "search_timeframe": forecast_result.search_timeframe
                 }
                 
                 reasoning = forecast_result.reasoning
@@ -150,7 +166,7 @@ class ComprehensiveBenchmarkRunner:
                 probability = forecast_result.probability
                 
             else:
-                # Use TargetedAgent as fallback
+                # Fallback to basic analysis
                 forecast_result = self.superforecaster.analyze(
                     initial_conditions="Current state",
                     outcomes_of_interest=[question["question"]],
@@ -174,7 +190,7 @@ class ComprehensiveBenchmarkRunner:
                     "base_rate": 0.5,
                     "evidence_quality": 0.7,
                     "methodology_completeness": 0.8,
-                    "components_used": {"targeted_analysis": True}
+                    "components_used": {"basic_analysis": True}
                 }
             
             print(f"🎯 AI Prediction: {probability:.3f}")
@@ -188,7 +204,7 @@ class ComprehensiveBenchmarkRunner:
                 "actual_outcome": question["freeze_value"],
                 "brier_score": (probability - question["freeze_value"])**2,
                 "freeze_datetime": question["freeze_datetime"].isoformat(),
-                "methodology": "crewai_superforecaster" if self.use_crewai else "targeted_agent",
+                "methodology": "google_news_superforecaster" if self.use_google_news else "basic_agent",
                 "methodology_details": methodology_details,
                 "reasoning": reasoning,
                 "full_analysis": full_analysis,
@@ -360,7 +376,8 @@ class ComprehensiveBenchmarkRunner:
         """Run comprehensive benchmark with CrewAI multi-agent superforecaster system"""
         
         print("🚀 Starting Comprehensive AI Forecasting Benchmark")
-        print("🤖 Using CrewAI Multi-Agent Superforecaster System (GPT-4o)")
+        print("📰 Using Google News Superforecaster System with SERP API (GPT-4o)")
+        print("🕒 Searching Google News with timestamps from June 2024 to freeze dates")
         print("=" * 70)
         
         # Load and select questions
@@ -371,7 +388,8 @@ class ComprehensiveBenchmarkRunner:
             return {"error": "No suitable questions found"}
         
         print(f"\n📋 Selected {len(questions)} high-quality questions for testing")
-        print("🔬 Agents: Base Rate Analyst, Evidence Researcher, Perspective Analyst, Uncertainty Quantifier, Synthesis Expert")
+        print("🔬 Agents: News Research Coordinator, Historical News Analyst, Current News Analyst, Expert News Aggregator, Contrarian News Researcher, Synthesis Expert")
+        print("📰 Each question will be researched using Google News with precise timestamp filtering")
         
         # Make predictions using CrewAI system
         predictions = []

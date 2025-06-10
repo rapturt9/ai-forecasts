@@ -71,7 +71,8 @@ def main():
         
         # Advanced options
         st.subheader("Advanced Options")
-        use_crewai = st.checkbox("🤖 Use CrewAI Multi-Agent System", value=True, help="Enhanced superforecaster methodology with 5 specialized agents")
+        use_google_news = st.checkbox("📰 Use Google News Superforecaster", value=True, help="Enhanced superforecaster methodology with timestamped Google News research using SERP API")
+        use_crewai = st.checkbox("🤖 Use CrewAI Multi-Agent System", value=False, help="Enhanced superforecaster methodology with 5 specialized agents (no web research)")
         use_validation = st.checkbox("Enable validation", value=True, help="Adds quality checks but takes longer")
         show_raw_output = st.checkbox("Show raw output", value=False, help="Display technical details")
         show_agent_logs = st.checkbox("Show agent logs", value=True, help="Display intermediate agent analysis")
@@ -85,9 +86,9 @@ def main():
     with col1:
         # Input form based on selected mode
         if "Evaluate Specific Outcomes" in mode:
-            results = render_targeted_mode(use_validation, use_crewai)
+            results = render_targeted_mode(use_validation, use_crewai, use_google_news)
         elif "Find Path to Desired Outcome" in mode:
-            results = render_strategy_mode(use_validation, use_crewai)
+            results = render_strategy_mode(use_validation, use_crewai, use_google_news)
     
     with col2:
         # Help and examples
@@ -102,7 +103,7 @@ def main():
 
 
 
-def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
+def render_targeted_mode(use_validation: bool, use_crewai: bool, use_google_news: bool) -> Dict[str, Any]:
     """Render the targeted forecasting mode interface"""
     
     st.header("📊 Evaluate Specific Outcomes")
@@ -231,13 +232,13 @@ def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
         # Make API call with live logs
         st.markdown("---")
         st.markdown("### 🔄 Analysis in Progress")
-        results = make_api_call_with_live_logs("/forecast", request_data, use_validation, use_crewai)
+        results = make_api_call_with_live_logs("/forecast", request_data, use_validation, use_crewai, use_google_news)
         return results
     
     return None
 
 
-def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
+def render_strategy_mode(use_validation: bool, use_crewai: bool, use_google_news: bool) -> Dict[str, Any]:
     """Render the strategy generation mode interface"""
     
     st.header("🚀 Find Path to Desired Outcome")
@@ -370,7 +371,7 @@ def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
         # Make API call with live logs
         st.markdown("---")
         st.markdown("### 🔄 Analysis in Progress")
-        results = make_api_call_with_live_logs("/forecast", request_data, use_validation, use_crewai)
+        results = make_api_call_with_live_logs("/forecast", request_data, use_validation, use_crewai, use_google_news)
         return results
     
     return None
@@ -439,12 +440,14 @@ def render_help_panel(mode: str):
                 st.error(f"❌ Cannot connect to API: {str(e)}")
 
 
-def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool, use_crewai: bool = False) -> Dict[str, Any]:
+def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool, use_crewai: bool = False, use_google_news: bool = False) -> Dict[str, Any]:
     """Make API call to the forecasting system"""
     
     try:
         # Choose endpoint based on preferences
-        if use_crewai:
+        if use_google_news:
+            url = f"{API_BASE_URL}{endpoint}/google_news"
+        elif use_crewai:
             url = f"{API_BASE_URL}{endpoint}/crewai"
         elif use_validation:
             url = f"{API_BASE_URL}{endpoint}"
@@ -470,7 +473,7 @@ def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool, use
         return None
 
 
-def make_api_call_with_live_logs(endpoint: str, data: Dict[str, Any], use_validation: bool, use_crewai: bool = False) -> Dict[str, Any]:
+def make_api_call_with_live_logs(endpoint: str, data: Dict[str, Any], use_validation: bool, use_crewai: bool = False, use_google_news: bool = False) -> Dict[str, Any]:
     """Make API call with live log updates during processing"""
     
     # Create placeholders for live updates
@@ -497,7 +500,9 @@ def make_api_call_with_live_logs(endpoint: str, data: Dict[str, Any], use_valida
     def run_api_call():
         try:
             # Choose endpoint based on preferences
-            if use_crewai:
+            if use_google_news:
+                url = f"{API_BASE_URL}{endpoint}/google_news"
+            elif use_crewai:
                 url = f"{API_BASE_URL}{endpoint}/crewai"
             elif use_validation:
                 url = f"{API_BASE_URL}{endpoint}"

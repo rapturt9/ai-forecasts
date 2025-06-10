@@ -51,12 +51,13 @@ def main():
     print("🔮 AI Forecasting & Strategy System")
     print("=" * 50)
     
-    # Check environment
+    # Set the API key if not already set
     if not os.getenv("OPENROUTER_API_KEY"):
-        print("❌ Error: OPENROUTER_API_KEY environment variable not set")
-        print("Please set your OpenRouter API key:")
-        print("export OPENROUTER_API_KEY='your-api-key-here'")
-        sys.exit(1)
+        # Set the provided API key
+        os.environ["OPENROUTER_API_KEY"] = "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"
+        print("✅ API key set from provided value")
+    else:
+        print("✅ API key already configured")
     
     # Start API server
     api_process = start_api_server()

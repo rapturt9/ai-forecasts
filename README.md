@@ -4,62 +4,64 @@ An AI-powered system that performs bidirectional analysis: forecasting probable 
 
 ## 🌟 Features
 
-### Three Operating Modes
+### Two Operating Modes
 
-1. **Pure Forecasting Mode**
-
-   - Input: Initial conditions only
-   - Output: Probability distribution of most notable outcomes
-
-2. **Targeted Forecasting Mode**
-
+1. **📊 Evaluate Specific Outcomes**
    - Input: Initial conditions + specific outcomes of interest
-   - Output: Probability assessments for specified outcomes
+   - Output: Probability assessments for specified outcomes with detailed analysis
+   - Features: Real-time agent logging, evidence quality scoring, confidence intervals
 
-3. **Strategy Generation Mode**
-   - Input: Initial conditions + desired outcomes
-   - Output: Optimal action paths with success probabilities
+2. **🚀 Find Path to Desired Outcome**
+   - Input: Initial conditions + desired outcomes + constraints
+   - Output: Strategic implementation plans with step-by-step actions
+   - Features: Gap analysis, risk assessment, multiple strategic paths
 
 ### Key Capabilities
 
-- **🤖 CrewAI Multi-Agent System**: 5 specialized agents implementing superforecaster methodologies
-  - **Base Rate Analyst**: Reference class forecasting and historical analysis
-  - **Evidence Researcher**: Systematic evidence gathering and quality evaluation
-  - **Perspective Analyst**: Multiple scenario analysis and bias detection
-  - **Uncertainty Quantifier**: Confidence assessment and calibration
-  - **Synthesis Expert**: Final forecast integration and reasoning
+- **🤖 Multi-Agent Analysis**: Specialized agents for targeted outcome evaluation and strategy generation
+  - **TargetedAgent**: Evaluates specific outcomes with probability assessments
+  - **StrategyAgent**: Generates optimal paths to achieve desired outcomes
+  - **CrewAI Integration**: Advanced multi-agent system with 5 specialized forecasting agents (when enabled)
+- **📊 Real-time Logging**: Live agent activity display during analysis with color-coded progress
 - **🧠 Superforecaster Methodology**: Proven techniques from top human forecasters
-- **📊 Enhanced Analysis**: Evidence quality scoring, methodology tracking, agent logs
-- **🔬 Rigorous Validation**: Multi-dimensional quality assessment and calibration
-- **🌐 Interactive Frontend**: Easy-to-use web interface with example buttons and real-time results
-- **⚡ Flexible Architecture**: Choose between standard or enhanced CrewAI analysis
+- **🔬 Comprehensive Benchmarking**: Brier score, calibration error, methodology quality assessment
+- **🌐 Interactive Frontend**: Streamlit web interface with example buttons and real-time results
+- **⚡ Robust Architecture**: Fallback mechanisms and error handling for reliable operation
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Python 3.12+
-- OpenRouter API key
+- OpenRouter API key (get one at [openrouter.ai](https://openrouter.ai))
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/rapturt9/ai-forecasts.git
 cd ai-forecasts
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Set up environment variables:
+3. **Set up environment variables:**
+
+Create a `.env` file in the project root:
 
 ```bash
-export OPENROUTER_API_KEY="your-api-key-here"
+cp .env.example .env
+```
+
+Edit `.env` and add your API key:
+
+```bash
+OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
 ```
 
 ### 🎯 **One-Command Launch**
@@ -71,9 +73,10 @@ python run_frontend.py
 ```
 
 This will automatically:
+- Load environment variables from `.env` file
 - Start the API server on port 12000
 - Launch the Streamlit frontend on port 12001
-- Open your browser to the web interface
+- Display configuration and status
 
 **Alternative: Manual Setup**
 
@@ -86,20 +89,14 @@ python run_api.py
 2. **Start the web interface (Terminal 2):**
 
 ```bash
-python run_frontend.py
-```
-
-3. **Run the demo:**
-
-```bash
-python demo.py
+streamlit run src/ai_forecasts/frontend/streamlit_app.py --server.port=12001
 ```
 
 ## 🌐 Access Points
 
-- **Web Interface**: https://work-2-ypcpnwlsffvpolgg.prod-runtime.all-hands.dev
-- **API Documentation**: https://work-1-ypcpnwlsffvpolgg.prod-runtime.all-hands.dev/docs
-- **API Health Check**: https://work-1-ypcpnwlsffvpolgg.prod-runtime.all-hands.dev/health
+- **Web Interface**: http://localhost:12001
+- **API Documentation**: http://localhost:12000/docs
+- **API Health Check**: http://localhost:12000/health
 
 ## 🎯 Frontend Features
 
@@ -108,49 +105,33 @@ python demo.py
 The Streamlit frontend provides an intuitive interface with:
 
 - **📋 Quick Example Buttons**: Click to populate forms with realistic examples
-- **🤖 CrewAI Toggle**: Switch between standard and enhanced multi-agent analysis
-- **📊 Real-time Results**: See probability estimates, confidence levels, and reasoning
-- **🔍 Agent Logs**: View intermediate analysis from each specialized agent
-- **📈 Visual Charts**: Interactive probability distributions and confidence intervals
-- **🔬 Methodology Breakdown**: Detailed view of superforecaster techniques used
+- **📊 Real-time Agent Logs**: Watch agents work in real-time with color-coded activity
+- **📈 Visual Results**: Probability estimates, confidence levels, and detailed reasoning
+- **🔍 Methodology Breakdown**: See which superforecaster techniques were applied
+- **⚡ Live Progress**: Visual progress bars and status updates during analysis
 
-### Three Analysis Modes
+### Two Analysis Modes
 
-1. **🎯 Forecast Outcomes**: Predict likely future developments
-2. **📊 Evaluate Specific Outcomes**: Assess probability of specific events
-3. **🚀 Find Path to Desired Outcome**: Generate strategic implementation plans
+1. **📊 Evaluate Specific Outcomes**: Assess probability of specific events
+2. **🚀 Find Path to Desired Outcome**: Generate strategic implementation plans
 
 ### Enhanced Output Display
 
 - **Probability Metrics**: Main forecast with confidence intervals
-- **Base Rate Analysis**: Historical reference class comparisons  
+- **Agent Activity**: Real-time logs from each specialist agent
 - **Evidence Quality**: Systematic evaluation of information sources
-- **Agent Analysis**: Breakdown of each specialist agent's contribution
 - **Methodology Components**: Detailed superforecaster techniques applied
 
 ## 📖 Usage Examples
 
-### Pure Forecasting
+### Evaluate Specific Outcomes
 
 ```python
 import requests
 
 response = requests.post("http://localhost:12000/forecast", json={
-    "initial_conditions": "OpenAI has released GPT-4, competition is increasing",
-    "time_horizon": "18 months"
-})
-
-results = response.json()
-for outcome in results["outcomes"]:
-    print(f"{outcome['description']}: {outcome['probability']:.1%}")
-```
-
-### Targeted Forecasting
-
-```python
-response = requests.post("http://localhost:12000/forecast", json={
     "initial_conditions": "Current AI capabilities as of 2024",
-    "outcomes_of_interest": ["AGI achieved", "Major AI safety incident"],
+    "outcomes_of_interest": ["AGI achieved by 2030", "Major AI safety incident"],
     "time_horizon": "5 years"
 })
 
@@ -186,29 +167,26 @@ print(f"Success Rate: {strategy['overall_probability']:.1%}")
 │  Mode Classifier    │
 └──────────┬──────────┘
            │
-     ┌─────┴─────┬──────────┐
-     │           │          │
-┌────▼────┐ ┌───▼────┐ ┌───▼────┐
-│Forecast │ │Targeted│ │Strategy│
-│  Agent  │ │ Agent  │ │ Agent  │
-└────┬────┘ └───┬────┘ └───┬────┘
-     │          │          │
-┌────▼──────────▼──────────▼────┐
-│    Synthesis & Validation      │
-└────────────────┬───────────────┘
-                 │
-         ┌───────▼────────┐
-         │ Output Builder │
-         └────────────────┘
+     ┌─────┴─────┐
+     │           │
+┌────▼────┐ ┌───▼────┐
+│Targeted │ │Strategy│
+│ Agent   │ │ Agent  │
+└────┬────┘ └───┬────┘
+     │          │
+┌────▼──────────▼────┐
+│ Agent Logger &      │
+│ Result Synthesis    │
+└─────────────────────┘
 ```
 
 ### Core Components
 
-- **ForecastAgent**: Generates probability distributions for likely outcomes
-- **TargetedAgent**: Evaluates specific outcomes of interest
+- **TargetedAgent**: Evaluates specific outcomes of interest with detailed probability analysis
 - **StrategyAgent**: Designs optimal paths to achieve desired outcomes
-- **ValidatorAgent**: Ensures logical consistency and calibration
-- **ForecastOrchestrator**: Coordinates multi-agent workflows
+- **AgentLogger**: Real-time logging and activity tracking for all agent operations
+- **LLMClient**: Unified interface for OpenRouter API with proper authentication
+- **ForecastOrchestrator**: Coordinates workflows and manages agent interactions
 
 ## 📊 API Reference
 
@@ -220,7 +198,7 @@ Request body:
 
 ```json
 {
-  "initial_conditions": "string (optional)",
+  "initial_conditions": "string (required)",
   "outcomes_of_interest": ["string"] (optional),
   "desired_outcome": "string (optional)",
   "time_horizon": "string (default: '1 year')",
@@ -230,23 +208,25 @@ Request body:
 
 ### Response Formats
 
-**Pure Forecasting Response:**
+**Targeted Forecasting Response:**
 
 ```json
 {
-  "mode": "forecast",
-  "outcomes": [
+  "mode": "targeted",
+  "evaluations": [
     {
-      "description": "string",
+      "outcome": "string",
       "probability": 0.65,
       "confidence_interval": [0.45, 0.8],
-      "key_drivers": ["string"],
-      "early_indicators": ["string"]
+      "reasoning": "string",
+      "key_factors": ["string"],
+      "blocking_factors": ["string"]
     }
   ],
-  "meta_analysis": {
-    "dominant_scenarios": ["string"],
-    "key_uncertainties": ["string"]
+  "agent_logs": ["string"],
+  "methodology": {
+    "evidence_quality": 0.8,
+    "confidence_level": "high"
   }
 }
 ```
@@ -268,56 +248,82 @@ Request body:
         "success_criteria": "string"
       }
     ]
-  }
+  },
+  "agent_logs": ["string"]
 }
 ```
 
-## 🧪 Testing
+## 🧪 Testing & Benchmarking
 
-Run the test suite:
+### Run the comprehensive benchmark:
+
+```bash
+python run_comprehensive_benchmark.py
+```
+
+This will:
+- Test the system on real forecasting questions
+- Calculate Brier scores and calibration metrics
+- Generate detailed performance reports
+- Save results to `comprehensive_benchmark_results.json`
+
+### Run individual tests:
 
 ```bash
 python -m pytest tests/ -v
-```
-
-Run the demo:
-
-```bash
-python demo.py
 ```
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-- `OPENROUTER_API_KEY`: Your OpenRouter API key
-- `OPENROUTER_BASE_URL`: OpenRouter API base URL (default: https://openrouter.ai/api/v1)
-- `DEFAULT_MODEL`: Default LLM model (default: anthropic/claude-opus-4)
+Create a `.env` file with the following variables:
 
-### Model Selection
+```bash
+# Required: OpenRouter API Key
+OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
+
+# Optional: OpenRouter API Base URL (default: https://openrouter.ai/api/v1)
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+
+# Optional: Default LLM model (default: openai/gpt-4o)
+DEFAULT_MODEL=openai/gpt-4o
+```
+
+### Supported Models
 
 The system supports any OpenRouter-compatible model. Popular choices:
 
-- `anthropic/claude-opus-4`
-- `anthropic/google/gemini-2.5-pro-preview`
-- `openai/o4-mini-high`
+- `openai/gpt-4o` (default, recommended)
+- `anthropic/claude-3.5-sonnet`
+- `google/gemini-pro-1.5`
+- `meta-llama/llama-3.1-405b-instruct`
 
-## 📈 Benchmarking
+### Model Selection
 
-The system includes a comprehensive benchmarking framework for evaluating forecast accuracy:
+You can change the model by:
+1. Setting `DEFAULT_MODEL` in your `.env` file
+2. Or passing it directly to the LLMClient in code
 
-- **Brier Score**: Measures probability calibration
-- **Log Score**: Assesses prediction quality
-- **Top-K Accuracy**: Evaluates outcome ranking
-- **Strategy Success Rate**: Measures strategic recommendation quality
+## 📈 Benchmarking Results
+
+The system includes comprehensive benchmarking with:
+
+- **Brier Score**: Measures probability calibration accuracy
+- **Calibration Error**: Assesses prediction reliability
+- **Methodology Quality**: Evaluates superforecaster technique usage
+- **Agent Performance**: Tracks individual agent contributions
+- **Extreme Prediction Accuracy**: Tests performance on high-confidence predictions
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
 4. Add tests for new functionality
-5. Submit a pull request
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ## 📄 License
 
@@ -325,19 +331,44 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- Built with OpenRouter for LLM access
-- Uses FastAPI for the backend API
-- Streamlit for the web interface
-- LangChain for LLM integration
+- Built with [OpenRouter](https://openrouter.ai) for LLM access
+- Uses [FastAPI](https://fastapi.tiangolo.com) for the backend API
+- [Streamlit](https://streamlit.io) for the web interface
+- [LangChain](https://langchain.com) for LLM integration
+- [CrewAI](https://crewai.com) for multi-agent orchestration
 
 ## 📞 Support
 
 For questions or issues:
 
-1. Check the API documentation at `/docs`
+1. Check the API documentation at http://localhost:12000/docs
 2. Review the examples in this README
-3. Run the demo script for a complete walkthrough
+3. Run the benchmark script for a complete walkthrough
 4. Open an issue on GitHub
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**API Key Not Found:**
+```bash
+❌ OPENROUTER_API_KEY not found!
+```
+- Create a `.env` file with your API key
+- Or set the environment variable: `export OPENROUTER_API_KEY=your-key`
+
+**Port Already in Use:**
+```bash
+❌ Port 12000 already in use
+```
+- Kill existing processes: `pkill -f "run_api.py"`
+- Or use different ports in the configuration
+
+**Dependencies Missing:**
+```bash
+❌ ModuleNotFoundError: No module named 'streamlit'
+```
+- Install dependencies: `pip install -r requirements.txt`
 
 ---
 

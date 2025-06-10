@@ -113,7 +113,7 @@ class ComprehensiveBenchmarkRunner:
                 good_questions.append(q)
         
         # Use random sampling for better coverage
-        random.seed(10)
+        random.seed(42)
         return random.sample(good_questions, min(num_questions, len(good_questions)))
     
     def make_prediction(self, question: Dict) -> Dict[str, Any]:

@@ -103,7 +103,7 @@ Return your analysis as a JSON object:
             # Get response from LLM
             messages = [HumanMessage(content=prompt)]
             response = self.llm.invoke(messages)
-            result = response.content response.content
+            result = response.content
             
             # Try to extract JSON from the response - look for complete JSON object
             json_start = result.find('{')

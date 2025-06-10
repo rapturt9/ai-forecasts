@@ -8,6 +8,9 @@ import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime
 from typing import Dict, Any, List
+import time
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
 # Page configuration
 st.set_page_config(
@@ -92,90 +95,7 @@ def main():
         render_results(results, show_raw_output, show_agent_logs)
 
 
-def render_forecast_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
-    """Render the pure forecasting mode interface"""
-    
-    st.header("🎯 Forecast Likely Outcomes")
-    st.markdown("Predict the most probable outcomes based on current global developments. The system will automatically research current conditions and generate a comprehensive forecast.")
-    
-    # Optional outcomes input
-    st.markdown("### 🎯 Optional: Specify Outcomes to Focus On")
-    with st.expander("🔍 Focus on specific outcomes (optional)", expanded=False):
-        st.info("💡 **Tip**: If you have specific outcomes in mind, enter them here to get more targeted analysis while still receiving a comprehensive forecast.")
-        focus_outcomes = st.text_area(
-            "Outcomes to prioritize in the forecast",
-            placeholder="Enter specific outcomes you're interested in (one per line):\n- AI breakthrough announcements\n- Major tech company acquisitions\n- Regulatory changes in AI",
-            height=100,
-            help="If specified, the forecast will pay special attention to these outcomes while still providing a comprehensive analysis"
-        )
-    
-    # Sample examples
-    st.markdown("**📋 Quick Examples:**")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("🤖 AI Development", key="forecast_ai_example"):
-            st.session_state.forecast_horizon = "1 year"
-            st.rerun()
-    
-    with col2:
-        if st.button("🏢 Tech Industry", key="forecast_tech_example"):
-            st.session_state.forecast_horizon = "6 months"
-            st.rerun()
-    
-    with col3:
-        if st.button("🌍 Global Economy", key="forecast_economy_example"):
-            st.session_state.forecast_horizon = "2 years"
-            st.rerun()
-    
-    st.divider()
-    
-    with st.form("forecast_form"):
-        # Input fields
-        col1, col2 = st.columns(2)
-        with col1:
-            horizon_options = ["1 month", "3 months", "6 months", "1 year", "2 years", "5 years"]
-            default_horizon = st.session_state.get('forecast_horizon', "1 year")
-            horizon_index = horizon_options.index(default_horizon) if default_horizon in horizon_options else 3
-            time_horizon = st.selectbox(
-                "Time Horizon",
-                horizon_options,
-                index=horizon_index,
-                help="How far into the future to forecast"
-            )
-        
-        with col2:
-            constraints = st.text_area(
-                "Constraints (optional)",
-                placeholder="e.g., budget < $1M, no regulatory changes",
-                height=100,
-                help="Any specific constraints or assumptions to consider"
-            )
-        
-        st.info("💡 The system will automatically research current global developments to inform the forecast.")
-        
-        submitted = st.form_submit_button("Generate Forecast", type="primary")
-    
-    if submitted:
-        # Prepare request
-        request_data = {
-            "time_horizon": time_horizon
-        }
-        
-        if constraints.strip():
-            request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
-        
-        # Add focus outcomes if specified
-        if focus_outcomes.strip():
-            focus_list = [line.strip().lstrip("- ") for line in focus_outcomes.split("\n") if line.strip()]
-            request_data["outcomes_of_interest"] = focus_list
-        
-        # Make API call
-        with st.spinner("Generating forecast..."):
-            results = make_api_call("/forecast", request_data, use_validation, use_crewai)
-            return results
-    
-    return None
+
 
 
 def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
@@ -262,10 +182,11 @@ def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
         
-        # Make API call
-        with st.spinner("Evaluating outcomes..."):
-            results = make_api_call("/forecast", request_data, use_validation, use_crewai)
-            return results
+        # Make API call with live logs
+        st.markdown("---")
+        st.markdown("### 🔄 Analysis in Progress")
+        results = make_api_call_with_live_logs("/forecast", request_data, use_validation, use_crewai)
+        return results
     
     return None
 
@@ -355,10 +276,11 @@ def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, An
         if constraints.strip():
             request_data["constraints"] = [c.strip() for c in constraints.split(",") if c.strip()]
         
-        # Make API call
-        with st.spinner("Generating strategy..."):
-            results = make_api_call("/forecast", request_data, use_validation, use_crewai)
-            return results
+        # Make API call with live logs
+        st.markdown("---")
+        st.markdown("### 🔄 Analysis in Progress")
+        results = make_api_call_with_live_logs("/forecast", request_data, use_validation, use_crewai)
+        return results
     
     return None
 
@@ -443,6 +365,187 @@ def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool, use
         return None
 
 
+def make_api_call_with_live_logs(endpoint: str, data: Dict[str, Any], use_validation: bool, use_crewai: bool = False) -> Dict[str, Any]:
+    """Make API call with live log updates during processing"""
+    
+    # Create placeholders for live updates
+    status_placeholder = st.empty()
+    logs_placeholder = st.empty()
+    progress_placeholder = st.empty()
+    
+    # Initialize session state for tracking
+    if 'api_call_active' not in st.session_state:
+        st.session_state.api_call_active = False
+    
+    if 'current_logs' not in st.session_state:
+        st.session_state.current_logs = []
+    
+    # Start the API call in a separate thread
+    st.session_state.api_call_active = True
+    st.session_state.current_logs = []
+    
+    # Show initial status
+    status_placeholder.info("🚀 Starting analysis...")
+    progress_bar = progress_placeholder.progress(0)
+    
+    # Function to run API call
+    def run_api_call():
+        try:
+            # Choose endpoint based on preferences
+            if use_crewai:
+                url = f"{API_BASE_URL}{endpoint}/crewai"
+            elif use_validation:
+                url = f"{API_BASE_URL}{endpoint}"
+            else:
+                url = f"{API_BASE_URL}{endpoint}/quick"
+            
+            response = requests.post(url, json=data, timeout=300)
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {"error": f"API Error {response.status_code}: {response.text}"}
+                
+        except requests.exceptions.Timeout:
+            return {"error": "Request timed out. The analysis is taking longer than expected."}
+        except requests.exceptions.ConnectionError:
+            return {"error": "Cannot connect to the API. Please check if the server is running."}
+        except Exception as e:
+            return {"error": f"Unexpected error: {str(e)}"}
+    
+    # Start API call in background
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(run_api_call)
+        
+        # Simulate progress and show live updates
+        start_time = time.time()
+        progress = 0
+        
+        # Simulated agent activities for live feedback
+        simulated_activities = [
+            ("orchestrator", "Initializing analysis framework..."),
+            ("web_research_agent", "Gathering current market data..."),
+            ("forecast_agent", "Analyzing probability distributions..."),
+            ("targeted_agent", "Evaluating specific outcomes..."),
+            ("strategy_agent", "Generating strategic recommendations..."),
+            ("validator_agent", "Validating results and checking consistency..."),
+            ("orchestrator", "Finalizing comprehensive analysis...")
+        ]
+        
+        activity_index = 0
+        last_activity_time = start_time
+        
+        while not future.done():
+            current_time = time.time()
+            elapsed = current_time - start_time
+            
+            # Update progress (simulate based on time)
+            if use_crewai:
+                # CrewAI takes longer, so slower progress
+                progress = min(0.95, elapsed / 120)  # 2 minutes estimated
+            else:
+                progress = min(0.95, elapsed / 60)   # 1 minute estimated
+            
+            progress_bar.progress(progress)
+            
+            # Add simulated activities every 10-15 seconds
+            if (current_time - last_activity_time > 10 and 
+                activity_index < len(simulated_activities)):
+                
+                agent, message = simulated_activities[activity_index]
+                activity_index += 1
+                last_activity_time = current_time
+                
+                # Add to current logs
+                log_entry = {
+                    "timestamp": datetime.now().isoformat(),
+                    "elapsed_seconds": elapsed,
+                    "agent": agent,
+                    "message": message
+                }
+                st.session_state.current_logs.append(log_entry)
+                
+                # Update status
+                status_placeholder.info(f"🤖 {agent.replace('_', ' ').title()}: {message}")
+                
+                # Update logs display
+                render_live_logs(logs_placeholder, st.session_state.current_logs)
+            
+            time.sleep(1)  # Check every second
+        
+        # Get the result
+        try:
+            result = future.result()
+            progress_bar.progress(1.0)
+            
+            if "error" in result:
+                status_placeholder.error(result["error"])
+                return None
+            else:
+                status_placeholder.success("✅ Analysis completed successfully!")
+                
+                # Merge simulated logs with actual logs if available
+                if "agent_logs" in result:
+                    # Replace simulated logs with actual logs
+                    st.session_state.current_logs = result["agent_logs"]
+                    render_live_logs(logs_placeholder, st.session_state.current_logs)
+                
+                return result
+                
+        except Exception as e:
+            status_placeholder.error(f"Error retrieving results: {str(e)}")
+            return None
+        finally:
+            st.session_state.api_call_active = False
+
+
+def render_live_logs(placeholder, logs: List[Dict[str, Any]]):
+    """Render live agent logs in a placeholder"""
+    
+    if not logs:
+        return
+    
+    with placeholder.container():
+        st.markdown("### 🤖 Live Agent Activity")
+        
+        # Show last 5 activities for better readability
+        recent_logs = logs[-5:] if len(logs) > 5 else logs
+        
+        for log in recent_logs:
+            elapsed = log.get('elapsed_seconds', 0)
+            agent = log.get('agent', 'unknown')
+            message = log.get('message', '')
+            
+            # Color code by agent
+            agent_colors = {
+                'orchestrator': '#1f77b4',
+                'forecast_agent': '#ff7f0e', 
+                'targeted_agent': '#2ca02c',
+                'strategy_agent': '#d62728',
+                'validator_agent': '#9467bd',
+                'web_research_agent': '#8c564b'
+            }
+            
+            color = agent_colors.get(agent, '#7f7f7f')
+            
+            st.markdown(f"""
+            <div style="
+                padding: 8px 12px; 
+                margin: 4px 0; 
+                border-left: 4px solid {color}; 
+                background-color: rgba(128,128,128,0.1);
+                border-radius: 4px;
+            ">
+                <strong style="color: {color};">{agent.replace('_', ' ').title()}</strong> 
+                <span style="color: #666; font-size: 0.9em;">({elapsed:.1f}s)</span><br>
+                {message}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        if len(logs) > 5:
+            st.caption(f"Showing last 5 of {len(logs)} activities...")
+
+
 def render_results(results: Dict[str, Any], show_raw: bool, show_agent_logs: bool):
     """Render the analysis results"""
     
@@ -462,8 +565,6 @@ def render_results(results: Dict[str, Any], show_raw: bool, show_agent_logs: boo
     # Mode-specific rendering
     if "crewai" in mode or methodology == "crewai_superforecaster":
         render_crewai_results(results)
-    elif mode == "forecast":
-        render_forecast_results(results)
     elif mode == "targeted":
         render_targeted_results(results)
     elif mode == "strategy":
@@ -562,75 +663,6 @@ def render_crewai_results(results: Dict[str, Any]):
                 else:
                     st.write(analysis)
 
-
-def render_forecast_results(results: Dict[str, Any]):
-    """Render pure forecasting results"""
-    
-    st.subheader("🎯 Predicted Outcomes")
-    
-    forecasts = results.get("outcomes", [])
-    
-    if not forecasts:
-        st.warning("No forecasts generated")
-        return
-    
-    # Create probability chart
-    if forecasts:
-        df = pd.DataFrame([
-            {
-                "Outcome": f["description"][:50] + "..." if len(f["description"]) > 50 else f["description"],
-                "Probability": f["probability"],
-                "Lower": f.get("confidence_interval", [0, 0])[0],
-                "Upper": f.get("confidence_interval", [0, 0])[1]
-            }
-            for f in forecasts
-        ])
-        
-        fig = px.bar(
-            df, 
-            x="Probability", 
-            y="Outcome",
-            orientation="h",
-            title="Outcome Probabilities",
-            color="Probability",
-            color_continuous_scale="viridis"
-        )
-        fig.update_layout(height=400)
-        st.plotly_chart(fig, use_container_width=True)
-    
-    # Detailed breakdown
-    for i, forecast in enumerate(forecasts, 1):
-        with st.expander(f"#{i}: {forecast['description']}", expanded=i <= 3):
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.metric(
-                    "Probability",
-                    f"{forecast['probability']:.1%}",
-                    help="Estimated likelihood of occurrence"
-                )
-            
-            with col2:
-                ci = forecast.get("confidence_interval", [0, 0])
-                st.metric(
-                    "Confidence Range",
-                    f"{ci[0]:.1%} - {ci[1]:.1%}",
-                    help="Uncertainty range around the estimate"
-                )
-            
-            with col3:
-                timeline = forecast.get("timeline", "Not specified")
-                st.metric("Timeline", timeline)
-            
-            if forecast.get("key_drivers"):
-                st.write("**Key Drivers:**")
-                for driver in forecast["key_drivers"]:
-                    st.write(f"• {driver}")
-            
-            if forecast.get("early_indicators"):
-                st.write("**Early Indicators:**")
-                for indicator in forecast["early_indicators"]:
-                    st.write(f"• {indicator}")
 
 
 def render_targeted_results(results: Dict[str, Any]):

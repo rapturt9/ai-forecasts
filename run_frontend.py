@@ -68,7 +68,7 @@ def main():
         print(f"✅ API key configured: {api_key[:20]}...")
         
     # Show configuration
-    model = os.getenv("DEFAULT_MODEL", "openai/gpt-4o")
+    model = os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20")
     base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
     print(f"🤖 Using model: {model}")
     print(f"🌐 API endpoint: {base_url}")

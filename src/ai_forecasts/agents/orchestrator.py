@@ -16,7 +16,7 @@ from .web_research_agent import WebResearchAgent
 class ForecastOrchestrator:
     """Main orchestrator that coordinates multiple agents to process forecast requests"""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "openai/gpt-4o"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "openai/gpt-4o-2024-11-20"):
         """Initialize the orchestrator with LLM client and agents"""
         
         # Initialize LLM client
@@ -158,7 +158,7 @@ class ForecastOrchestrator:
         except Exception as e:
             # Return error response
             return {
-                "mode": mode.value if mode else "unknown",
+                "mode": mode.value if 'mode' in locals() else "unknown",
                 "error": str(e),
                 "initial_conditions_summary": "Error occurred during processing",
                 "time_horizon": request.time_horizon,

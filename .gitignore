@@ -1,2 +1,3 @@
 .env
 *.pyc
+/src/ai_forecasts/api/__pycache__

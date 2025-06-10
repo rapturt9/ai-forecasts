@@ -6,6 +6,10 @@ from fastapi.responses import JSONResponse
 from typing import Dict, Any, Optional
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from ..models.schemas import ForecastRequest
 from ..agents.orchestrator import ForecastOrchestrator

@@ -2,7 +2,7 @@
   "benchmark_type": "comprehensive_ai_forecasting_2024",
   "methodology": "crewai_multi_agent_superforecaster",
   "num_questions": 5,
-  "timestamp": "2025-06-10T06:36:15.799271",
+  "timestamp": "2025-06-10T08:03:56.984927",
   "metrics": {
     "brier_score": 0.119757073207394,
     "num_predictions": 5,
@@ -62,7 +62,7 @@
         },
         "agent_logs": [
           {
-            "timestamp": "2025-06-10T06:36:14.990860",
+            "timestamp": "2025-06-10T08:03:55.455407",
             "elapsed_seconds": 0.0,
             "agent": "session_start",
             "message": "Starting comprehensive_benchmark analysis",
@@ -111,7 +111,7 @@
         },
         "agent_logs": [
           {
-            "timestamp": "2025-06-10T06:36:15.218710",
+            "timestamp": "2025-06-10T08:03:55.899718",
             "elapsed_seconds": 0.0,
             "agent": "session_start",
             "message": "Starting comprehensive_benchmark analysis",
@@ -160,7 +160,7 @@
         },
         "agent_logs": [
           {
-            "timestamp": "2025-06-10T06:36:15.419969",
+            "timestamp": "2025-06-10T08:03:56.100210",
             "elapsed_seconds": 0.0,
             "agent": "session_start",
             "message": "Starting comprehensive_benchmark analysis",
@@ -209,7 +209,7 @@
         },
         "agent_logs": [
           {
-            "timestamp": "2025-06-10T06:36:15.539240",
+            "timestamp": "2025-06-10T08:03:56.306117",
             "elapsed_seconds": 0.0,
             "agent": "session_start",
             "message": "Starting comprehensive_benchmark analysis",
@@ -258,7 +258,7 @@
         },
         "agent_logs": [
           {
-            "timestamp": "2025-06-10T06:36:15.669682",
+            "timestamp": "2025-06-10T08:03:56.524524",
             "elapsed_seconds": 0.0,
             "agent": "session_start",
             "message": "Starting comprehensive_benchmark analysis",

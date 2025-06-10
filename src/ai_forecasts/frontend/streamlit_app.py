@@ -11,6 +11,10 @@ from typing import Dict, Any, List
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Page configuration
 st.set_page_config(
@@ -1016,7 +1020,3 @@ def render_agent_logs(results: Dict[str, Any]):
                     {message}
                 </div>
                 """, unsafe_allow_html=True)
-
-
-if __name__ == "__main__":
-    main()

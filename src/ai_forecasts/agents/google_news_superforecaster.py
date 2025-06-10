@@ -475,18 +475,49 @@ class GoogleNewsSuperforecaster:
             News Coordination: {{news_coordination_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
-            Your analysis should include:
-            1. Identify relevant reference classes from news coverage
-            2. Calculate or estimate base rates from available news data
-            3. Assess the quality of historical precedent coverage
-            4. Consider multiple reference classes and their base rates
-            5. Evaluate how representative the news coverage is
-            6. Provide confidence intervals for base rate estimates
+            **CRITICAL: You must identify specific numerical base rates from the news research**
             
-            Use the Google News research to find actual historical data and precedents.
-            Start with outside view (base rates) before considering inside view factors.
+            **STEP 1: REFERENCE CLASS IDENTIFICATION**
+            - Find the most relevant reference class from news coverage
+            - Look for historical statistics, success rates, or precedent data
+            - Identify sample size and time period for the reference class
             
-            Output your analysis in JSON format with base rate calculations.
+            **STEP 2: BASE RATE EXTRACTION**
+            - Extract specific percentages or ratios from news sources
+            - If exact numbers aren't available, estimate based on described patterns
+            - Consider multiple reference classes and their different base rates
+            
+            **STEP 3: QUALITY ASSESSMENT**
+            - Evaluate source credibility (academic studies > news analysis > opinion)
+            - Assess recency and relevance of historical data
+            - Consider sample size and representativeness
+            
+            **STEP 4: BASE RATE SELECTION**
+            - Choose the most applicable base rate for this specific question
+            - If multiple base rates exist, weight them by quality and relevance
+            - Provide confidence level in the base rate estimate
+            
+            **OUTPUT FORMAT (EXACT JSON):**
+            {{
+                "primary_base_rate": 0.XX,
+                "base_rate_source": "specific news article or study cited",
+                "reference_class": "exact description of what the base rate represents",
+                "sample_size": "number of cases or time period",
+                "alternative_base_rates": [
+                    {{"rate": 0.XX, "source": "source", "description": "what it measures"}}
+                ],
+                "quality_assessment": "high/medium/low",
+                "confidence_in_base_rate": "high/medium/low",
+                "historical_trends": "any trends over time mentioned in news",
+                "relevance_to_question": "how well the reference class matches current question"
+            }}
+            
+            **EXAMPLES OF GOOD BASE RATES:**
+            - "55% of chess champions successfully defend their title in first attempt"
+            - "23% of IPOs in tech sector exceed initial valuation after 1 year"
+            - "67% of incumbent politicians win re-election in similar conditions"
+            
+            Focus on finding concrete numbers, not vague statements. If no exact base rate exists, estimate based on described patterns and clearly state your reasoning.
             """,
             agent=self.historical_news_analyst,
             expected_output="JSON analysis with base rate calculations, reference classes, and confidence assessments from news sources",
@@ -503,17 +534,67 @@ class GoogleNewsSuperforecaster:
             News Coordination: {{news_coordination_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
-            Your analysis should include:
-            1. Current market/social/political conditions from news coverage
-            2. Recent developments and trend changes reported in news
-            3. How current conditions compare to historical precedents
-            4. Emerging factors that could influence the outcome
-            5. Timeline of recent relevant events from news sources
-            6. Current momentum and trajectory assessment from news trends
+            **CRITICAL: Identify specific factors that should adjust the base rate up or down**
             
-            Focus on how current conditions from news coverage might affect the probability estimate.
+            **STEP 1: FACTOR IDENTIFICATION**
+            - List 3-5 specific current factors from news that could influence the outcome
+            - Focus on recent developments, performance indicators, or changing conditions
+            - Distinguish between factors that increase vs decrease probability
             
-            Output your analysis in JSON format with current context assessment.
+            **STEP 2: FACTOR IMPACT ASSESSMENT**
+            - For each factor, assess its impact strength:
+              * Strong impact: Could change probability by 10-20%
+              * Moderate impact: Could change probability by 5-10%
+              * Weak impact: Could change probability by 1-5%
+            
+            **STEP 3: EVIDENCE STRENGTH EVALUATION**
+            - Rate the evidence quality for each factor:
+              * High: Multiple credible sources, recent, directly relevant
+              * Medium: Some credible sources, somewhat recent/relevant
+              * Low: Limited sources, older, indirectly relevant
+            
+            **STEP 4: DIRECTIONAL ANALYSIS**
+            - Determine if each factor pushes probability higher or lower than base rate
+            - Consider interaction effects between factors
+            - Assess overall momentum/trajectory
+            
+            **OUTPUT FORMAT (EXACT JSON):**
+            {{
+                "positive_factors": [
+                    {{
+                        "factor": "specific factor name",
+                        "description": "detailed description from news",
+                        "impact_strength": "strong/moderate/weak",
+                        "evidence_quality": "high/medium/low",
+                        "estimated_impact": "+X%",
+                        "news_sources": ["source1", "source2"]
+                    }}
+                ],
+                "negative_factors": [
+                    {{
+                        "factor": "specific factor name", 
+                        "description": "detailed description from news",
+                        "impact_strength": "strong/moderate/weak",
+                        "evidence_quality": "high/medium/low",
+                        "estimated_impact": "-X%",
+                        "news_sources": ["source1", "source2"]
+                    }}
+                ],
+                "overall_momentum": "strongly positive/positive/neutral/negative/strongly negative",
+                "key_recent_events": [
+                    {{"date": "YYYY-MM-DD", "event": "description", "impact": "positive/negative/neutral"}}
+                ],
+                "current_vs_historical": "how current conditions compare to historical precedents",
+                "uncertainty_factors": ["factors that make prediction more uncertain"]
+            }}
+            
+            **EXAMPLE FACTORS:**
+            - Recent performance metrics (wins/losses, approval ratings, financial results)
+            - Competitive landscape changes (new competitors, market shifts)
+            - External conditions (economic, political, technological changes)
+            - Preparation/training indicators (investment, team changes, strategy shifts)
+            
+            Be specific about numbers, dates, and measurable changes mentioned in the news.
             """,
             agent=self.current_news_analyst,
             expected_output="JSON analysis of current conditions, recent developments, and trend assessment from news sources",
@@ -587,31 +668,69 @@ class GoogleNewsSuperforecaster:
             Contrarian News Views: {{contrarian_news_task.output}}
             Search Timeframe: {search_timeframe['start']} to {search_timeframe['end']}
             
-            Create a final forecast that follows superforecaster methodology:
+            **CRITICAL: You must provide a precise probability estimate between 0.01 and 0.99**
             
-            1. **Start with base rates** (outside view) from historical news analysis
-            2. **Adjust for specific factors** (inside view) based on current news context
-            3. **Consider multiple perspectives** including expert consensus and contrarian views from news
-            4. **Quantify uncertainty** appropriately and avoid overconfidence
-            5. **Update incrementally** based on strength of news evidence
-            6. **Think probabilistically** with a single probability estimate (0.01 to 0.99)
+            Follow this EXACT superforecaster process:
             
-            Your forecast should include:
-            - Clear probability estimate with reasoning
-            - Confidence level and uncertainty bounds
-            - Key factors that could change the forecast
-            - Summary of most important Google News insights
-            - Explanation of how you weighted different evidence types
-            - Assessment of news coverage quality and completeness
+            **STEP 1: BASE RATE ANALYSIS (Outside View)**
+            - Extract the base rate from historical analysis (e.g., "55% of champions defend titles")
+            - Identify the reference class size and quality
+            - Start with this base rate as your initial estimate
             
-            Follow the superforecaster process:
-            - Break down the question into components
-            - Look for reference classes and base rates from news
-            - Adjust for current specific factors from news coverage
-            - Consider what you might be missing
-            - Avoid common cognitive biases
+            **STEP 2: SPECIFIC FACTOR ADJUSTMENTS (Inside View)**
+            - List 3-5 specific factors from current news that could move probability up or down
+            - For each factor, estimate its impact: Strong (+/-15%), Moderate (+/-8%), Weak (+/-3%)
+            - Apply adjustments incrementally to base rate
             
-            Output your final forecast in JSON format with detailed reasoning.
+            **STEP 3: EVIDENCE QUALITY WEIGHTING**
+            - High quality evidence (credible sources, recent, relevant): Weight 100%
+            - Medium quality evidence: Weight 60%
+            - Low quality evidence: Weight 30%
+            - Adjust your estimate based on evidence quality
+            
+            **STEP 4: EXPERT CONSENSUS INTEGRATION**
+            - If experts agree: Move 5-10% toward consensus
+            - If experts disagree: Stay closer to base rate
+            - Weight expert opinions by track record and expertise
+            
+            **STEP 5: CONTRARIAN ADJUSTMENT**
+            - Consider if contrarian views reveal blind spots
+            - If strong contrarian evidence: Adjust 3-8% toward uncertainty
+            - If weak contrarian evidence: Minimal adjustment (1-2%)
+            
+            **STEP 6: FINAL CALIBRATION**
+            - Avoid overconfidence: Don't go below 5% or above 95% unless overwhelming evidence
+            - Round to nearest 1% (e.g., 0.23, 0.67, 0.84)
+            - Ensure probability reflects true uncertainty
+            
+            **OUTPUT FORMAT (EXACT JSON):**
+            {{
+                "probability": 0.XX,
+                "base_rate": 0.XX,
+                "base_rate_source": "specific historical data from news",
+                "adjustments": [
+                    {{"factor": "specific factor 1", "impact": "+/-X%", "reasoning": "evidence from news"}},
+                    {{"factor": "specific factor 2", "impact": "+/-X%", "reasoning": "evidence from news"}}
+                ],
+                "evidence_quality": "high/medium/low",
+                "expert_consensus": "agree/disagree/mixed",
+                "contrarian_strength": "strong/moderate/weak",
+                "confidence_level": "high/medium/low",
+                "reasoning": "step-by-step calculation showing base rate + adjustments = final probability",
+                "key_uncertainties": ["uncertainty 1", "uncertainty 2"],
+                "news_research_quality": "assessment of Google News coverage completeness"
+            }}
+            
+            **EXAMPLE CALCULATION:**
+            Base rate: 55% (historical championship defense rate)
+            - Current poor performance: -12% (strong negative factor)
+            - Strong competition: -8% (moderate negative factor)  
+            - Training preparation: +3% (weak positive factor)
+            Expert consensus: Mixed (no adjustment)
+            Contrarian views: Moderate (-3% toward uncertainty)
+            Final: 55% - 12% - 8% + 3% - 3% = 35% → 0.35
+            
+            Be precise, show your work, and avoid round numbers like 0.50 unless truly justified.
             """,
             agent=self.synthesis_expert,
             expected_output="JSON final forecast with probability, reasoning, confidence assessment, and Google News research integration following superforecaster methodology",

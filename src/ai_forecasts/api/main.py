@@ -9,6 +9,7 @@ from datetime import datetime
 
 from ..models.schemas import ForecastRequest
 from ..agents.orchestrator import ForecastOrchestrator
+from ..agents.crewai_superforecaster import CrewAISuperforecaster
 from ..utils.agent_logger import agent_logger
 
 # Initialize FastAPI app
@@ -29,8 +30,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize orchestrator
+# Initialize orchestrators
 orchestrator = None
+crewai_forecaster = None
 
 def get_orchestrator():
     """Get or create the orchestrator instance"""
@@ -40,6 +42,16 @@ def get_orchestrator():
         model = os.getenv("DEFAULT_MODEL", "openai/gpt-4o")
         orchestrator = ForecastOrchestrator(api_key=api_key, model=model)
     return orchestrator
+
+def get_crewai_forecaster():
+    """Get or create the CrewAI forecaster instance"""
+    global crewai_forecaster
+    if crewai_forecaster is None:
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY environment variable is required")
+        crewai_forecaster = CrewAISuperforecaster(api_key)
+    return crewai_forecaster
 
 
 @app.get("/")
@@ -153,6 +165,71 @@ async def forecast_raw(request_data: Dict[str, Any]):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+@app.post("/forecast/crewai")
+async def forecast_crewai(request: ForecastRequest, background_tasks: BackgroundTasks):
+    """
+    CrewAI multi-agent superforecaster endpoint with enhanced methodology
+    """
+    try:
+        # Start logging session
+        mode = "crewai_forecast"
+        if request.outcomes_of_interest:
+            mode = "crewai_targeted"
+        elif request.desired_outcome:
+            mode = "crewai_strategy"
+        
+        agent_logger.start_session(mode, request.dict())
+        
+        # Get CrewAI forecaster
+        forecaster = get_crewai_forecaster()
+        
+        # Determine the question based on mode
+        if request.desired_outcome:
+            question = f"How can we achieve: {request.desired_outcome}"
+            background = f"Constraints: {', '.join(request.constraints or [])}"
+        elif request.outcomes_of_interest:
+            question = f"What is the probability of these outcomes: {', '.join(request.outcomes_of_interest)}"
+            background = f"Initial conditions: {request.initial_conditions or 'Current state'}"
+        else:
+            question = f"What are the most likely outcomes in the next {request.time_horizon}?"
+            background = f"Initial conditions: {request.initial_conditions or 'Current state'}"
+        
+        # Process with CrewAI
+        forecast_result = forecaster.forecast(
+            question=question,
+            background=background,
+            cutoff_date=None,  # Use current date
+            time_horizon=request.time_horizon
+        )
+        
+        # Convert to API response format
+        results = {
+            "mode": mode,
+            "question": question,
+            "time_horizon": request.time_horizon,
+            "methodology": "crewai_superforecaster",
+            "forecast": {
+                "probability": forecast_result.probability,
+                "confidence_level": forecast_result.confidence_level,
+                "reasoning": forecast_result.reasoning,
+                "base_rate": forecast_result.base_rate,
+                "evidence_quality": forecast_result.evidence_quality,
+                "methodology_components": forecast_result.methodology_components
+            },
+            "agent_analysis": forecast_result.full_analysis,
+            "agent_logs": agent_logger.get_logs(),
+            "processing_summary": agent_logger.get_summary(),
+            "timestamp": datetime.now().isoformat(),
+            "success": True
+        }
+        
+        return results
+        
+    except Exception as e:
+        agent_logger.log("error", f"CrewAI forecast failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"CrewAI forecast error: {str(e)}")
 
 
 @app.get("/modes")

@@ -22,11 +22,17 @@ An AI-powered system that performs bidirectional analysis: forecasting probable 
 
 ### Key Capabilities
 
-- **Multi-Agent Architecture**: Specialized AI agents for forecasting, targeted analysis, strategy generation, and validation
-- **Rigorous Methodology**: Uses reference class forecasting, base rates, and probabilistic reasoning
-- **Comprehensive Analysis**: Includes gap analysis, risk assessment, and contingency planning
-- **Quality Validation**: Built-in validation and calibration checks
-- **Multiple Interfaces**: Both API and web interface available
+- **🤖 CrewAI Multi-Agent System**: 5 specialized agents implementing superforecaster methodologies
+  - **Base Rate Analyst**: Reference class forecasting and historical analysis
+  - **Evidence Researcher**: Systematic evidence gathering and quality evaluation
+  - **Perspective Analyst**: Multiple scenario analysis and bias detection
+  - **Uncertainty Quantifier**: Confidence assessment and calibration
+  - **Synthesis Expert**: Final forecast integration and reasoning
+- **🧠 Superforecaster Methodology**: Proven techniques from top human forecasters
+- **📊 Enhanced Analysis**: Evidence quality scoring, methodology tracking, agent logs
+- **🔬 Rigorous Validation**: Multi-dimensional quality assessment and calibration
+- **🌐 Interactive Frontend**: Easy-to-use web interface with example buttons and real-time results
+- **⚡ Flexible Architecture**: Choose between standard or enhanced CrewAI analysis
 
 ## 🚀 Quick Start
 
@@ -53,19 +59,31 @@ pip install -r requirements.txt
 3. Set up environment variables:
 
 ```bash
-cp .env.example .env
-# Edit .env with your OpenRouter API key
+export OPENROUTER_API_KEY="your-api-key-here"
 ```
 
-### Running the System
+### 🎯 **One-Command Launch**
 
-1. **Start the API server:**
+**Run the complete system with one command:**
+
+```bash
+python run_frontend.py
+```
+
+This will automatically:
+- Start the API server on port 12000
+- Launch the Streamlit frontend on port 12001
+- Open your browser to the web interface
+
+**Alternative: Manual Setup**
+
+1. **Start the API server (Terminal 1):**
 
 ```bash
 python run_api.py
 ```
 
-2. **Start the web interface:**
+2. **Start the web interface (Terminal 2):**
 
 ```bash
 python run_frontend.py
@@ -82,6 +100,33 @@ python demo.py
 - **Web Interface**: https://work-2-ypcpnwlsffvpolgg.prod-runtime.all-hands.dev
 - **API Documentation**: https://work-1-ypcpnwlsffvpolgg.prod-runtime.all-hands.dev/docs
 - **API Health Check**: https://work-1-ypcpnwlsffvpolgg.prod-runtime.all-hands.dev/health
+
+## 🎯 Frontend Features
+
+### Interactive Web Interface
+
+The Streamlit frontend provides an intuitive interface with:
+
+- **📋 Quick Example Buttons**: Click to populate forms with realistic examples
+- **🤖 CrewAI Toggle**: Switch between standard and enhanced multi-agent analysis
+- **📊 Real-time Results**: See probability estimates, confidence levels, and reasoning
+- **🔍 Agent Logs**: View intermediate analysis from each specialized agent
+- **📈 Visual Charts**: Interactive probability distributions and confidence intervals
+- **🔬 Methodology Breakdown**: Detailed view of superforecaster techniques used
+
+### Three Analysis Modes
+
+1. **🎯 Forecast Outcomes**: Predict likely future developments
+2. **📊 Evaluate Specific Outcomes**: Assess probability of specific events
+3. **🚀 Find Path to Desired Outcome**: Generate strategic implementation plans
+
+### Enhanced Output Display
+
+- **Probability Metrics**: Main forecast with confidence intervals
+- **Base Rate Analysis**: Historical reference class comparisons  
+- **Evidence Quality**: Systematic evaluation of information sources
+- **Agent Analysis**: Breakdown of each specialist agent's contribution
+- **Methodology Components**: Detailed superforecaster techniques applied
 
 ## 📖 Usage Examples
 

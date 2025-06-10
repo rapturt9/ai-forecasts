@@ -18,7 +18,7 @@ st.set_page_config(
 )
 
 # Constants
-API_BASE_URL = "http://localhost:12002"
+API_BASE_URL = "http://localhost:12000"
 
 def main():
     """Main Streamlit application"""
@@ -70,8 +70,10 @@ def main():
         
         # Advanced options
         st.subheader("Advanced Options")
+        use_crewai = st.checkbox("🤖 Use CrewAI Multi-Agent System", value=True, help="Enhanced superforecaster methodology with 5 specialized agents")
         use_validation = st.checkbox("Enable validation", value=True, help="Adds quality checks but takes longer")
         show_raw_output = st.checkbox("Show raw output", value=False, help="Display technical details")
+        show_agent_logs = st.checkbox("Show agent logs", value=True, help="Display intermediate agent analysis")
     
     # Main content area
     col1, col2 = st.columns([2, 1])
@@ -79,11 +81,11 @@ def main():
     with col1:
         # Input form based on selected mode
         if "Forecast Outcomes" in mode:
-            results = render_forecast_mode(use_validation)
+            results = render_forecast_mode(use_validation, use_crewai)
         elif "Evaluate Specific Outcomes" in mode:
-            results = render_targeted_mode(use_validation)
+            results = render_targeted_mode(use_validation, use_crewai)
         elif "Find Path to Desired Outcome" in mode:
-            results = render_strategy_mode(use_validation)
+            results = render_strategy_mode(use_validation, use_crewai)
     
     with col2:
         # Help and examples
@@ -92,10 +94,10 @@ def main():
     # Display results if available
     if 'results' in locals() and results:
         st.divider()
-        render_results(results, show_raw_output)
+        render_results(results, show_raw_output, show_agent_logs)
 
 
-def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
+def render_forecast_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
     """Render the pure forecasting mode interface"""
     
     st.header("🎯 Forecast Likely Outcomes")
@@ -175,13 +177,13 @@ def render_forecast_mode(use_validation: bool) -> Dict[str, Any]:
         
         # Make API call
         with st.spinner("Generating forecast..."):
-            results = make_api_call("/forecast", request_data, use_validation)
+            results = make_api_call("/forecast", request_data, use_validation, use_crewai)
             return results
     
     return None
 
 
-def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
+def render_targeted_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
     """Render the targeted forecasting mode interface"""
     
     st.header("📊 Evaluate Specific Outcomes")
@@ -267,13 +269,13 @@ def render_targeted_mode(use_validation: bool) -> Dict[str, Any]:
         
         # Make API call
         with st.spinner("Evaluating outcomes..."):
-            results = make_api_call("/forecast", request_data, use_validation)
+            results = make_api_call("/forecast", request_data, use_validation, use_crewai)
             return results
     
     return None
 
 
-def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
+def render_strategy_mode(use_validation: bool, use_crewai: bool) -> Dict[str, Any]:
     """Render the strategy generation mode interface"""
     
     st.header("🚀 Find Path to Desired Outcome")
@@ -360,7 +362,7 @@ def render_strategy_mode(use_validation: bool) -> Dict[str, Any]:
         
         # Make API call
         with st.spinner("Generating strategy..."):
-            results = make_api_call("/forecast", request_data, use_validation)
+            results = make_api_call("/forecast", request_data, use_validation, use_crewai)
             return results
     
     return None
@@ -428,17 +430,19 @@ def render_help_panel(mode: str):
                 st.error(f"❌ Cannot connect to API: {str(e)}")
 
 
-def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool) -> Dict[str, Any]:
+def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool, use_crewai: bool = False) -> Dict[str, Any]:
     """Make API call to the forecasting system"""
     
     try:
-        # Choose endpoint based on validation preference
-        if use_validation:
+        # Choose endpoint based on preferences
+        if use_crewai:
+            url = f"{API_BASE_URL}{endpoint}/crewai"
+        elif use_validation:
             url = f"{API_BASE_URL}{endpoint}"
         else:
             url = f"{API_BASE_URL}{endpoint}/quick"
         
-        response = requests.post(url, json=data, timeout=120)
+        response = requests.post(url, json=data, timeout=300)  # Increased timeout for CrewAI
         
         if response.status_code == 200:
             return response.json()
@@ -457,7 +461,7 @@ def make_api_call(endpoint: str, data: Dict[str, Any], use_validation: bool) -> 
         return None
 
 
-def render_results(results: Dict[str, Any], show_raw: bool):
+def render_results(results: Dict[str, Any], show_raw: bool, show_agent_logs: bool):
     """Render the analysis results"""
     
     if not results or results.get("error"):
@@ -465,11 +469,18 @@ def render_results(results: Dict[str, Any], show_raw: bool):
         return
     
     mode = results.get("mode", "unknown")
+    methodology = results.get("methodology", "standard")
     
     st.header("📋 Analysis Results")
     
+    # Show methodology info
+    if methodology == "crewai_superforecaster":
+        st.info("🤖 **Enhanced Analysis**: This forecast was generated using the CrewAI multi-agent superforecaster system with 5 specialized agents.")
+    
     # Mode-specific rendering
-    if mode == "forecast":
+    if "crewai" in mode or methodology == "crewai_superforecaster":
+        render_crewai_results(results)
+    elif mode == "forecast":
         render_forecast_results(results)
     elif mode == "targeted":
         render_targeted_results(results)
@@ -477,7 +488,7 @@ def render_results(results: Dict[str, Any], show_raw: bool):
         render_strategy_results(results)
     
     # Agent computation logs
-    if "agent_logs" in results or "processing_summary" in results:
+    if show_agent_logs and ("agent_logs" in results or "processing_summary" in results):
         render_agent_logs(results)
     
     # Validation results
@@ -488,6 +499,86 @@ def render_results(results: Dict[str, Any], show_raw: bool):
     if show_raw:
         with st.expander("🔍 Raw Output"):
             st.json(results)
+
+
+def render_crewai_results(results: Dict[str, Any]):
+    """Render CrewAI multi-agent superforecaster results"""
+    
+    forecast = results.get("forecast", {})
+    agent_analysis = results.get("agent_analysis", {})
+    
+    # Main forecast display
+    st.subheader("🎯 Superforecaster Analysis")
+    
+    # Key metrics
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        probability = forecast.get("probability", 0)
+        st.metric(
+            "Probability",
+            f"{probability:.1%}",
+            help="Final probability estimate from multi-agent analysis"
+        )
+    
+    with col2:
+        confidence = forecast.get("confidence_level", "Unknown")
+        st.metric(
+            "Confidence",
+            confidence,
+            help="Confidence level in the forecast"
+        )
+    
+    with col3:
+        base_rate = forecast.get("base_rate", 0)
+        st.metric(
+            "Base Rate",
+            f"{base_rate:.1%}",
+            help="Historical base rate for similar situations"
+        )
+    
+    with col4:
+        evidence_quality = forecast.get("evidence_quality", 0)
+        st.metric(
+            "Evidence Quality",
+            f"{evidence_quality:.1%}",
+            help="Quality score of available evidence"
+        )
+    
+    # Main reasoning
+    if forecast.get("reasoning"):
+        st.subheader("🧠 Reasoning")
+        st.write(forecast["reasoning"])
+    
+    # Methodology components
+    methodology = forecast.get("methodology_components", {})
+    if methodology:
+        st.subheader("🔬 Methodology Components")
+        
+        for component, details in methodology.items():
+            with st.expander(f"📋 {component.replace('_', ' ').title()}", expanded=False):
+                if isinstance(details, dict):
+                    for key, value in details.items():
+                        st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                else:
+                    st.write(details)
+    
+    # Agent analysis breakdown
+    if agent_analysis:
+        st.subheader("🤖 Agent Analysis Breakdown")
+        
+        for agent_name, analysis in agent_analysis.items():
+            with st.expander(f"🔍 {agent_name.replace('_', ' ').title()}", expanded=False):
+                if isinstance(analysis, dict):
+                    for key, value in analysis.items():
+                        if isinstance(value, list):
+                            st.write(f"**{key.replace('_', ' ').title()}:**")
+                            for item in value:
+                                st.write(f"• {item}")
+                        else:
+                            st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                else:
+                    st.write(analysis)
 
 
 def render_forecast_results(results: Dict[str, Any]):

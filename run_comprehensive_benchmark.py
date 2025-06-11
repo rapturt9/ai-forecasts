@@ -28,7 +28,7 @@ from ai_forecasts.utils.agent_logger import agent_logger
 class ComprehensiveBenchmarkRunner:
     """Comprehensive benchmark runner using CrewAI multi-agent superforecaster system"""
     
-    def __init__(self, max_workers: int = 3):
+    def __init__(self, max_workers: int = 10):
         # Set API key if not already set
         if not os.getenv("OPENROUTER_API_KEY"):
             os.environ["OPENROUTER_API_KEY"] = "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"

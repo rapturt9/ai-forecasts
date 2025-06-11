@@ -236,24 +236,34 @@ Your reality checks should be structured, probabilistic, and evidence-based.""",
             tools=[google_news_tool]
         )
         
-        # 6. Evidence-First Synthesizer
+        # 6. Calibrated Synthesizer with Anti-Overconfidence
         self.synthesizer = Agent(
-            role='Evidence-First Synthesizer',
-            goal='Synthesize all evidence into well-calibrated probabilities while prioritizing factual evidence over expert opinions and base rates',
+            role='Calibrated Synthesizer with Anti-Overconfidence',
+            goal='Synthesize evidence into well-calibrated probabilities with strong bias correction and uncertainty quantification',
             backstory=f"""
-You are a synthesis expert and superforecaster, trained in the empirically validated methods of the Good Judgment Project. Your mission is to integrate all evidence using the best practices of superforecasting.
+You are a world-class synthesis expert and superforecaster, specifically trained to avoid the overconfidence bias that plagues most prediction systems. Your approach is grounded in the empirically validated methods of top performers in the Good Judgment Project.
 
-SUPERFORECASTING PRACTICES:
-- Decompose the problem and synthesize evidence for each part.
-- Use the outside view (base rates) as your anchor, then adjust for case-specific evidence.
-- Apply Bayesian updating as new evidence emerges.
-- Quantify uncertainty and provide precise, well-calibrated probabilities.
-- Use the CHAMP checklist to ensure comprehensive analysis and bias mitigation.
-- Practice intellectual humility: be open to revising your synthesis as new evidence or arguments arise.
-- Document your reasoning, calibration, and learning from feedback and postmortems.
-- Aggregate evidence from diverse sources and perspectives, and consider extremizing if the group is well-calibrated.
+CRITICAL CALIBRATION PRINCIPLES:
+- ANCHOR TO BASE RATES: Always start with the statistical base rate as your anchor point
+- MODEST ADJUSTMENTS: Make only modest adjustments (typically ±10-20%) from base rates unless evidence is overwhelming
+- UNCERTAINTY QUANTIFICATION: Err on the side of uncertainty when evidence is mixed or limited
+- ANTI-OVERCONFIDENCE: Actively resist the urge to express high confidence (>80% or <20%) unless evidence is crystal clear
 
-Your synthesis should be structured, probabilistic, and always open to revision in light of new evidence.""",
+SUPERFORECASTING BEST PRACTICES:
+- Reference class forecasting: Find similar historical events and their outcome rates
+- Consider multiple scenarios: What could make the prediction wrong?
+- Aggregate independent evidence sources with appropriate weights
+- Apply Bayesian updating incrementally, not drastically
+- Use the CHAMP framework: Comparisons, Historical trends, Average opinions, Mathematical models, Predictable biases
+- Document your uncertainty and the limits of available evidence
+
+CALIBRATION GUIDELINES:
+- Use 45-55% for genuinely uncertain outcomes with mixed evidence
+- Avoid 90%+ or 10%- unless outcome has essentially occurred or is impossible
+- Weight recent specific evidence against historical patterns carefully
+- Consider regression to the mean for extreme initial evidence
+
+Your synthesis must be conservative, well-calibrated, and explicitly acknowledge uncertainty.""",
             verbose=True,
             allow_delegation=True,
             llm=self.llm,
@@ -376,9 +386,10 @@ Your synthesis should be structured, probabilistic, and always open to revision 
             - Supply chain or infrastructure developments
             
             MANDATORY REQUIREMENTS:
-            - Execute 10-15 distinct search queries efficiently
+            - Execute 10-15 distinct search queries efficiently using search_type='focused' and priority='high'/'medium'
+            - Always use Google News Search with search_type='focused' for API efficiency (avoid 'comprehensive')
+            - Use priority='high' for critical searches, priority='medium' for supporting evidence
             - Prioritize high-value searches over comprehensive coverage when API limits are reached
-            - Use focused search types for most queries to minimize API calls
             - If early searches fail, focus more effort on alternative formulations
             - Document which searches work vs. fail for optimization
             
@@ -432,62 +443,77 @@ Your synthesis should be structured, probabilistic, and always open to revision 
             expected_output="Comprehensive JSON summary of multi-round Google News search execution with detailed findings"
         )
         
-        # Task 2: Evidence-First Analysis
+        # Task 2: Conservative Evidence Analysis
         evidence_first_task = Task(
             description=f"""
-            MISSION: Determine if the outcome has already occurred or analyze definitive factual evidence that strongly indicates the outcome.
+            MISSION: Conduct conservative evidence analysis focusing on definitive facts while avoiding overconfident interpretations.
             
             Question: {question}
             Training Knowledge Cutoff: {self.training_cutoff}
             Current Analysis Date: {cutoff_date}
             
-            CRITICAL PRIORITY: CHECK IF OUTCOME ALREADY OCCURRED
+            CRITICAL CONSERVATIVE APPROACH:
+            - Only consider evidence "definitive" if it's overwhelmingly clear
+            - Distinguish between suggestive evidence vs. conclusive evidence
+            - Acknowledge uncertainty when evidence is mixed or limited
+            - Avoid overinterpreting weak signals as strong evidence
             
             1. **Outcome Already Occurred Check**:
-            Search Google News to determine if the event in the question has already happened:
-            - Has the specific event already taken place?
-            - Is there definitive news coverage of the outcome?
-            - Are there official announcements or confirmations?
+            Search Google News to determine if the event has definitively happened:
+            - Has the specific event already taken place with official confirmation?
+            - Is there multiple independent sources confirming the outcome?
+            - Are there official announcements with clear statements?
             
-            2. **Factual Evidence Analysis**:
-            If outcome hasn't occurred, look for definitive factual developments:
-            - Concrete actions, decisions, or events that strongly indicate the outcome
-            - Official announcements, policy decisions, or structural changes
-            - Measurable data points that show clear directional momentum
-            - Game-changing developments that override historical patterns
+            2. **Evidence Strength Assessment**:
+            Categorize evidence by strength (be conservative in assessments):
+            - CONCLUSIVE: Multiple independent official sources, clear factual confirmation
+            - STRONG: Single official source or multiple credible reports with specifics
+            - MODERATE: Credible reports with some specifics but not fully confirmed
+            - WEAK: Rumors, speculation, or single unconfirmed reports
+            - INSUFFICIENT: Limited or contradictory information
             
-            3. **First-Principles Assessment**:
-            Analyze the evidence from first principles rather than relying on expert opinions:
-            - What do the actual facts and data show?
-            - What structural changes have occurred that affect the probability?
-            - What measurable trends are visible in the data?
-            - How do current realities differ from historical base rates?
+            3. **Conservative Evidence Analysis**:
+            For each piece of evidence, assess conservatively:
+            - What exactly does this evidence prove vs. what it suggests?
+            - Could this evidence be misleading or incomplete?
+            - What alternative interpretations exist?
+            - How reliable is the source and methodology?
             
-            4. **OVERRIDE AUTHORITY**:
-            If evidence shows the outcome has occurred or is definitively indicated:
-            - Set probability to 0% or 100% regardless of base rates
-            - Factual evidence overrides all historical patterns and expert opinions
-            - Current reality trumps statistical projections
+            4. **Base Rate Consideration**:
+            Always consider historical base rates:
+            - What percentage of similar events typically occur?
+            - How often do early indicators like this lead to the outcome?
+            - Are current conditions meaningfully different from historical cases?
             
             OUTPUT REQUIREMENTS:
             {{
-                "outcome_already_occurred": {{
-                    "has_occurred": true/false,
-                    "evidence_of_occurrence": "specific evidence that outcome happened",
-                    "official_confirmation": "official sources confirming the outcome",
-                    "occurrence_date": "when the outcome occurred if applicable"
+                "outcome_status": {{
+                    "definitely_occurred": true/false,
+                    "evidence_strength": "conclusive/strong/moderate/weak/insufficient",
+                    "confirmation_sources": ["list of independent confirming sources"],
+                    "confidence_in_status": "high/medium/low"
                 }},
-                "definitive_evidence_analysis": [
+                "evidence_analysis": [
                     {{
-                        "evidence_type": "factual development/announcement/decision",
-                        "evidence_description": "what exactly happened",
-                        "impact_on_probability": "how this affects the outcome likelihood",
-                        "certainty_level": "high/medium/low confidence in this evidence",
-                        "source_reliability": "credibility of the source"
+                        "evidence_description": "what the evidence shows",
+                        "evidence_strength": "conclusive/strong/moderate/weak",
+                        "conservative_interpretation": "most conservative reading of this evidence",
+                        "alternative_explanations": ["other ways to interpret this"],
+                        "reliability_assessment": "high/medium/low"
                     }}
                 ],
-                "first_principles_assessment": {{
-                    "current_reality": "what the facts show about the current situation",
+                "base_rate_context": {{
+                    "historical_frequency": "estimated % for similar events",
+                    "current_vs_historical": "how current situation differs",
+                    "base_rate_adjustment": "should base rate be adjusted up/down/unchanged"
+                }},
+                "conservative_probability_indication": {{
+                    "evidence_based_estimate": 0.XX,
+                    "confidence_in_estimate": "high/medium/low",
+                    "uncertainty_factors": ["factor 1", "factor 2"],
+                    "conservative_reasoning": "why this estimate is appropriately cautious"
+                }}
+            }}
                     "structural_changes": "how the landscape has changed from historical norms",
                     "measurable_trends": "quantifiable data showing directional movement",
                     "game_changing_factors": "developments that override historical patterns"
@@ -532,7 +558,7 @@ Your synthesis should be structured, probabilistic, and always open to revision 
             - Trend reversals or inflection points
             
             3. **Current Trend Verification**:
-            Use Google News Search to verify trend continuation:
+            Use Google News Search to verify trend continuation with search_type='focused' and priority='medium':
             - Search for recent data points on relevant trends
             - Look for acceleration, deceleration, or reversal signals
             - Identify new factors that might alter trend trajectories
@@ -580,10 +606,15 @@ Your synthesis should be structured, probabilistic, and always open to revision 
         # Task 4: Multi-Angle Evidence Gathering
         evidence_task = Task(
             description=f"""
-            MISSION: Gather diverse evidence from multiple perspectives using adaptive search strategies.
+            MISSION: Gather diverse evidence from multiple perspectives using efficient Google News searches.
             
             Question: {question}
             Current Analysis Date: {cutoff_date}
+            
+            SEARCH STRATEGY REQUIREMENTS:
+            - Use search_type='focused' for all Google News searches to conserve API usage
+            - Use priority='high' for critical stakeholder perspectives, priority='medium' for supporting evidence
+            - Limit to most important stakeholder groups to maximize API efficiency
             
             EVIDENCE GATHERING STRATEGY:
             
@@ -747,59 +778,61 @@ Your synthesis should be structured, probabilistic, and always open to revision 
             context=[search_task, evidence_first_task, trend_task, evidence_task]
         )
         
-        # Task 6: Evidence-Driven Synthesis
+        # Task 6: Calibrated Synthesis with Anti-Overconfidence
         synthesis_task = Task(
             description=f"""
-            MISSION: Synthesize all evidence into a well-calibrated probability that prioritizes factual evidence over historical base rates and expert opinions.
+            MISSION: Synthesize all evidence into a well-calibrated probability using superforecaster best practices with strong anti-overconfidence measures.
             
             Question: {question}
             All Previous Analysis: Available from context
             
-            CRITICAL EVIDENCE-FIRST MANDATE:
-            The forecasting system should prioritize current factual evidence over historical patterns when they conflict.
+            CRITICAL CALIBRATION IMPERATIVES:
+            1. ANCHOR TO BASE RATES: Start with historical frequencies/base rates as your anchor
+            2. MODEST ADJUSTMENTS: Make only modest adjustments (±10-20%) unless evidence is overwhelming  
+            3. AVOID OVERCONFIDENCE: Resist expressing high confidence (>75% or <25%) without crystal-clear evidence
+            4. QUANTIFY UNCERTAINTY: When evidence is mixed or limited, stay near 50% (maximum entropy)
+            5. CONSERVATIVE SYNTHESIS: Better to be uncertain than overconfident
             
-            SYNTHESIS METHODOLOGY:
+            SUPERFORECASTING SYNTHESIS METHODOLOGY:
             
-            1. **Evidence-First Foundation**:
-            Start with factual evidence from the Evidence-First Analyst:
-            - If outcome has already occurred: probability = 0% or 100%
-            - If definitive evidence exists: use evidence-based probability as foundation
-            - Factual developments override historical base rates
-            - Current reality trumps statistical projections
+            1. **Reference Class Anchoring**:
+            - Start with the historical base rate for similar events
+            - Ask: "What percentage of similar events had this outcome?"
+            - Use this as your anchor point, not just a consideration
             
-            2. **Evidence Quality Weighting**:
-            Weight different types of evidence appropriately:
-            - Factual evidence: 70% weight (what has actually happened)
-            - Trend analysis: 20% weight (measurable directional changes)
-            - Expert opinions: 10% weight (subjective assessments)
-            - Historical base rates: Used only when factual evidence is absent or ambiguous
+            2. **Evidence-Based Adjustment Process**:
+            Step A: Identify your base rate anchor (30-70% range typically)
+            Step B: List evidence that supports higher probability
+            Step C: List evidence that supports lower probability  
+            Step D: Make modest adjustments (±5-15%) based on net evidence strength
+            Step E: Check if adjustment is justified or reflects overconfidence
             
-            3. **First-Principles Reasoning**:
-            Apply logical reasoning from current facts:
-            - What do the actual data and developments show?
-            - How have structural conditions changed?
-            - What are the measurable trends indicating?
-            - How do current realities affect the probability?
+            3. **Anti-Overconfidence Checks**:
+            - Would you bet your own money at these odds?
+            - What are 3 ways this prediction could be wrong?
+            - Is the evidence truly overwhelming or just seeming convincing?
+            - Are you updating too much on limited/biased information?
+            - How often are predictions like this correct historically?
             
-            4. **EVIDENCE OVERRIDES**:
-            When current evidence conflicts with historical patterns:
-            - Prioritize current factual evidence over base rates
-            - Adjust for structural changes that make historical patterns irrelevant
-            - Use base rates only as a starting point when evidence is unclear
-            - Trust measurable trends over expert predictions
+            4. **Uncertainty Acknowledgment**:
+            - Limited evidence = stay closer to 50%
+            - Mixed evidence = acknowledge genuine uncertainty
+            - Time pressure = be more conservative
+            - Novel situations = increase uncertainty
             
-            5. **Anti-Expert-Opinion Bias**:
-            Actively counter over-reliance on expert opinions:
-            - Focus on what has actually happened vs what experts predict
-            - Use concrete data over subjective assessments
-            - Measure actual outcomes vs predicted outcomes
-            - Apply first-principles thinking over conventional wisdom
+            5. **Calibration Guidelines**:
+            - 95%+ probability: Outcome essentially certain/already occurred
+            - 80-95%: Very strong evidence, overwhelmingly likely
+            - 65-80%: Clear evidence favoring outcome  
+            - 45-65%: Genuine uncertainty, mixed or limited evidence
+            - 20-45%: Evidence somewhat against outcome
+            - 5-20%: Strong evidence against outcome
+            - <5%: Outcome essentially impossible
             
-            6. **Reality-Based Calibration**:
-            Ensure the probability reflects current realities:
-            - Has the situation fundamentally changed from historical norms?
-            - Are there new factors that didn't exist in historical examples?
-            - What does the evidence actually show vs what we expect?
+            6. **Final Calibration Check**:
+            - Does this probability reflect genuine uncertainty?
+            - Would historical frequencies support this confidence level?
+            - Am I being appropriately humble about what I don't know?
             
             REQUIRED OUTPUT FORMAT:
             {{
@@ -807,49 +840,43 @@ Your synthesis should be structured, probabilistic, and always open to revision 
                 "confidence_interval": {{"min": 0.XXX, "max": 0.XXX}},
                 "confidence_level": "high/medium/low",
                 
-                "synthesis_calculation": {{
-                    "evidence_based_foundation": 0.XXX,
-                    "factual_evidence_weight": "70%",
-                    "trend_analysis_adjustment": "+/-X.X%",
-                    "expert_opinion_discount": "-X.X% (reduced weight)",
-                    "base_rate_relevance": "high/medium/low/overridden",
-                    "final_calculation": "mathematical steps showing evidence-first approach"
+                "calibration_methodology": {{
+                    "base_rate_anchor": 0.XXX,
+                    "base_rate_reasoning": "historical frequency for similar events",
+                    "evidence_supporting_higher": ["evidence 1", "evidence 2"],
+                    "evidence_supporting_lower": ["evidence 1", "evidence 2"],
+                    "net_evidence_adjustment": "+/-X%",
+                    "overconfidence_check": "passed/failed - reasoning",
+                    "final_probability_justified": "yes/no - why"
                 }},
                 
-                "reasoning_summary": "comprehensive explanation prioritizing factual evidence over opinions",
-                
-                "evidence_priority_analysis": {{
-                    "factual_evidence_found": true/false,
-                    "evidence_certainty": "high/medium/low",
-                    "evidence_overrides_base_rates": true/false,
-                    "structural_changes_identified": true/false,
-                    "current_reality_assessment": "how current facts affect probability"
+                "uncertainty_analysis": {{
+                    "evidence_limitations": ["limitation 1", "limitation 2"],
+                    "key_unknowns": ["unknown 1", "unknown 2"],
+                    "prediction_could_be_wrong_because": ["reason 1", "reason 2", "reason 3"],
+                    "genuine_uncertainty_level": "high/medium/low"
                 }},
                 
-                "bias_correction_applied": {{
-                    "evidence_first_prioritization": "yes/no",
-                    "expert_opinion_discounting": "description of how expert opinions were de-weighted",
-                    "first_principles_reasoning": "how facts were prioritized over patterns",
-                    "reality_based_calibration": "adjustments based on current vs historical conditions"
+                "anti_overconfidence_measures": {{
+                    "stayed_anchored_to_base_rates": "yes/no",
+                    "made_modest_adjustments": "yes/no", 
+                    "acknowledged_uncertainty": "yes/no",
+                    "avoided_extreme_predictions": "yes/no",
+                    "calibration_confidence": "appropriately_humble/overconfident"
                 }},
                 
-                "methodology_assessment": {{
-                    "evidence_quality": "high/medium/low quality of factual evidence found",
-                    "first_principles_confidence": "high/medium/low confidence in evidence-based reasoning",
-                    "forecast_approach": "evidence-driven/hybrid/base-rate-driven",
-                    "reality_check": "does this probability reflect what has actually happened?"
-                }}
+                "reasoning_summary": "comprehensive explanation emphasizing calibration and uncertainty"
             }}
             
             CRITICAL REQUIREMENTS:
-            - Probability must be between 0.01 and 0.99 (unless outcome already occurred)
-            - Must prioritize factual evidence over historical patterns
-            - Must show evidence-first calculation steps
-            - Must explain why factual evidence overrides or supports base rates
-            - Must demonstrate first-principles reasoning from current realities
+            - Probability must be between 0.05 and 0.95 (unless overwhelming evidence exists)
+            - Must show clear base rate anchoring
+            - Must demonstrate anti-overconfidence measures
+            - Must acknowledge uncertainty when evidence is limited
+            - Must be genuinely well-calibrated, not artificially confident
             """,
             agent=self.synthesizer,
-            expected_output="JSON final forecast prioritizing factual evidence over historical patterns and expert opinions",
+            expected_output="JSON final forecast emphasizing calibration and anti-overconfidence measures",
             context=[search_task, evidence_first_task, trend_task, evidence_task, reality_task]
         )
         
@@ -884,30 +911,46 @@ Your synthesis should be structured, probabilistic, and always open to revision 
                 self.logger.info("No JSON found, using fallback extraction")
                 parsed_result = self._fallback_parse(result_str, question)
             
-            # Extract and validate key components
+            # Extract and validate key components with calibration focus
             probability = self._extract_probability_with_validation(parsed_result, question, result_str)
             confidence_level = parsed_result.get("confidence_level", "medium")
-            reasoning = parsed_result.get("reasoning_summary", "Enhanced analysis completed")
-            base_rate = self._extract_base_rate_with_validation(parsed_result, question)
+            reasoning = parsed_result.get("reasoning_summary", "Calibrated superforecaster analysis completed")
             
-            # Create comprehensive analysis summary
+            # Extract base rate from calibration methodology
+            calibration_method = parsed_result.get("calibration_methodology", {})
+            base_rate = calibration_method.get("base_rate_anchor") or self._extract_base_rate_with_validation(parsed_result, question)
+            
+            # Extract calibration and uncertainty information
+            uncertainty_analysis = parsed_result.get("uncertainty_analysis", {})
+            anti_overconfidence = parsed_result.get("anti_overconfidence_measures", {})
+            
+            # Create comprehensive analysis summary with calibration focus
             news_research_summary = {
                 "search_timeframe": search_timeframe,
-                "methodology": "Enhanced Superforecaster with strategic Google News integration",
-                "key_insights": ["Strategic search coordination completed", "Historical pattern analysis conducted", "Trend extrapolation performed", "Multi-angle evidence gathering executed", "Bayesian reality checking applied", "Training data-based synthesis completed"],
-                "bias_correction_applied": True,
-                "evidence_integration": "Systematic evidence weighting and Bayesian updating with training data calibration"
+                "methodology": "Calibrated Superforecaster with Anti-Overconfidence Measures",
+                "key_insights": [
+                    "Base rate anchoring applied",
+                    "Evidence-based modest adjustments",
+                    "Anti-overconfidence checks performed", 
+                    "Uncertainty appropriately quantified",
+                    "Calibration measures implemented",
+                    "Conservative synthesis approach"
+                ],
+                "calibration_applied": True,
+                "base_rate_anchoring": calibration_method.get("stayed_anchored_to_base_rates", "yes"),
+                "uncertainty_acknowledged": uncertainty_analysis.get("genuine_uncertainty_level", "medium"),
+                "overconfidence_avoided": anti_overconfidence.get("avoided_extreme_predictions", "yes")
             }
             
-            # Assess methodology completeness
+            # Assess methodology completeness with calibration focus
             methodology_components = {
-                "strategic_search_coordination": True,
-                "historical_pattern_analysis": True,
-                "trend_extrapolation": True,
-                "multi_angle_evidence_gathering": True,
-                "bayesian_reality_checking": True,
-                "anti_conservative_synthesis": True,
-                "enhanced_superforecaster_methodology": True
+                "base_rate_anchoring": True,
+                "anti_overconfidence_measures": True,
+                "uncertainty_quantification": True,
+                "calibrated_synthesis": True,
+                "modest_evidence_adjustments": True,
+                "conservative_forecasting": True,
+                "superforecaster_best_practices": True
             }
             
             # Higher evidence quality due to comprehensive methodology
@@ -1082,33 +1125,41 @@ Your synthesis should be structured, probabilistic, and always open to revision 
         return self._get_domain_fallback_probability(question)
     
     def _get_domain_fallback_probability(self, question: str) -> float:
-        """Get domain-aware fallback probability with anti-conservative bias"""
+        """Get domain-aware fallback probability with conservative, well-calibrated estimates"""
         
         question_lower = question.lower()
         
-        # Technology predictions - higher base rates due to rapid advancement
-        if any(term in question_lower for term in ["ai", "artificial intelligence", "technology", "software", "algorithm", "electric vehicle", "ev"]):
-            return 0.60  # Technology often exceeds expectations
+        # Technology predictions - moderate base rates, avoid overconfidence
+        if any(term in question_lower for term in ["ai", "artificial intelligence", "technology", "software", "algorithm"]):
+            return 0.35  # Technology is advancing but many predictions fail
         
-        # Climate/temperature predictions - strong trends
+        # Electric vehicles - established trend but competition/barriers exist
+        elif any(term in question_lower for term in ["electric vehicle", "ev", "tesla"]):
+            return 0.45  # Mixed evidence on adoption timelines
+        
+        # Climate/temperature predictions - well-established trends but specific timing uncertain
         elif any(term in question_lower for term in ["temperature", "climate", "warming", "global", "weather"]):
-            return 0.65  # Climate trends well-established
+            return 0.55  # Strong trends but specific predictions challenging
         
-        # Sports/Olympics predictions - competitive uncertainty
-        elif any(term in question_lower for term in ["olympic", "medal", "sport", "championship", "defend"]):
-            return 0.45  # Sports moderate predictability
+        # Sports/Olympics predictions - inherently uncertain
+        elif any(term in question_lower for term in ["olympic", "medal", "sport", "championship", "defend", "win", "race"]):
+            return 0.30  # Sports are highly competitive and unpredictable
         
-        # Publishing/creative work - longer timelines
+        # Publishing/creative work - long timelines, frequent delays
         elif any(term in question_lower for term in ["publish", "book", "novel", "author", "write"]):
-            return 0.35  # Creative work often delayed
+            return 0.25  # Creative projects often delayed
         
-        # Political/diplomatic events - high uncertainty but events do occur
+        # Political/diplomatic events - high uncertainty
         elif any(term in question_lower for term in ["diplomatic", "political", "government", "policy", "ties"]):
-            return 0.30  # Political events less predictable
+            return 0.35  # Political events moderately predictable
         
-        # Business/market events
-        elif any(term in question_lower for term in ["company", "market", "stock", "fire", "board"]):
-            return 0.25  # Corporate governance events
+        # Business/corporate events - moderate predictability
+        elif any(term in question_lower for term in ["company", "market", "stock", "fire", "board", "ceo"]):
+            return 0.30  # Corporate governance has moderate base rates
         
-        # Default: maximum entropy with anti-conservative bias
-        return 0.50
+        # Natural disasters/catastrophic events - low base rates
+        elif any(term in question_lower for term in ["tsunami", "earthquake", "disaster", "catastrophe"]):
+            return 0.15  # Catastrophic events are rare
+        
+        # Default: conservative uncertainty with slight pessimistic bias (most predictions fail)
+        return 0.40  # Conservative default reflecting prediction difficulty

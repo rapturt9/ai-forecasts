@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """
-Comprehensive AI Forecasting Benchmark - Uses the best CrewAI multi-agent system
+Comprehensive AI Forecasting Benchmark - Uses the best CrewAI multi-agent system with parallel processing
 """
 
 import json
 import random
 import statistics
+import traceback
 import os
+import asyncio
+import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any
@@ -18,16 +22,13 @@ load_dotenv()
 import sys
 sys.path.append('src')
 
-from ai_forecasts.agents.crewai_superforecaster import CrewAISuperforecaster
 from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
-from ai_forecasts.agents.targeted_agent import TargetedAgent
 from ai_forecasts.utils.agent_logger import agent_logger
-from ai_forecasts.utils.llm_client import LLMClient
 
 class ComprehensiveBenchmarkRunner:
     """Comprehensive benchmark runner using CrewAI multi-agent superforecaster system"""
     
-    def __init__(self):
+    def __init__(self, max_workers: int = 3):
         # Set API key if not already set
         if not os.getenv("OPENROUTER_API_KEY"):
             os.environ["OPENROUTER_API_KEY"] = "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"
@@ -38,6 +39,7 @@ class ComprehensiveBenchmarkRunner:
         
         self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
         self.serp_api_key = os.getenv("SERP_API_KEY")
+        self.max_workers = max_workers  # Control parallel execution
         
         if not self.openrouter_api_key:
             raise ValueError("OPENROUTER_API_KEY environment variable is required")
@@ -47,14 +49,19 @@ class ComprehensiveBenchmarkRunner:
         # Use Google News Superforecaster with SERP API integration
         print("🔄 Using Google News Superforecaster with SERP API")
         print("📰 This system will search Google News with timestamps from June 2024 to freeze date")
-        self.superforecaster = GoogleNewsSuperforecaster(
+        print(f"⚡ Parallel processing enabled with {max_workers} concurrent workers")
+        
+        # We'll create superforecaster instances per worker to avoid conflicts
+        self.use_google_news = True
+        self.logger = agent_logger
+        self.questions = []
+    
+    def _create_superforecaster_instance(self):
+        """Create a new superforecaster instance for parallel processing"""
+        return GoogleNewsSuperforecaster(
             openrouter_api_key=self.openrouter_api_key,
             serp_api_key=self.serp_api_key
         )
-        self.use_google_news = True
-        
-        self.logger = agent_logger
-        self.questions = []
         
     def load_human_questions(self, filename: str = "forecastbench_human_2024.json") -> None:
         """Load questions from human benchmark dataset"""
@@ -128,6 +135,9 @@ class ComprehensiveBenchmarkRunner:
             print(f"📅 Searching Google News from June 2024 to: {question['freeze_datetime']}")
         
         try:
+            # Create a fresh superforecaster instance for each prediction to avoid conflicts
+            superforecaster = self._create_superforecaster_instance()
+            
             # Start logging session
             self.logger.start_session("comprehensive_benchmark", {
                 "question_id": question["id"],
@@ -138,7 +148,7 @@ class ComprehensiveBenchmarkRunner:
             
             if self.use_google_news:
                 # Use Google News Superforecaster system
-                forecast_result = self.superforecaster.forecast_with_google_news(
+                forecast_result = superforecaster.forecast_with_google_news(
                     question=question["question"],
                     background=question["background"],
                     cutoff_date=question["freeze_datetime"],
@@ -166,24 +176,10 @@ class ComprehensiveBenchmarkRunner:
                 probability = forecast_result.probability
                 
             else:
-                # Fallback to basic analysis
-                forecast_result = self.superforecaster.analyze(
-                    initial_conditions="Current state",
-                    outcomes_of_interest=[question["question"]],
-                    time_horizon="2 years",
-                    constraints=[]
-                )
-                
-                # Extract probability from result
-                if isinstance(forecast_result, dict) and "outcomes" in forecast_result:
-                    outcome_data = forecast_result["outcomes"][0] if forecast_result["outcomes"] else {}
-                    probability = outcome_data.get("probability", 0.5)
-                    reasoning = outcome_data.get("reasoning", "Analysis completed")
-                    full_analysis = forecast_result
-                else:
-                    probability = 0.5
-                    reasoning = "Fallback analysis"
-                    full_analysis = {"error": "Could not parse result"}
+
+                probability = 0.5
+                reasoning = "Fallback analysis"
+                full_analysis = {"error": "Could not parse result"}
                 
                 methodology_details = {
                     "confidence_level": "medium",
@@ -391,14 +387,42 @@ class ComprehensiveBenchmarkRunner:
         print("🔬 Agents: News Research Coordinator, Historical News Analyst, Current News Analyst, Expert News Aggregator, Contrarian News Researcher, Synthesis Expert")
         print("📰 Each question will be researched using Google News with precise timestamp filtering")
         
-        # Make predictions using CrewAI system
+        # Make predictions using CrewAI system with parallel processing
         predictions = []
-        for i, question in enumerate(questions):
-            print(f"\n{'='*70}")
-            print(f"Question {i+1}/{len(questions)}")
+        
+        print(f"\n⚡ Running {len(questions)} predictions in parallel with {self.max_workers} workers")
+        
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            # Submit all prediction tasks
+            future_to_question = {
+                executor.submit(self.make_prediction, question): question 
+                for question in questions
+            }
             
-            prediction = self.make_prediction(question)
-            predictions.append(prediction)
+            # Collect results as they complete
+            for i, future in enumerate(as_completed(future_to_question), 1):
+                question = future_to_question[future]
+                print(f"\n{'='*70}")
+                print(f"Completed prediction {i}/{len(questions)}: {question['question'][:60]}...")
+                
+                try:
+                    prediction = future.result()
+                    predictions.append(prediction)
+                except Exception as e:
+                    print(f"❌ Error in parallel prediction: {str(e)}")
+                    # Create error prediction
+                    error_prediction = {
+                        "question_id": question["id"],
+                        "question": question["question"],
+                        "prediction": 0.5,
+                        "actual_outcome": question["freeze_value"],
+                        "brier_score": (0.5 - question["freeze_value"])**2,
+                        "freeze_datetime": question["freeze_datetime"].isoformat(),
+                        "methodology": "failed_parallel",
+                        "error": str(e),
+                        "success": False
+                    }
+                    predictions.append(error_prediction)
         
         # Calculate comprehensive metrics
         metrics = self.calculate_comprehensive_metrics(predictions)
@@ -485,8 +509,16 @@ def main():
                 # Show methodology details if available
                 if pred.get('methodology_details'):
                     md = pred['methodology_details']
-                    print(f"    📊 Confidence: {md.get('confidence_level', 'unknown')}, Base Rate: {md.get('base_rate', 0.5):.3f}")
-                    print(f"    🔬 Evidence Quality: {md.get('evidence_quality', 0.5):.3f}, Methodology: {md.get('methodology_completeness', 0.5):.3f}")
+                    base_rate = md.get('base_rate', 0.5)
+                    evidence_quality = md.get('evidence_quality', 0.5)
+                    methodology_completeness = md.get('methodology_completeness', 0.5)
+                    
+                    base_rate_str = f"{base_rate:.3f}" if base_rate is not None else "N/A"
+                    evidence_str = f"{evidence_quality:.3f}" if evidence_quality is not None else "N/A"
+                    methodology_str = f"{methodology_completeness:.3f}" if methodology_completeness is not None else "N/A"
+                    
+                    print(f"    📊 Confidence: {md.get('confidence_level', 'unknown')}, Base Rate: {base_rate_str}")
+                    print(f"    🔬 Evidence Quality: {evidence_str}, Methodology: {methodology_str}")
                 
                 # Show reasoning if available
                 if pred.get('reasoning'):
@@ -500,7 +532,13 @@ def main():
                 if pred.get('full_analysis') and isinstance(pred['full_analysis'], dict):
                     analysis = pred['full_analysis']
                     if 'probability' in analysis and 'base_rate' in analysis:
-                        print(f"    📈 Analysis: Base rate {analysis.get('base_rate', 'N/A'):.3f} → Final {analysis.get('probability', pred['prediction']):.3f}")
+                        base_rate = analysis.get('base_rate')
+                        probability = analysis.get('probability', pred['prediction'])
+                        
+                        base_rate_str = f"{base_rate:.3f}" if base_rate is not None else "N/A"
+                        probability_str = f"{probability:.3f}" if probability is not None else "N/A"
+                        
+                        print(f"    📈 Analysis: Base rate {base_rate_str} → Final {probability_str}")
                     
                     # Show key insights if available
                     if 'key_uncertainties' in analysis:

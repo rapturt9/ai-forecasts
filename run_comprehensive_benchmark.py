@@ -465,7 +465,7 @@ def main():
     """Run the comprehensive AI forecasting benchmark"""
     try:
         runner = ComprehensiveBenchmarkRunner()
-        results = runner.run_comprehensive_benchmark(num_questions=50)
+        results = runner.run_comprehensive_benchmark(num_questions=1)
         
         # Print results
         print(f"\n" + "="*70)

@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from ai_forecasts.agents.market_agent import MarketAgent
 from manifold_markets.client import ManifoldMarketsClient
-from manifold_markets.backtesting import RealDataBacktester
+from manifold_markets.simple_backtesting import SimpleBacktester
 from manifold_markets.kelly_criterion import KellyCriterionCalculator
 from ai_forecasts.utils.agent_logger import agent_logger
 
@@ -96,31 +96,31 @@ class ManifoldTradingSystem:
             self.logger.error(f"❌ Error in live trading demo: {e}")
             return []
     
-    async def run_backtesting(self, start_date: str, end_date: str, initial_balance: float = 1000.0):
+    def run_backtesting(self, start_date: str, end_date: str, initial_balance: float = 1000.0):
         """Run backtesting between two time periods"""
         self.logger.info(f"📊 Starting Backtesting ({start_date} to {end_date})")
         
         try:
-            # Initialize backtester
-            backtester = RealDataBacktester(
-                market_agent=self.market_agent,
-                initial_balance=initial_balance
-            )
+            # Parse dates
+            from datetime import datetime
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+            
+            # Initialize simplified backtester
+            backtester = SimpleBacktester(initial_balance=initial_balance)
             
             # Run backtest
-            results = await backtester.run_backtest(
-                start_date=start_date,
-                end_date=end_date
-            )
+            results = backtester.run_backtest(start_dt, end_dt, max_markets=30)
             
             # Display results
             self.logger.info("🎯 Backtesting Results:")
-            self.logger.info(f"   Initial Balance: ${results['initial_balance']:.2f}")
-            self.logger.info(f"   Final Balance: ${results['final_balance']:.2f}")
-            self.logger.info(f"   Total Return: {results['total_return']:.1%}")
-            self.logger.info(f"   Total Trades: {results['total_trades']}")
-            self.logger.info(f"   Win Rate: {results['win_rate']:.1%}")
-            self.logger.info(f"   Sharpe Ratio: {results['sharpe_ratio']:.2f}")
+            self.logger.info(f"   Initial Balance: ${results.initial_balance:.2f}")
+            self.logger.info(f"   Final Balance: ${results.final_balance:.2f}")
+            self.logger.info(f"   Total Return: {results.total_return:.1%}")
+            self.logger.info(f"   Total Trades: {results.total_trades}")
+            self.logger.info(f"   Win Rate: {results.win_rate:.1%}")
+            self.logger.info(f"   Sharpe Ratio: {results.sharpe_ratio:.2f}")
+            self.logger.info(f"   Max Drawdown: {results.max_drawdown:.1%}")
             
             return results
             
@@ -143,9 +143,18 @@ class ManifoldTradingSystem:
         ]
         
         for scenario in scenarios:
-            edge = kelly_calc.calculate_edge(scenario["forecast"], scenario["market"])
-            kelly_fraction = kelly_calc.calculate_kelly_fraction(edge)
-            position_size = kelly_calc.calculate_position_size(edge, balance=1000)
+            # Calculate edge manually
+            edge = abs(scenario["forecast"] - scenario["market"])
+            
+            # Calculate Kelly fraction
+            kelly_fraction = kelly_calc.calculate_kelly_fraction(
+                ai_probability=scenario["forecast"],
+                market_probability=scenario["market"],
+                outcome="YES"
+            )
+            
+            # Calculate position size (simple percentage of balance)
+            position_size = kelly_fraction * 1000  # 1000 is the balance
             
             self.logger.info(f"📈 {scenario['description']}:")
             self.logger.info(f"   Forecast: {scenario['forecast']:.1%}, Market: {scenario['market']:.1%}")
@@ -188,7 +197,7 @@ async def main():
     end_date = datetime.now().strftime("%Y-%m-%d")
     start_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
     
-    await trading_system.run_backtesting(
+    trading_system.run_backtesting(
         start_date=start_date,
         end_date=end_date,
         initial_balance=1000.0

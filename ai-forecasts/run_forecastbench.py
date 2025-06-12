@@ -38,8 +38,18 @@ class ForecastBenchRunner:
         try:
             with open(file_path, 'r') as f:
                 data = json.load(f)
-            self.logger.info(f"Loaded {len(data)} questions from ForecastBench")
-            return data
+            
+            # Extract questions from the JSON structure
+            if isinstance(data, dict) and 'questions' in data:
+                questions = data['questions']
+            elif isinstance(data, list):
+                questions = data
+            else:
+                self.logger.error("Invalid ForecastBench data format")
+                return []
+                
+            self.logger.info(f"Loaded {len(questions)} questions from ForecastBench dataset")
+            return questions
         except Exception as e:
             self.logger.error(f"Error loading ForecastBench data: {e}")
             return []

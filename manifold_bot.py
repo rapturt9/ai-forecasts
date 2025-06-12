@@ -55,8 +55,8 @@ def main():
             os.system("python src/manifold_markets/cli.py test")
             
         elif choice == "4":
-            print("\n🔄 Running examples...")
-            os.system("python src/manifold_markets/examples.py")
+            print("\n🔄 Running market agent demo...")
+            os.system("python -c \"from src.ai_forecasts.agents.market_agent import MarketAgent; import os; agent = MarketAgent(os.getenv('OPENROUTER_API_KEY'), os.getenv('MANIFOLD_API_KEY')); print('Market agent initialized successfully')\"")
             
         elif choice == "5":
             print("\n🔄 Showing CLI help...")

@@ -11,9 +11,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-from ..models.schemas import ForecastRequest
-from ..agents.orchestrator import ForecastOrchestrator
-from ..agents.crewai_superforecaster import CrewAISuperforecaster
+from ..models.schemas import ForecastRequest, ForecastResponse
+from ..agents.google_news_superforecaster import GoogleNewsSuperforecaster
 from ..utils.agent_logger import agent_logger
 
 # Initialize FastAPI app
@@ -34,28 +33,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize orchestrators
-orchestrator = None
-crewai_forecaster = None
+# Initialize forecaster
+google_news_forecaster = None
 
-def get_orchestrator():
-    """Get or create the orchestrator instance"""
-    global orchestrator
-    if orchestrator is None:
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        model = os.getenv("DEFAULT_MODEL", "openai/gpt-4o-2024-11-20")
-        orchestrator = ForecastOrchestrator(api_key=api_key, model=model)
-    return orchestrator
-
-def get_crewai_forecaster():
-    """Get or create the CrewAI forecaster instance"""
-    global crewai_forecaster
-    if crewai_forecaster is None:
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
+def get_google_news_forecaster():
+    """Get or create the Google News forecaster instance"""
+    global google_news_forecaster
+    if google_news_forecaster is None:
+        openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+        serp_api_key = os.getenv("SERP_API_KEY")
+        if not openrouter_api_key:
             raise ValueError("OPENROUTER_API_KEY environment variable is required")
-        crewai_forecaster = CrewAISuperforecaster(api_key)
-    return crewai_forecaster
+        google_news_forecaster = GoogleNewsSuperforecaster(
+            openrouter_api_key=openrouter_api_key,
+            serp_api_key=serp_api_key
+        )
+    return google_news_forecaster
 
 
 @app.get("/")
@@ -78,13 +71,13 @@ async def root():
 async def health_check():
     """Health check endpoint"""
     try:
-        # Test if we can initialize the orchestrator
-        orch = get_orchestrator()
+        # Test if we can initialize the forecaster
+        forecaster = get_google_news_forecaster()
         return {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
             "components": {
-                "orchestrator": "initialized",
+                "google_news_forecaster": "initialized",
                 "llm_client": "configured"
             }
         }
@@ -103,115 +96,15 @@ def create_demo_response(request: ForecastRequest) -> Dict[str, Any]:
     """Create a realistic demo response when API is not available"""
     import random
     
-    if request.outcomes_of_interest:
-        # Targeted forecasting mode
-        evaluations = []
-        for outcome in request.outcomes_of_interest:
-            prob = random.uniform(0.2, 0.8)
-            evaluations.append({
-                "outcome": outcome,
-                "probability": round(prob, 3),
-                "confidence_interval": [round(prob - 0.15, 3), round(prob + 0.15, 3)],
-                "reasoning": f"Based on current trends and available data, the probability of '{outcome}' is estimated at {prob:.1%}. This assessment considers multiple factors including technological progress, market conditions, and regulatory environment.",
-                "key_factors": [
-                    "Current technological advancement rate",
-                    "Market adoption patterns",
-                    "Regulatory landscape",
-                    "Economic conditions"
-                ],
-                "blocking_factors": [
-                    "Technical challenges",
-                    "Regulatory hurdles",
-                    "Market resistance",
-                    "Resource constraints"
-                ]
-            })
-        
-        return {
-            "mode": "targeted",
-            "evaluations": evaluations,
-            "agent_logs": [
-                "🎯 TargetedAgent: Starting outcome evaluation",
-                "📊 Analyzing probability distributions",
-                "🔍 Researching relevant factors",
-                "✅ Evaluation complete"
-            ],
-            "methodology": {
-                "evidence_quality": round(random.uniform(0.7, 0.9), 2),
-                "confidence_level": "high",
-                "base_rate_analysis": True,
-                "reference_class_forecasting": True
-            },
-            "demo_mode": True
-        }
-    
-    elif request.desired_outcome:
-        # Strategy mode
-        prob = random.uniform(0.4, 0.8)
-        return {
-            "mode": "strategy",
-            "feasibility_score": round(prob, 3),
-            "recommended_strategy": {
-                "name": f"Strategic Path to: {request.desired_outcome}",
-                "overall_probability": round(prob, 3),
-                "steps": [
-                    {
-                        "phase": 1,
-                        "action": "Initial assessment and planning",
-                        "timeline": "1-3 months",
-                        "success_criteria": "Clear roadmap established"
-                    },
-                    {
-                        "phase": 2,
-                        "action": "Implementation of core components",
-                        "timeline": "6-12 months",
-                        "success_criteria": "Key milestones achieved"
-                    },
-                    {
-                        "phase": 3,
-                        "action": "Optimization and scaling",
-                        "timeline": "12-24 months",
-                        "success_criteria": "Desired outcome achieved"
-                    }
-                ]
-            },
-            "agent_logs": [
-                "🚀 StrategyAgent: Analyzing desired outcome",
-                "📋 Generating strategic options",
-                "⚖️ Evaluating feasibility",
-                "✅ Strategy recommendation complete"
-            ],
-            "demo_mode": True
-        }
-    
-    else:
-        # Pure forecasting mode
-        return {
-            "mode": "forecast",
-            "predictions": [
-                {
-                    "outcome": "Most likely scenario",
-                    "probability": 0.45,
-                    "description": "Based on current conditions, this represents the most probable outcome"
-                },
-                {
-                    "outcome": "Alternative scenario",
-                    "probability": 0.35,
-                    "description": "Secondary possibility with significant likelihood"
-                },
-                {
-                    "outcome": "Low probability scenario",
-                    "probability": 0.20,
-                    "description": "Less likely but still possible outcome"
-                }
-            ],
-            "agent_logs": [
-                "🔮 ForecastAgent: Analyzing initial conditions",
-                "📈 Generating probability distributions",
-                "✅ Forecast complete"
-            ],
-            "demo_mode": True
-        }
+    return {
+        "question": request.question,
+        "probability": round(random.uniform(0.3, 0.8), 2),
+        "reasoning": f"Demo response for: {request.question}. This is a placeholder response when the full forecasting system is not available.",
+        "confidence": round(random.uniform(0.5, 0.9), 2),
+        "sources": ["Demo Source 1", "Demo Source 2"],
+        "metadata": {"mode": "demo", "timestamp": datetime.now().isoformat()},
+        "timestamp": datetime.now().isoformat()
+    }
 
 
 @app.post("/forecast")
@@ -232,20 +125,23 @@ async def forecast(request: ForecastRequest, background_tasks: BackgroundTasks):
         
         agent_logger.start_session(mode, request.dict())
         
-        # Try to get orchestrator and process request
+        # Try to get forecaster and process request
         try:
-            orch = get_orchestrator()
-            results = orch.process_request(request, use_validation=True)
+            forecaster = get_google_news_forecaster()
+            result = forecaster.forecast_with_google_news(request.question)
             
-            # Add logging information to results
-            results["agent_logs"] = agent_logger.get_logs()
-            results["processing_summary"] = agent_logger.get_summary()
+            # Convert to API response format
+            response = {
+                "question": result.question,
+                "probability": result.probability,
+                "reasoning": result.reasoning,
+                "confidence": getattr(result, 'confidence', 0.7),
+                "sources": result.sources,
+                "metadata": {"mode": "google_news", "timestamp": datetime.now().isoformat()},
+                "timestamp": datetime.now().isoformat()
+            }
             
-            # Check if processing was successful
-            if results.get("success", True) is False:
-                raise HTTPException(status_code=400, detail=results.get("error", "Processing failed"))
-            
-            return results
+            return response
             
         except Exception as api_error:
             # If API fails, return demo response

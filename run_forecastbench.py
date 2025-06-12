@@ -77,13 +77,21 @@ class ForecastBenchRunner:
             result = superforecaster.forecast(question, cutoff_date=cutoff_dt)
             
             # Get ground truth for Brier score calculation
-            ground_truth = question_data.get('freeze_datetime_value', None)
+            ground_truth_raw = question_data.get('freeze_datetime_value', None)
+            ground_truth = None
             brier_score = None
-            if ground_truth is not None:
-                # Brier score = (forecast - outcome)^2
-                # For probability forecasts, outcome is 1 if event occurred, 0 if not
-                # Since we have market probability as ground truth, we'll use that
-                brier_score = (result.probability - ground_truth) ** 2
+            
+            if ground_truth_raw is not None:
+                try:
+                    # Convert ground truth to float (it might be stored as string)
+                    ground_truth = float(ground_truth_raw)
+                    # Brier score = (forecast - outcome)^2
+                    # For probability forecasts, outcome is 1 if event occurred, 0 if not
+                    # Since we have market probability as ground truth, we'll use that
+                    brier_score = (result.probability - ground_truth) ** 2
+                except (ValueError, TypeError) as e:
+                    self.logger.warning(f"Could not convert ground truth to float: {ground_truth_raw}, error: {e}")
+                    ground_truth = None
             
             return {
                 'question_idx': question_idx,

@@ -1,0 +1,117 @@
+
+> trading-interface@0.1.0 dev
+> next dev --turbopack --port 12000 --hostname 0.0.0.0
+
+   ▲ Next.js 15.3.3 (Turbopack)
+   - Local:        http://localhost:12000
+   - Network:      http://0.0.0.0:12000
+
+ ✓ Starting...
+ ✓ Ready in 1099ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.2s
+ GET / 200 in 4562ms
+ ○ Compiling /api/forecast ...
+ ✓ Compiled /api/forecast in 557ms
+🔮 Calling Python forecasting API: {
+  question: 'Will it rain tomorrow?',
+  background: '',
+  prior: 0.5,
+  timeHorizon: '1 day'
+}
+✅ Forecast generation started: e0791770-454e-4dfa-82da-3bbf37de7c6b
+ POST /api/forecast 200 in 683ms
+ GET / 200 in 62ms
+ GET / 200 in 51ms
+ GET / 200 in 48ms
+ GET / 200 in 71ms
+ GET / 200 in 45ms
+ GET / 200 in 44ms
+ GET / 200 in 56ms
+ ○ Compiling /api/sessions ...
+📊 Fetching trading sessions from Python API
+✅ Sessions fetched from Python API: 0
+ GET /api/sessions 200 in 876ms
+📊 Fetching trading sessions from Python API
+✅ Sessions fetched from Python API: 0
+ GET /api/sessions 200 in 64ms
+ ✓ Compiled /api/sessions in 974ms
+📊 Fetching markets from Python API
+✅ Markets fetched from Python API: 5
+ GET /api/markets?limit=20 200 in 1006ms
+📊 Fetching markets from Python API
+✅ Markets fetched from Python API: 5
+ GET /api/markets?limit=20 200 in 36ms
+🔮 Calling Python forecasting API: {
+  question: 'Will it rain tomorrow in San Francisco?',
+  background: '',
+  prior: undefined,
+  timeHorizon: '1 year'
+}
+✅ Forecast generation started: ab1b3dbc-44ab-4725-8d9d-a5446b32218a
+ POST /api/forecast 200 in 51ms
+ ✓ Compiled /api/analyze/[marketId] in 497ms
+Error: Route "/api/analyze/[marketId]" used `params.marketId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at POST (src/app/api/analyze/[marketId]/route.ts:8:12)
+   6 | ) {
+   7 |   try {
+>  8 |     const { marketId } = params
+     |            ^
+   9 |
+  10 |     // Mock analysis result for demo
+  11 |     const mockAnalysis = {
+ POST /api/analyze/bitcoin-100k-2024 200 in 1135ms
+ ○ Compiling /api/trade/[marketId] ...
+ ✓ Compiled /api/trade/[marketId] in 555ms
+Error: Route "/api/trade/[marketId]" used `params.marketId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at POST (src/app/api/trade/[marketId]/route.ts:8:12)
+   6 | ) {
+   7 |   try {
+>  8 |     const { marketId } = params
+     |            ^
+   9 |
+  10 |     // Mock trading decision for demo
+  11 |     const mockDecision = {
+ POST /api/trade/bitcoin-100k-2024 200 in 1136ms
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 873ms
+ POST /api/session/start 404 in 945ms
+ GET / 200 in 54ms
+🔮 Calling Python forecasting API: {
+  question: 'Will it rain tomorrow in San Francisco?',
+  background: '',
+  prior: undefined,
+  timeHorizon: '1 year'
+}
+✅ Forecast generation started: b8cb2c81-4ef5-46e9-b9fa-be3b1f45b88e
+ POST /api/forecast 200 in 56ms
+Error: Route "/api/analyze/[marketId]" used `params.marketId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at POST (src/app/api/analyze/[marketId]/route.ts:8:12)
+   6 | ) {
+   7 |   try {
+>  8 |     const { marketId } = params
+     |            ^
+   9 |
+  10 |     // Mock analysis result for demo
+  11 |     const mockAnalysis = {
+ POST /api/analyze/bitcoin-100k-2024 200 in 143ms
+Error: Route "/api/trade/[marketId]" used `params.marketId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at POST (src/app/api/trade/[marketId]/route.ts:8:12)
+   6 | ) {
+   7 |   try {
+>  8 |     const { marketId } = params
+     |            ^
+   9 |
+  10 |     // Mock trading decision for demo
+  11 |     const mockDecision = {
+ POST /api/trade/bitcoin-100k-2024 200 in 131ms
+ POST /api/session/start 404 in 64ms
+ GET / 200 in 55ms
+🔮 Calling Python forecasting API: {
+  question: 'Will Tesla stock price exceed $300 by the end of 2025?',
+  background: 'Tesla has been expanding production capacity and developing new models. Current stock price is around $200. Consider market conditions, EV adoption, and competition.',
+  prior: 0.6,
+  timeHorizon: '1 year'
+}
+✅ Forecast generation started: f906a85e-6893-4e68-acc8-894b85a60c63
+ POST /api/forecast 200 in 46ms

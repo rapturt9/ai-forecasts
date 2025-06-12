@@ -33,13 +33,15 @@ class ManifoldMarketsClient:
                 "Content-Type": "application/json"
             })
     
-    def get_markets(self, limit: int = 100, before: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_markets(self, limit: int = 100, before: Optional[str] = None, sort: Optional[str] = None, order: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Get list of markets from Manifold
         
         Args:
             limit: Number of markets to fetch (max 1000)
             before: Get markets before this ID (for pagination)
+            sort: Sort order ('created-time', 'updated-time', 'last-bet-time', 'last-comment-time')
+            order: Order direction ('asc' or 'desc')
             
         Returns:
             List of market dictionaries
@@ -48,6 +50,10 @@ class ManifoldMarketsClient:
             params = {"limit": limit}
             if before:
                 params["before"] = before
+            if sort:
+                params["sort"] = sort
+            if order:
+                params["order"] = order
                 
             response = self.session.get(f"{self.base_url}/markets", params=params)
             response.raise_for_status()
@@ -110,6 +116,25 @@ class ManifoldMarketsClient:
             
         except requests.exceptions.RequestException as e:
             logger.error(f"Error searching markets for '{term}': {e}")
+            raise
+    
+    def get_user_info(self) -> Dict[str, Any]:
+        """
+        Get authenticated user information
+        
+        Returns:
+            User information including balance
+        """
+        try:
+            response = self.session.get(f"{self.base_url}/me")
+            response.raise_for_status()
+            
+            user_info = response.json()
+            logger.debug(f"Retrieved user info for {user_info.get('username', 'unknown')}")
+            return user_info
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error getting user info: {e}")
             raise
     
     def place_bet(self, contract_id: str, amount: float, outcome: str) -> Dict[str, Any]:

@@ -1,0 +1,20 @@
+{
+  "forecast_due_date": "2024-07-21",
+  "total_questions": 1,
+  "successful_forecasts": 0,
+  "success_rate": 0.0,
+  "duration_seconds": 0.576638,
+  "questions_per_minute": 104.05141527266674,
+  "average_probability": 0,
+  "average_brier_score": null,
+  "brier_score_count": 0,
+  "confidence_distribution": {},
+  "results": [
+    {
+      "question_idx": 0,
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - No auth credentials found",
+      "success": false
+    }
+  ]
+}

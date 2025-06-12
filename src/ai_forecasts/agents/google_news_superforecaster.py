@@ -270,6 +270,17 @@ Your synthesis must be conservative, well-calibrated, and explicitly acknowledge
             tools=[google_news_tool]
         )
     
+    def forecast(self, question: str, background: str = "", cutoff_date: Optional[datetime] = None) -> ForecastResult:
+        """
+        Simple forecast method that calls forecast_with_google_news for compatibility
+        """
+        return self.forecast_with_google_news(
+            question=question,
+            background=background,
+            cutoff_date=cutoff_date,
+            is_benchmark=True
+        )
+    
     def forecast_with_google_news(
         self, 
         question: str, 

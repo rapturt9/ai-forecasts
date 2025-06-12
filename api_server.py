@@ -134,6 +134,30 @@ async def generate_forecast(request: ForecastRequest, background_tasks: Backgrou
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Forecast generation failed: {str(e)}")
 
+@app.get("/api/sessions")
+async def get_forecast_sessions():
+    """Get all forecast sessions"""
+    try:
+        sessions = db_manager.get_recent_forecasts(limit=50)
+        
+        result = []
+        for session in sessions:
+            result.append({
+                "session_id": session.id,
+                "status": session.status,
+                "question": session.question,
+                "probability": session.forecast_probability,
+                "confidence": session.confidence_level,
+                "created_at": session.created_at.isoformat() if session.created_at else None,
+                "completed_at": session.completed_at.isoformat() if session.completed_at else None,
+                "processing_time": session.processing_time_seconds
+            })
+        
+        return result
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get forecast sessions: {str(e)}")
+
 @app.get("/api/forecast/{session_id}", response_model=ForecastResponse)
 async def get_forecast_status(session_id: str):
     """Get the status and results of a forecast session"""

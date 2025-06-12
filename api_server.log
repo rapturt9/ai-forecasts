@@ -1,0 +1,15 @@
+INFO:     Will watch for changes in these directories: ['/workspace/ai-forecasts']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [34009] using WatchFiles
+🗄️ Initializing database...
+✅ Database initialized successfully
+🚀 Starting AI Forecasting & Trading API server on port 8000
+📊 API Documentation: http://localhost:8000/docs
+🔗 Frontend should connect to: http://localhost:8000
+INFO:     Started server process [34028]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:51248 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60096 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47058 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47068 - "GET /api/sessions HTTP/1.1" 200 OK

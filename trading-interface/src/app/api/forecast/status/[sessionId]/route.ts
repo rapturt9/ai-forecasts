@@ -2,32 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://localhost:8000'
 
-export async function POST(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { sessionId: string } }
+) {
   try {
-    const body = await request.json()
-    const { question, background, prior, timeHorizon } = body
+    const { sessionId } = params
 
-    if (!question) {
-      return NextResponse.json(
-        { error: 'Question is required' },
-        { status: 400 }
-      )
-    }
+    console.log('📊 Polling forecast status for session:', sessionId)
 
-    console.log('🔮 Calling Python forecasting API:', { question, background, prior, timeHorizon })
-
-    // Call the Python FastAPI server to start forecast generation
-    const response = await fetch(`${PYTHON_API_URL}/api/forecast`, {
-      method: 'POST',
+    // Call the Python FastAPI server to get forecast status
+    const response = await fetch(`${PYTHON_API_URL}/api/forecast/${sessionId}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        question,
-        background: background || "",
-        prior_probability: prior,
-        time_horizon: timeHorizon || "1 year"
-      }),
     })
 
     if (!response.ok) {
@@ -37,11 +26,11 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json()
-    console.log('✅ Forecast generation started:', data.session_id)
+    console.log('✅ Forecast status received:', data.confidence_level)
     
-    // Return immediate response with session ID for polling
+    // Transform Python response to match frontend expectations
     const transformedResponse = {
-      question,
+      question: data.question || "Processing...",
       probability: data.forecast_probability,
       confidence: data.confidence_level,
       reasoning: data.reasoning,
@@ -59,9 +48,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(transformedResponse)
   } catch (error) {
-    console.error('Forecast API error:', error)
+    console.error('Forecast status API error:', error)
     return NextResponse.json(
-      { error: `Failed to generate forecast: ${error.message}` },
+      { error: `Failed to get forecast status: ${error.message}` },
       { status: 500 }
     )
   }

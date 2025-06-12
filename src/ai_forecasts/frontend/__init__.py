@@ -1,1 +1,0 @@
-"""Frontend module for the AI Forecasting System"""

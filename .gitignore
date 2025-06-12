@@ -1,4 +1,1 @@
 .env
-*.pyc
-/src/ai_forecasts/api/__pycache__
-/cache/google_news

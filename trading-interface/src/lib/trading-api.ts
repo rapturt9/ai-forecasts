@@ -46,6 +46,29 @@ export interface TradingSession {
   newsProcessed: number
 }
 
+export interface ForecastRequest {
+  question: string
+  background?: string
+  prior?: number
+  timeHorizon?: string
+}
+
+export interface ForecastResult {
+  question: string
+  probability: number
+  confidence: string
+  reasoning: string
+  baseRate: number
+  evidenceQuality: number
+  strategies: string[]
+  newsSourcesCount: number
+  totalArticles: number
+  searchTimeframe: {
+    start: string
+    end: string
+  }
+}
+
 export class TradingAPI {
   private baseUrl: string
   private apiKey: string
@@ -176,6 +199,23 @@ export class TradingAPI {
     
     if (!response.ok) {
       throw new Error(`Failed to run backtest: ${response.statusText}`)
+    }
+    
+    return response.json()
+  }
+
+  async generateForecast(request: ForecastRequest): Promise<ForecastResult> {
+    const response = await fetch(`${this.baseUrl}/forecast`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request)
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to generate forecast: ${response.statusText}`)
     }
     
     return response.json()

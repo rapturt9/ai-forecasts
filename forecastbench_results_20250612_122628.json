@@ -1,0 +1,17 @@
+{
+  "total_questions": 1,
+  "successful_forecasts": 0,
+  "success_rate": 0.0,
+  "duration_seconds": 0.007155,
+  "questions_per_minute": 8385.744234800837,
+  "average_probability": 0,
+  "confidence_distribution": {},
+  "results": [
+    {
+      "question_idx": 0,
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "error": "'GoogleNewsSuperforecaster' object has no attribute 'forecast'",
+      "success": false
+    }
+  ]
+}

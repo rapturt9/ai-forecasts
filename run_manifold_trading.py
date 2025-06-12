@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from ai_forecasts.agents.market_agent import MarketAgent
 from manifold_markets.client import ManifoldMarketsClient
 from manifold_markets.simple_backtesting import SimpleBacktester
+from manifold_markets.enhanced_backtesting import EnhancedBacktester
 from manifold_markets.kelly_criterion import KellyCriterionCalculator
 from ai_forecasts.utils.agent_logger import agent_logger
 
@@ -44,6 +45,13 @@ class ManifoldTradingSystem:
         else:
             self.manifold_client = None
             self.logger.warning("No Manifold API key provided - using demo mode")
+        
+        # Initialize enhanced backtester
+        self.enhanced_backtester = EnhancedBacktester(
+            manifold_api_key=manifold_api_key or "demo_key",
+            openrouter_api_key=openrouter_api_key,
+            serp_api_key=serp_api_key
+        )
     
     async def run_live_trading_demo(self, max_markets: int = 5):
         """Run live trading demonstration"""
@@ -128,6 +136,54 @@ class ManifoldTradingSystem:
             self.logger.error(f"❌ Error in backtesting: {e}")
             return None
     
+    async def run_enhanced_backtesting(self, hours_to_run: int = 24):
+        """Run enhanced backtesting with CrewAI market selection"""
+        self.logger.info(f"🚀 Starting Enhanced Backtesting with CrewAI")
+        self.logger.info(f"   Duration: {hours_to_run} hours")
+        self.logger.info(f"   Features: CrewAI market selection, Kelly Criterion, hourly execution")
+        
+        try:
+            # Run the enhanced backtest
+            session = await self.enhanced_backtester.run_week_long_backtest(hours_to_run=hours_to_run)
+            
+            # Display detailed results
+            self.logger.info("🎯 Enhanced Backtesting Results:")
+            self.logger.info(f"   Session ID: {session.session_id}")
+            self.logger.info(f"   Initial Balance: ${session.initial_balance:.2f}")
+            self.logger.info(f"   Final Balance: ${session.current_balance:.2f}")
+            self.logger.info(f"   Total Return: {session.total_return:.1%}")
+            self.logger.info(f"   Total Trades: {session.total_trades}")
+            self.logger.info(f"   Win Rate: {session.winning_trades/max(session.total_trades, 1):.1%}")
+            self.logger.info(f"   Sharpe Ratio: {session.sharpe_ratio:.2f}")
+            self.logger.info(f"   Max Drawdown: {session.max_drawdown:.1%}")
+            self.logger.info(f"   Markets Analyzed: {session.markets_analyzed}")
+            
+            # Show some sample trades
+            if session.trade_history:
+                self.logger.info("\n📊 Sample Trades:")
+                for i, trade in enumerate(session.trade_history[:5]):
+                    profit_str = f"+${trade['profit']:.2f}" if trade['profit'] > 0 else f"-${abs(trade['profit']):.2f}"
+                    self.logger.info(f"   {i+1}. {trade['action']} ${trade['position_size']:.0f} -> {profit_str}")
+                    self.logger.info(f"      {trade['question'][:60]}...")
+            
+            # Show market selection insights
+            if session.market_selection_log:
+                total_available = sum(log['available_markets'] for log in session.market_selection_log)
+                total_selected = sum(log['selected_markets'] for log in session.market_selection_log)
+                avg_available = total_available / len(session.market_selection_log)
+                avg_selected = total_selected / len(session.market_selection_log)
+                
+                self.logger.info(f"\n🎯 Market Selection Insights:")
+                self.logger.info(f"   Average markets available per hour: {avg_available:.1f}")
+                self.logger.info(f"   Average markets selected per hour: {avg_selected:.1f}")
+                self.logger.info(f"   Selection efficiency: {avg_selected/avg_available:.1%}")
+            
+            return session
+            
+        except Exception as e:
+            self.logger.error(f"❌ Error in enhanced backtesting: {e}")
+            return None
+    
     def demonstrate_kelly_criterion(self):
         """Demonstrate Kelly Criterion calculations"""
         self.logger.info("🎯 Kelly Criterion Demonstration")
@@ -193,7 +249,7 @@ async def main():
     else:
         print("⚠️  No Manifold API key - skipping live trading demo")
     
-    # Run backtesting demo
+    # Run simple backtesting demo
     end_date = datetime.now().strftime("%Y-%m-%d")
     start_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
     
@@ -202,6 +258,13 @@ async def main():
         end_date=end_date,
         initial_balance=1000.0
     )
+    
+    # Run enhanced backtesting with CrewAI
+    print("\n" + "="*60)
+    print("🤖 ENHANCED BACKTESTING WITH CREWAI")
+    print("="*60)
+    
+    await trading_system.run_enhanced_backtesting(hours_to_run=12)  # 12 hours for demo
 
 if __name__ == "__main__":
     asyncio.run(main())

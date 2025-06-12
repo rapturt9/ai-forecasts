@@ -7,13 +7,15 @@ import { MarketAnalysis } from './MarketAnalysis'
 import { PerformanceChart } from './PerformanceChart'
 import { TradeHistory } from './TradeHistory'
 import { BacktestRunner } from './BacktestRunner'
+import { ForecastingInterface } from './ForecastingInterface'
+import { AgentMonitor } from './AgentMonitor'
 
 interface TradingDashboardProps {
   api: TradingAPI
 }
 
 export function TradingDashboard({ api }: TradingDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'live' | 'backtest' | 'history'>('live')
+  const [activeTab, setActiveTab] = useState<'forecast' | 'live' | 'backtest' | 'history' | 'monitor'>('forecast')
   const [sessions, setSessions] = useState<TradingSession[]>([])
   const [selectedSession, setSelectedSession] = useState<TradingSession | null>(null)
   const [markets, setMarkets] = useState<MarketData[]>([])
@@ -74,9 +76,11 @@ export function TradingDashboard({ api }: TradingDashboardProps) {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {[
+            { id: 'forecast', name: 'AI Forecasting', icon: '🔮' },
             { id: 'live', name: 'Live Trading', icon: '🔴' },
             { id: 'backtest', name: 'Backtesting', icon: '📊' },
-            { id: 'history', name: 'Trade History', icon: '📈' }
+            { id: 'history', name: 'Trade History', icon: '📈' },
+            { id: 'monitor', name: 'Agent Monitor', icon: '🤖' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -148,6 +152,10 @@ export function TradingDashboard({ api }: TradingDashboardProps) {
 
         {/* Right Column - Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {activeTab === 'forecast' && (
+            <ForecastingInterface api={api} />
+          )}
+
           {activeTab === 'live' && (
             <>
               {selectedSession && (
@@ -184,6 +192,10 @@ export function TradingDashboard({ api }: TradingDashboardProps) {
               </h2>
               <TradeHistory sessionId={selectedSession.sessionId} api={api} />
             </div>
+          )}
+
+          {activeTab === 'monitor' && (
+            <AgentMonitor api={api} />
           )}
         </div>
       </div>

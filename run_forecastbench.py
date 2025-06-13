@@ -77,7 +77,17 @@ class ForecastBenchRunner:
             response = requests.get(self.RESOLUTIONS_URL, timeout=30)
             response.raise_for_status()
             
-            resolutions = response.json()
+            data = response.json()
+            
+            # Extract resolutions from the JSON structure
+            if isinstance(data, dict) and 'resolutions' in data:
+                resolutions = data['resolutions']
+            elif isinstance(data, list):
+                resolutions = data
+            else:
+                self.logger.error("Invalid resolution data format")
+                return {}
+                
             self.logger.info(f"✅ Loaded {len(resolutions)} resolutions")
             
             # Create lookup dictionary by question ID

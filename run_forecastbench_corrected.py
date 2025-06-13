@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-ForecastBench Parallel Runner - Uses Google News Superforecaster with 4 time horizons
-Evaluates on all 200 questions with proper Brier score calculation
+Corrected ForecastBench Runner - Uses local JSON files with proper Brier score calculation
 """
 
 import json
@@ -11,7 +10,6 @@ import traceback
 import os
 import asyncio
 import concurrent.futures
-import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -27,12 +25,8 @@ sys.path.append('src')
 from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
 from ai_forecasts.utils.agent_logger import agent_logger
 
-class ForecastBenchRunner:
-    """ForecastBench runner using Google News Superforecaster with 4 time horizons"""
-    
-    # Local files for ForecastBench datasets
-    QUESTIONS_FILE = "forecastbench_human_2024.json"
-    RESOLUTIONS_FILE = "forecast_human_resolution_2024.json"
+class CorrectedForecastBenchRunner:
+    """Corrected ForecastBench runner using local JSON files with proper Brier score calculation"""
     
     # Time horizons for predictions (in days)
     TIME_HORIZONS = [7, 30, 90, 180]
@@ -42,61 +36,29 @@ class ForecastBenchRunner:
         self.serp_api_key = serp_api_key
         self.logger = agent_logger
         
-    def load_forecastbench_questions(self) -> List[Dict]:
-        """Load all 200 questions from local ForecastBench file"""
+    def load_local_data(self) -> Tuple[List[Dict], Dict[str, Any]]:
+        """Load questions and resolutions from local JSON files"""
         try:
-            self.logger.info(f"Loading questions from: {self.QUESTIONS_FILE}")
+            # Load questions
+            with open('forecastbench_human_2024.json', 'r') as f:
+                questions_data = json.load(f)
             
-            with open(self.QUESTIONS_FILE, 'r') as f:
-                data = json.load(f)
+            # Load resolutions
+            with open('forecast_human_resolution_2024.json', 'r') as f:
+                resolutions_data = json.load(f)
             
-            # Extract questions from the JSON structure
-            if isinstance(data, dict) and 'questions' in data:
-                questions = data['questions']
-            elif isinstance(data, list):
-                questions = data
-            else:
-                self.logger.error("Invalid ForecastBench questions format")
-                return []
-                
-            self.logger.info(f"✅ Loaded {len(questions)} questions from ForecastBench dataset")
-            return questions
+            questions = questions_data['questions']
+            self.logger.info(f"✅ Loaded {len(questions)} questions from local file")
+            self.logger.info(f"✅ Loaded {len(resolutions_data['resolutions'])} resolutions from local file")
+            
+            return questions, resolutions_data
             
         except Exception as e:
-            self.logger.error(f"❌ Error loading ForecastBench questions: {e}")
-            return []
-    
-    def load_resolution_data(self) -> Dict[str, Any]:
-        """Load resolution data from local ForecastBench file"""
-        try:
-            self.logger.info(f"Loading resolutions from: {self.RESOLUTIONS_FILE}")
-            
-            with open(self.RESOLUTIONS_FILE, 'r') as f:
-                data = json.load(f)
-            
-            # Extract resolutions from the JSON structure
-            if isinstance(data, dict) and 'resolutions' in data:
-                resolutions = data['resolutions']
-            elif isinstance(data, list):
-                resolutions = data
-            else:
-                self.logger.error("Invalid resolution data format")
-                return {}
-                
-            self.logger.info(f"✅ Loaded {len(resolutions)} resolutions")
-            
-            # Return the full data structure for proper resolution lookup
-            return data
-            
-        except Exception as e:
-            self.logger.error(f"❌ Error loading resolution data: {e}")
-            return {}
+            self.logger.error(f"❌ Error loading local data: {e}")
+            return [], {}
     
     def get_resolution_for_question_and_date(self, question_id: str, resolution_date: str, resolutions_data: Dict) -> float:
         """Get the resolution value for a specific question ID and date"""
-        if 'resolutions' not in resolutions_data:
-            return None
-            
         for resolution in resolutions_data['resolutions']:
             if (resolution['id'] == question_id and 
                 resolution['resolution_date'] == resolution_date):
@@ -188,20 +150,19 @@ class ForecastBenchRunner:
     
     def run_parallel_benchmark(self, max_questions: int = 200, max_workers: int = 3) -> Dict[str, Any]:
         """Run ForecastBench evaluation with 4 time horizons in parallel"""
-        self.logger.info(f"🚀 Starting ForecastBench evaluation with 4 time horizons")
+        self.logger.info(f"🚀 Starting Corrected ForecastBench evaluation with 4 time horizons")
         self.logger.info(f"   Questions: {max_questions}, Workers: {max_workers}")
         self.logger.info(f"   Time horizons: {self.TIME_HORIZONS} days")
         
-        # Load questions and resolutions
-        questions = self.load_forecastbench_questions()
+        # Load questions and resolutions from local files
+        questions, resolutions_data = self.load_local_data()
         if not questions:
             return {"error": "Failed to load ForecastBench questions"}
             
-        resolutions_data = self.load_resolution_data()
         if not resolutions_data:
             return {"error": "Failed to load resolution data"}
         
-        # Limit questions for testing (default 200 for full evaluation)
+        # Limit questions for testing
         questions = questions[:max_questions]
         
         # Base date for time horizon calculations (forecast due date)
@@ -301,7 +262,7 @@ class ForecastBenchRunner:
         }
         
         # Log comprehensive results
-        self.logger.info(f"🎯 ForecastBench Evaluation Complete!")
+        self.logger.info(f"🎯 Corrected ForecastBench Evaluation Complete!")
         self.logger.info(f"   Questions processed: {len(successful_results)}/{len(questions)} ({success_rate:.1%})")
         self.logger.info(f"   Total predictions: {total_predictions}")
         self.logger.info(f"   Total Brier scores: {total_brier_scores}")
@@ -319,7 +280,7 @@ class ForecastBenchRunner:
         return summary
 
 def main():
-    """Main function to run ForecastBench evaluation"""
+    """Main function to run corrected ForecastBench evaluation"""
     # Get API keys
     openrouter_api_key = os.getenv('OPENROUTER_API_KEY')
     serp_api_key = os.getenv('SERP_API_KEY')
@@ -329,17 +290,17 @@ def main():
         return
     
     # Create runner
-    runner = ForecastBenchRunner(
+    runner = CorrectedForecastBenchRunner(
         openrouter_api_key=openrouter_api_key,
         serp_api_key=serp_api_key
     )
     
-    # Run benchmark (testing: first 3 questions, 1 worker)
+    # Run benchmark on first 3 questions for testing
     results = runner.run_parallel_benchmark(max_questions=3, max_workers=1)
     
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"forecastbench_results_{timestamp}.json"
+    output_file = f"forecastbench_corrected_results_{timestamp}.json"
     
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=2, default=str)

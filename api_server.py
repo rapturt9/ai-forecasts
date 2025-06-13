@@ -386,10 +386,10 @@ async def run_forecast_generation(session_id: str, request: ForecastRequest):
         )
         
         # Generate forecast
-        result = superforecaster.forecast(
+        result = superforecaster.forecast_with_google_news(
             question=request.question,
-            background_info=request.background,
-            prior_probability=request.prior_probability
+            background=request.background or "",
+            time_horizon=request.time_horizon or "1 year"
         )
         
         # Generate strategies for achieving the outcome

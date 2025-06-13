@@ -126,7 +126,7 @@ export class TradingAPI {
   }
 
   async startTradingSession(mode: 'backtest' | 'live', config: any): Promise<TradingSession> {
-    const response = await fetch(`${this.baseUrl}/session/start`, {
+    const response = await fetch(`${this.baseUrl}/api/trading/start`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,

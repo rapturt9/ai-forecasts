@@ -1,0 +1,31 @@
+{
+  "forecast_due_date": "2024-07-21",
+  "total_questions": 1,
+  "successful_forecasts": 1,
+  "success_rate": 1.0,
+  "duration_seconds": 190.712674,
+  "questions_per_minute": 0.31460940031704454,
+  "average_probability": 0.75,
+  "average_brier_score": 4.306573102778307e-05,
+  "brier_score_count": 1,
+  "confidence_distribution": {
+    "medium": 1
+  },
+  "results": [
+    {
+      "question_idx": 0,
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "forecast_probability": 0.75,
+      "ground_truth_probability": 0.7565624485542961,
+      "brier_score": 4.306573102778307e-05,
+      "confidence_level": "medium",
+      "reasoning": "The evidence strongly suggests a high likelihood that the average global temperature in 2024 will exceed that of 2023, supported by a consistent trend of record-setting temperatures and a strong consensus from climate authorities. However, several uncertainties remain that warrant a cautious approach, leading to a conservative probability estimate of 75%. This estimate reflects both the historical patterns and current conditions, while accounting for potential cooling factors and variability in climate predictions.",
+      "base_rate": 0.75,
+      "evidence_quality": 0.95,
+      "news_sources_count": 1,
+      "total_articles": 0,
+      "cutoff_date_used": "2024-07-21",
+      "success": true
+    }
+  ]
+}

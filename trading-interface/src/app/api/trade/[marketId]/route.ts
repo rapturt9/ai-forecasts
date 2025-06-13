@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { marketId: string } }
+  { params }: { params: Promise<{ marketId: string }> }
 ) {
   try {
-    const { marketId } = params
+    const { marketId } = await params
 
     // Mock trading decision for demo
     const mockDecision = {

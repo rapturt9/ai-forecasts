@@ -1,0 +1,293 @@
+{
+  "base_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 3,
+  "successful_forecasts": 3,
+  "success_rate": 1.0,
+  "duration_seconds": 545.946521,
+  "questions_per_minute": 0.32970262301570746,
+  "total_predictions": 12,
+  "total_brier_scores": 12,
+  "overall_avg_brier_score": 0.14544015185049466,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.137176516663828,
+      "brier_score_count": 3,
+      "avg_prediction": 0.5833333333333334,
+      "prediction_count": 3,
+      "avg_actual_value": 0.9147196852,
+      "actual_value_count": 3
+    },
+    "30d": {
+      "avg_brier_score": 0.13180984999716133,
+      "brier_score_count": 3,
+      "avg_prediction": 0.6066666666666667,
+      "prediction_count": 3,
+      "avg_actual_value": 0.9147196852,
+      "actual_value_count": 3
+    },
+    "90d": {
+      "avg_brier_score": 0.160120453703828,
+      "brier_score_count": 3,
+      "avg_prediction": 0.55,
+      "prediction_count": 3,
+      "avg_actual_value": 0.9147196852,
+      "actual_value_count": 3
+    },
+    "180d": {
+      "avg_brier_score": 0.15265378703716134,
+      "brier_score_count": 3,
+      "avg_prediction": 0.5966666666666667,
+      "prediction_count": 3,
+      "avg_actual_value": 0.9147196852,
+      "actual_value_count": 3
+    }
+  },
+  "run_timestamp": "20250613_170208",
+  "master_log_file": "logs/benchmark_run_20250613_170208.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 1,
+      "question_id": "KCFbp1TH0RYN4j5zYdmh",
+      "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+      "freeze_value": "0.6458942140911571",
+      "comprehensive_context_length": 1194,
+      "predictions": {
+        "7d": {
+          "probability": 0.45,
+          "confidence": "high",
+          "reasoning": "Multiple credible news sources and official Olympic statements confirm the men's triathlon was postponed due to unsafe Seine water quality, definitively answering the question",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-07-28",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "30d": {
+          "probability": 0.45,
+          "confidence": "high",
+          "reasoning": "Multiple major news sources confirmed official postponements and cancellations of Olympic events due to Seine water quality issues, making this a certainty rather than a forecast",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-08-20",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "90d": {
+          "probability": 0.45,
+          "confidence": "high",
+          "reasoning": "Multiple high-quality sources confirm that Olympic events were postponed and cancelled due to Seine water quality, including the men's triathlon and training sessions",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-10-19",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "180d": {
+          "probability": 0.45,
+          "confidence": "high",
+          "reasoning": "Multiple independent sources confirm that Olympic events were postponed due to Seine water quality issues, with the men's triathlon specifically postponed on July 30, 2024",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        }
+      },
+      "brier_scores": {
+        "7d": 0.30250000000000005,
+        "30d": 0.30250000000000005,
+        "90d": 0.30250000000000005,
+        "180d": 0.30250000000000005
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_2_KCFbp1TH0RYN4j5zYdmh_20250613_170208.json",
+      "success": true
+    },
+    {
+      "question_idx": 2,
+      "question_id": "q6wJThcy6TJnQKrbjALm",
+      "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+      "freeze_value": "0.6912524093033491",
+      "comprehensive_context_length": 939,
+      "predictions": {
+        "7d": {
+          "probability": 0.45,
+          "confidence": "medium",
+          "reasoning": "While technological and policy drivers support significant EV adoption growth, infrastructure constraints and consumer resistance suggest majority adoption by 2030 is unlikely but possible",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-07-28",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "30d": {
+          "probability": 0.45,
+          "confidence": "medium",
+          "reasoning": "While current 14% market share and strong growth trajectory support significant expansion, infrastructure constraints and recent market slowdowns suggest majority adoption by 2030 is unlikely. 45% represents a realistic but ambitious target given evidence quality and implementation challenges.",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-08-20",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "90d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "While EV adoption is growing rapidly, achieving majority global sales by 2030 faces substantial hurdles in infrastructure, supply chain, and consumer acceptance across all markets",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-10-19",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "180d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "While EV adoption will continue to grow significantly, reaching majority (>50%) global sales by 2030 faces too many concurrent challenges in infrastructure, supply chains, and market acceptance to be likely",
+          "base_rate": 0.45,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        }
+      },
+      "brier_scores": {
+        "7d": 0.08652954999148392,
+        "30d": 0.08652954999148392,
+        "90d": 0.15536136111148396,
+        "180d": 0.15536136111148396
+      },
+      "actual_values": {
+        "7d": 0.7441590556000001,
+        "30d": 0.7441590556000001,
+        "90d": 0.7441590556000001,
+        "180d": 0.7441590556000001
+      },
+      "log_file": "logs/question_3_q6wJThcy6TJnQKrbjALm_20250613_170208.json",
+      "success": true
+    },
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Strong evidence of unprecedented warming trend balanced against remaining uncertainties and potential cooling mechanisms",
+          "base_rate": 0.6,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-07-28",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "30d": {
+          "probability": 0.92,
+          "confidence": "high",
+          "reasoning": "High probability justified by unprecedented streak of monthly records, consistent warming trend, and multiple independent confirmations, while maintaining appropriate uncertainty for remaining months",
+          "base_rate": 0.6,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-08-20",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "90d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "While evidence strongly supports 2024 exceeding 2023 temperatures based on unprecedented warming through August, prudent calibration requires acknowledging Q4 uncertainties",
+          "base_rate": 0.6,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2024-10-19",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        },
+        "180d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Conclusive evidence from multiple authoritative sources (WMO, NASA, Copernicus) confirms 2024 exceeded 2023 temperatures, with first-ever breach of 1.5\u00b0C threshold",
+          "base_rate": 0.6,
+          "evidence_quality": 0.95,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Multiple strategic search approaches"
+          ],
+          "total_articles_found": 0
+        }
+      },
+      "brier_scores": {
+        "7d": 0.022500000000000006,
+        "30d": 0.006399999999999993,
+        "90d": 0.022500000000000006,
+        "180d": 0.00010000000000000018
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250613_170208.json",
+      "success": true
+    }
+  ]
+}

@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """
-ForecastBench Parallel Runner - Uses Google News Superforecaster with 4 time horizons
-Evaluates on all 200 questions with proper Brier score calculation
+Enhanced ForecastBench Runner - Combines corrected data loading with comprehensive question context
+Provides all question information to the superforecaster for improved accuracy
 """
 
 import json
-import random
 import statistics
 import traceback
 import os
 import asyncio
 import concurrent.futures
-import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -25,10 +23,10 @@ import sys
 sys.path.append('src')
 
 from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
-from ai_forecasts.utils.agent_logger import agent_logger
+from ai_forecasts.utils.agent_logger import agent_logger, AgentLogger
 
-class ForecastBenchRunner:
-    """ForecastBench runner using Google News Superforecaster with 4 time horizons"""
+class EnhancedForecastBenchRunner:
+    """Enhanced ForecastBench runner with comprehensive question context and corrected Brier score calculation"""
     
     # Local files for ForecastBench datasets
     QUESTIONS_FILE = "forecastbench_human_2024.json"
@@ -42,55 +40,32 @@ class ForecastBenchRunner:
         self.serp_api_key = serp_api_key
         self.logger = agent_logger
         
-    def load_forecastbench_questions(self) -> List[Dict]:
-        """Load all 200 questions from local ForecastBench file"""
+        # Create logs and checkpoints directories
+        self.logs_dir = Path("logs")
+        self.logs_dir.mkdir(exist_ok=True)
+        self.checkpoints_dir = Path("checkpoints")
+        self.checkpoints_dir.mkdir(exist_ok=True)
+        
+    def load_local_data(self) -> Tuple[List[Dict], Dict[str, Any]]:
+        """Load questions and resolutions from local JSON files"""
         try:
-            self.logger.info(f"Loading questions from: {self.QUESTIONS_FILE}")
-            
+            # Load questions
             with open(self.QUESTIONS_FILE, 'r') as f:
-                data = json.load(f)
+                questions_data = json.load(f)
             
-            # Extract questions from the JSON structure
-            if isinstance(data, dict) and 'questions' in data:
-                questions = data['questions']
-            elif isinstance(data, list):
-                questions = data
-            else:
-                self.logger.error("Invalid ForecastBench questions format")
-                return []
-                
-            self.logger.info(f"✅ Loaded {len(questions)} questions from ForecastBench dataset")
-            return questions
-            
-        except Exception as e:
-            self.logger.error(f"❌ Error loading ForecastBench questions: {e}")
-            return []
-    
-    def load_resolution_data(self) -> Dict[str, Any]:
-        """Load resolution data from local ForecastBench file"""
-        try:
-            self.logger.info(f"Loading resolutions from: {self.RESOLUTIONS_FILE}")
-            
+            # Load resolutions
             with open(self.RESOLUTIONS_FILE, 'r') as f:
-                data = json.load(f)
+                resolutions_data = json.load(f)
             
-            # Extract resolutions from the JSON structure
-            if isinstance(data, dict) and 'resolutions' in data:
-                resolutions = data['resolutions']
-            elif isinstance(data, list):
-                resolutions = data
-            else:
-                self.logger.error("Invalid resolution data format")
-                return {}
-                
-            self.logger.info(f"✅ Loaded {len(resolutions)} resolutions")
+            questions = questions_data['questions']
+            self.logger.info(f"✅ Loaded {len(questions)} questions from local file")
+            self.logger.info(f"✅ Loaded {len(resolutions_data['resolutions'])} resolutions from local file")
             
-            # Return the full data structure for proper resolution lookup
-            return data
+            return questions, resolutions_data
             
         except Exception as e:
-            self.logger.error(f"❌ Error loading resolution data: {e}")
-            return {}
+            self.logger.error(f"❌ Error loading local data: {e}")
+            return [], {}
     
     def get_resolution_for_question_and_date(self, question_id: str, resolution_date: str, resolutions_data: Dict) -> float:
         """Get the resolution value for a specific question ID and date"""
@@ -103,19 +78,100 @@ class ForecastBenchRunner:
                 return resolution['resolved_to']
         return None
     
-    def process_single_question(self, question_data: Dict, question_idx: int, resolutions_data: Dict, base_date: datetime) -> Dict:
-        """Process a single question with 4 time horizon predictions"""
+    def create_comprehensive_context(self, question_data: Dict) -> str:
+        """Create comprehensive context from all available question information"""
+        context_parts = []
+        
+        # Main question
+        context_parts.append(f"QUESTION: {question_data.get('question', '')}")
+        
+        # Source and context
+        if question_data.get('source'):
+            context_parts.append(f"SOURCE: {question_data['source']}")
+        
+        if question_data.get('source_intro'):
+            context_parts.append(f"SOURCE CONTEXT: {question_data['source_intro']}")
+        
+        # Resolution criteria
+        if question_data.get('resolution_criteria'):
+            context_parts.append(f"RESOLUTION CRITERIA: {question_data['resolution_criteria']}")
+        
+        # Background information
+        if question_data.get('background'):
+            context_parts.append(f"BACKGROUND: {question_data['background']}")
+        
+        # Market information
+        if question_data.get('market_info_open_datetime'):
+            context_parts.append(f"MARKET OPENED: {question_data['market_info_open_datetime']}")
+        
+        if question_data.get('market_info_close_datetime'):
+            context_parts.append(f"MARKET CLOSES: {question_data['market_info_close_datetime']}")
+        
+        # Freeze information (current market state)
+        if question_data.get('freeze_datetime'):
+            context_parts.append(f"CURRENT MARKET STATE AS OF: {question_data['freeze_datetime']}")
+        
+        if question_data.get('freeze_datetime_value'):
+            context_parts.append(f"CURRENT MARKET PROBABILITY: {question_data['freeze_datetime_value']}")
+        
+        if question_data.get('freeze_datetime_value_explanation'):
+            context_parts.append(f"MARKET PROBABILITY EXPLANATION: {question_data['freeze_datetime_value_explanation']}")
+        
+        # URL for reference
+        if question_data.get('url'):
+            context_parts.append(f"REFERENCE URL: {question_data['url']}")
+        
+        # Additional market criteria
+        if question_data.get('market_info_resolution_criteria') and question_data['market_info_resolution_criteria'] != 'N/A':
+            context_parts.append(f"MARKET RESOLUTION CRITERIA: {question_data['market_info_resolution_criteria']}")
+        
+        # Combination information
+        if question_data.get('combination_of') and question_data['combination_of'] != 'N/A':
+            context_parts.append(f"COMBINATION OF: {question_data['combination_of']}")
+        
+        # Resolution dates
+        if question_data.get('resolution_dates') and question_data['resolution_dates'] != 'N/A':
+            context_parts.append(f"RESOLUTION DATES: {question_data['resolution_dates']}")
+        
+        return "\n\n".join(context_parts)
+    
+    def process_single_question(self, question_data: Dict, question_idx: int, resolutions_data: Dict, base_date: datetime, run_timestamp: str) -> Dict:
+        """Process a single question with 4 time horizon predictions using enhanced context"""
         try:
-            # Initialize superforecaster for this thread
+            # Create individual logger for this question
+            question_id = question_data.get('id', f"q_{question_idx}")
+            log_file = self.logs_dir / f"question_{question_idx+1}_{question_id}_{run_timestamp}.json"
+            question_logger = AgentLogger(log_file=str(log_file))
+            
+            # Initialize superforecaster for this thread with custom logger
             superforecaster = GoogleNewsSuperforecaster(
                 openrouter_api_key=self.openrouter_api_key,
-                serp_api_key=self.serp_api_key
+                serp_api_key=self.serp_api_key,
+                logger=question_logger
             )
             
             question = question_data.get('question', '')
             question_id = question_data.get('id', f"q_{question_idx}")
             
+            # Create comprehensive context from all question information
+            comprehensive_context = self.create_comprehensive_context(question_data)
+            
+            # Start logging session for this question
+            question_logger.start_session(
+                session_type="ForecastBench_Question",
+                request_data={
+                    "question_idx": question_idx,
+                    "question_id": question_id,
+                    "question": question[:100],
+                    "time_horizons": self.TIME_HORIZONS,
+                    "base_date": base_date.strftime('%Y-%m-%d')
+                },
+                session_id=f"q{question_idx+1}_{question_id}_{run_timestamp}"
+            )
+            
             self.logger.info(f"Processing question {question_idx + 1}: {question[:80]}...")
+            self.logger.info(f"Comprehensive context length: {len(comprehensive_context)} characters")
+            self.logger.info(f"Question logs: {log_file}")
             
             # Calculate resolution dates for all time horizons
             resolution_dates = []
@@ -123,19 +179,35 @@ class ForecastBenchRunner:
                 res_date = base_date + timedelta(days=horizon_days)
                 resolution_dates.append(res_date.strftime('%Y-%m-%d'))
             
-            # Generate predictions for each time horizon
-            predictions = {}
-            brier_scores = {}
-            actual_values = {}
+            # Generate predictions for all time horizons using the new multi-horizon method
+            cutoff_date = base_date + timedelta(days=180)  # Use the longest horizon as cutoff
             
-            for i, (horizon_days, resolution_date) in enumerate(zip(self.TIME_HORIZONS, resolution_dates)):
-                try:
-                    # Calculate cutoff date for this horizon
-                    cutoff_date = base_date + timedelta(days=horizon_days)
-                    
-                    # Generate forecast with cutoff date
-                    result = superforecaster.forecast(question, cutoff_date=cutoff_date)
-                    
+            # Use the updated forecast_with_google_news method for all time horizons at once
+            time_horizons_str = [f"{h}d" for h in self.TIME_HORIZONS]
+            
+            # Default parameters for multi-horizon forecasting
+            effective_recommended_articles = 10
+            effective_max_queries = 5
+            
+            try:
+                horizon_results = superforecaster.forecast_with_google_news(
+                    question=question,
+                    background=comprehensive_context,
+                    cutoff_date=cutoff_date,
+                    time_horizons=time_horizons_str,
+                    is_benchmark=True,
+                    recommended_articles=effective_recommended_articles,
+                    max_search_queries=effective_max_queries
+                )
+                
+                self.logger.info(f"  ✅ Multi-horizon forecast completed: {len(horizon_results)} predictions")
+                
+                # Process each horizon result
+                predictions = {}
+                brier_scores = {}
+                actual_values = {}
+                
+                for i, (horizon_days, resolution_date, result) in enumerate(zip(self.TIME_HORIZONS, resolution_dates, horizon_results)):
                     # Get actual resolution value
                     actual_value = self.get_resolution_for_question_and_date(question_id, resolution_date, resolutions_data)
                     
@@ -149,35 +221,65 @@ class ForecastBenchRunner:
                     predictions[horizon_key] = {
                         'probability': result.probability,
                         'confidence': result.confidence_level,
-                        'reasoning': result.reasoning[:200] + "..." if len(result.reasoning) > 200 else result.reasoning,
+                        'reasoning': result.reasoning,
                         'base_rate': result.base_rate,
                         'evidence_quality': result.evidence_quality,
                         'cutoff_date': cutoff_date.strftime("%Y-%m-%d"),
-                        'resolution_date': resolution_date
+                        'resolution_date': resolution_date,
+                        'news_sources_count': len(result.news_sources),
+                        'search_queries_used': result.search_queries_used,
+                        'total_articles_found': result.total_articles_found,
+                        'time_horizon': result.time_horizon if hasattr(result, 'time_horizon') else horizon_key
                     }
                     
                     brier_scores[horizon_key] = brier_score
                     actual_values[horizon_key] = actual_value
                     
-                except Exception as e:
-                    self.logger.warning(f"Error processing {horizon_days}d horizon for question {question_idx + 1}: {e}")
-                    predictions[f"{horizon_days}d"] = {'error': str(e)}
-                    brier_scores[f"{horizon_days}d"] = None
-                    actual_values[f"{horizon_days}d"] = None
+                    self.logger.info(f"  ✅ {horizon_days}d horizon: prob={result.probability:.3f}, actual={actual_value}, brier={brier_score:.3f}" if brier_score is not None else f"  ✅ {horizon_days}d horizon: prob={result.probability:.3f}, actual={actual_value}")
+                
+            except Exception as e:
+                self.logger.error(f"Multi-horizon forecasting failed for question {question_idx + 1}: {e}")
+                question_logger.error("Multi-horizon forecasting failed", {"error": str(e), "traceback": traceback.format_exc()})
+                
+                # Fallback to empty results
+                predictions = {}
+                brier_scores = {}
+                actual_values = {}
+                
+                for horizon_days in self.TIME_HORIZONS:
+                    horizon_key = f"{horizon_days}d"
+                    predictions[horizon_key] = {'error': str(e)}
+                    brier_scores[horizon_key] = None
+                    actual_values[horizon_key] = None
+            
+            # Finalize question logging session
+            question_logger.finalize_session()
             
             return {
                 'question_idx': question_idx,
                 'question_id': question_id,
                 'question': question,
                 'freeze_value': question_data.get('freeze_datetime_value'),
+                'comprehensive_context_length': len(comprehensive_context),
                 'predictions': predictions,
                 'brier_scores': brier_scores,
                 'actual_values': actual_values,
+                'log_file': str(log_file),
                 'success': True
             }
             
         except Exception as e:
             self.logger.error(f"Error processing question {question_idx + 1}: {e}")
+            traceback.print_exc()
+            
+            # Try to finalize logger even on error
+            try:
+                if 'question_logger' in locals():
+                    question_logger.error("Question processing failed", {"error": str(e), "traceback": traceback.format_exc()})
+                    question_logger.finalize_session()
+            except:
+                pass
+            
             return {
                 'question_idx': question_idx,
                 'question_id': question_data.get('id', f"q_{question_idx}"),
@@ -186,67 +288,184 @@ class ForecastBenchRunner:
                 'success': False
             }
     
-    def run_parallel_benchmark(self, max_questions: int = 200, max_workers: int = 3) -> Dict[str, Any]:
-        """Run ForecastBench evaluation with 4 time horizons in parallel"""
-        self.logger.info(f"🚀 Starting ForecastBench evaluation with 4 time horizons")
+    def run_parallel_benchmark(self, max_questions: int = 200, max_workers: int = 3, resume_from_checkpoint: str = None) -> Dict[str, Any]:
+        """Run enhanced ForecastBench evaluation with comprehensive context and checkpoint support"""
+        
+        # Handle checkpoint resumption or create new timestamp
+        if resume_from_checkpoint:
+            if resume_from_checkpoint == "latest":
+                checkpoint_file = self.find_latest_checkpoint()
+                if checkpoint_file:
+                    checkpoint_data = self.load_checkpoint(checkpoint_file)
+                    run_timestamp = checkpoint_data.get('run_timestamp', datetime.now().strftime("%Y%m%d_%H%M%S"))
+                    self.logger.info(f"🔄 Resuming from latest checkpoint: {checkpoint_file}")
+                else:
+                    self.logger.info("📄 No checkpoint found, starting fresh")
+                    run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    checkpoint_data = {}
+            else:
+                # Specific checkpoint file
+                checkpoint_file = Path(resume_from_checkpoint)
+                checkpoint_data = self.load_checkpoint(checkpoint_file)
+                run_timestamp = checkpoint_data.get('run_timestamp', datetime.now().strftime("%Y%m%d_%H%M%S"))
+        else:
+            # Fresh start
+            run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            checkpoint_data = {}
+            checkpoint_file = self.get_checkpoint_file(run_timestamp)
+        
+        # Create master log file for the entire run
+        master_log_file = self.logs_dir / f"benchmark_run_{run_timestamp}.json"
+        master_logger = AgentLogger(log_file=str(master_log_file))
+        
+        master_logger.start_session(
+            session_type="ForecastBench_Run",
+            request_data={
+                "max_questions": max_questions,
+                "max_workers": max_workers,
+                "time_horizons": self.TIME_HORIZONS,
+                "run_timestamp": run_timestamp,
+                "resume_from_checkpoint": resume_from_checkpoint is not None
+            },
+            session_id=f"benchmark_{run_timestamp}"
+        )
+        
+        self.logger.info(f"🚀 Starting Enhanced ForecastBench evaluation with comprehensive context")
         self.logger.info(f"   Questions: {max_questions}, Workers: {max_workers}")
         self.logger.info(f"   Time horizons: {self.TIME_HORIZONS} days")
+        self.logger.info(f"   Master log: {master_log_file}")
+        self.logger.info(f"   Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
+        self.logger.info(f"   Checkpoint file: {checkpoint_file}")
         
-        # Load questions and resolutions
-        questions = self.load_forecastbench_questions()
+        # Load questions and resolutions from local files
+        questions, resolutions_data = self.load_local_data()
         if not questions:
+            master_logger.error("Failed to load ForecastBench questions")
+            master_logger.finalize_session()
             return {"error": "Failed to load ForecastBench questions"}
             
-        resolutions_data = self.load_resolution_data()
         if not resolutions_data:
+            master_logger.error("Failed to load resolution data")
+            master_logger.finalize_session()
             return {"error": "Failed to load resolution data"}
         
-        # Limit questions for testing (default 200 for full evaluation)
+        master_logger.log("data_loading", f"Loaded {len(questions)} questions and {len(resolutions_data.get('resolutions', []))} resolutions")
+        
+        # Limit questions for testing
         questions = questions[:max_questions]
+        master_logger.log("question_selection", f"Processing first {len(questions)} questions")
         
         # Base date for time horizon calculations (forecast due date)
         base_date = datetime(2024, 7, 21)
+        master_logger.log("base_date", f"Using base date: {base_date.strftime('%Y-%m-%d')}")
         
-        results = []
-        start_time = datetime.now()
+        # Resume from checkpoint if available
+        if checkpoint_data and 'results' in checkpoint_data:
+            completed_indices = set(r['question_idx'] for r in checkpoint_data['results'] if r.get('success', False))
+            self.logger.info(f"⏮️ Found checkpoint with {len(completed_indices)} completed questions")
+            results = checkpoint_data['results']
+            start_time = datetime.fromisoformat(checkpoint_data.get('start_time', datetime.now().isoformat()))
+        else:
+            completed_indices = set()
+            results = []
+            start_time = datetime.now()
         
-        # Process questions in parallel
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all tasks
-            future_to_idx = {
-                executor.submit(self.process_single_question, q, idx, resolutions_data, base_date): idx 
-                for idx, q in enumerate(questions)
-            }
-            
-            # Collect results as they complete
-            for future in as_completed(future_to_idx):
-                try:
-                    result = future.result()
-                    results.append(result)
-                    
-                    if result['success']:
-                        # Show progress with Brier scores for each horizon
-                        brier_info = []
-                        for horizon in self.TIME_HORIZONS:
-                            brier = result['brier_scores'].get(f"{horizon}d")
-                            if brier is not None:
-                                brier_info.append(f"{horizon}d:{brier:.3f}")
-                        brier_str = f" (Brier: {', '.join(brier_info)})" if brier_info else ""
-                        self.logger.info(f"✅ Completed question {result['question_idx'] + 1}/{len(questions)}{brier_str}")
-                    else:
-                        self.logger.error(f"❌ Failed question {result['question_idx'] + 1}/{len(questions)}")
+        # Filter questions that haven't been completed yet
+        remaining_questions = [(idx, q) for idx, q in enumerate(questions) if idx not in completed_indices]
+        
+        if not remaining_questions:
+            self.logger.info("✅ All questions already completed from checkpoint!")
+        else:
+            self.logger.info(f"📋 Processing {len(remaining_questions)} remaining questions (out of {len(questions)} total)")
+        
+        # Process remaining questions in parallel
+        if remaining_questions:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                # Submit tasks for remaining questions
+                future_to_idx = {
+                    executor.submit(self.process_single_question, q, idx, resolutions_data, base_date, run_timestamp): idx 
+                    for idx, q in remaining_questions
+                }
+                
+                # Track progress for checkpointing
+                completed_count = len(completed_indices)
+                total_questions = len(questions)
+                
+                # Collect results as they complete
+                for future in as_completed(future_to_idx):
+                    try:
+                        result = future.result()
+                        results.append(result)
+                        completed_count += 1
                         
-                except Exception as e:
-                    idx = future_to_idx[future]
-                    self.logger.error(f"❌ Exception in question {idx + 1}: {e}")
-                    results.append({
-                        'question_idx': idx,
-                        'error': str(e),
-                        'success': False
-                    })
+                        if result['success']:
+                            # Show progress with Brier scores for each horizon
+                            brier_info = []
+                            for horizon in self.TIME_HORIZONS:
+                                brier = result['brier_scores'].get(f"{horizon}d")
+                                if brier is not None:
+                                    brier_info.append(f"{horizon}d:{brier:.3f}")
+                            brier_str = f" (Brier: {', '.join(brier_info)})" if brier_info else ""
+                            self.logger.info(f"✅ Completed question {result['question_idx'] + 1}/{total_questions} ({completed_count}/{total_questions}){brier_str}")
+                            master_logger.log("question_completed", f"Question {result['question_idx'] + 1} completed", {
+                                "question_id": result['question_id'],
+                                "log_file": result.get('log_file'),
+                                "brier_scores": result['brier_scores']
+                            })
+                        else:
+                            self.logger.error(f"❌ Failed question {result['question_idx'] + 1}/{total_questions}")
+                            master_logger.error(f"Question {result['question_idx'] + 1} failed", {
+                                "question_id": result.get('question_id'),
+                                "error": result.get('error')
+                            })
+                        
+                        # Save checkpoint after every completed question
+                        checkpoint_data_to_save = {
+                            'run_timestamp': run_timestamp,
+                            'start_time': start_time.isoformat(),
+                            'base_date': base_date.strftime('%Y-%m-%d'),
+                            'max_questions': max_questions,
+                            'max_workers': max_workers,
+                            'time_horizons': self.TIME_HORIZONS,
+                            'total_questions': len(questions),
+                            'completed_count': completed_count,
+                            'results': results
+                        }
+                        self.save_checkpoint(checkpoint_data_to_save, checkpoint_file)
+                            
+                    except Exception as e:
+                        idx = future_to_idx[future]
+                        self.logger.error(f"❌ Exception in question {idx + 1}: {e}")
+                        master_logger.error(f"Question {idx + 1} exception", {"error": str(e), "traceback": traceback.format_exc()})
+                        results.append({
+                            'question_idx': idx,
+                            'error': str(e),
+                            'success': False
+                        })
+                        completed_count += 1
+                        
+                        # Save checkpoint even after errors
+                        checkpoint_data_to_save = {
+                            'run_timestamp': run_timestamp,
+                            'start_time': start_time.isoformat(),
+                            'base_date': base_date.strftime('%Y-%m-%d'),
+                            'max_questions': max_questions,
+                            'max_workers': max_workers,
+                            'time_horizons': self.TIME_HORIZONS,
+                            'total_questions': len(questions),
+                            'completed_count': completed_count,
+                            'results': results
+                        }
+                        self.save_checkpoint(checkpoint_data_to_save, checkpoint_file)
         
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
+        
+        master_logger.log("benchmark_completed", f"Benchmark completed in {duration:.1f}s", {
+            "total_questions": len(questions),
+            "successful_results": len([r for r in results if r['success']]),
+            "duration_seconds": duration
+        })
         
         # Calculate comprehensive statistics
         successful_results = [r for r in results if r['success']]
@@ -254,6 +473,8 @@ class ForecastBenchRunner:
         
         # Calculate Brier scores by time horizon
         horizon_stats = {}
+        all_brier_scores = []
+        
         for horizon in self.TIME_HORIZONS:
             horizon_key = f"{horizon}d"
             brier_scores = []
@@ -264,6 +485,7 @@ class ForecastBenchRunner:
                 brier = result['brier_scores'].get(horizon_key)
                 if brier is not None:
                     brier_scores.append(brier)
+                    all_brier_scores.append(brier)
                     
                 pred = result['predictions'].get(horizon_key, {}).get('probability')
                 if pred is not None:
@@ -284,7 +506,8 @@ class ForecastBenchRunner:
         
         # Overall statistics
         total_predictions = sum(len([r for r in successful_results if r['predictions'].get(f"{h}d")]) for h in self.TIME_HORIZONS)
-        total_brier_scores = sum(len([r for r in successful_results if r['brier_scores'].get(f"{h}d") is not None]) for h in self.TIME_HORIZONS)
+        total_brier_scores = len(all_brier_scores)
+        overall_avg_brier = statistics.mean(all_brier_scores) if all_brier_scores else None
         
         summary = {
             'base_date': base_date.strftime("%Y-%m-%d"),
@@ -296,30 +519,100 @@ class ForecastBenchRunner:
             'questions_per_minute': (len(questions) / duration) * 60 if duration > 0 else 0,
             'total_predictions': total_predictions,
             'total_brier_scores': total_brier_scores,
+            'overall_avg_brier_score': overall_avg_brier,
             'horizon_statistics': horizon_stats,
+            'run_timestamp': run_timestamp,
+            'master_log_file': str(master_log_file),
+            'logs_directory': str(self.logs_dir),
             'results': results
         }
         
+        # Log summary to master log
+        master_logger.log("final_summary", "Benchmark run completed", {
+            "summary": {k: v for k, v in summary.items() if k != 'results'}  # Exclude full results to avoid huge log
+        })
+        
+        # Finalize master logging session
+        master_logger.finalize_session()
+        
         # Log comprehensive results
-        self.logger.info(f"🎯 ForecastBench Evaluation Complete!")
+        self.logger.info(f"🎯 Enhanced ForecastBench Evaluation Complete!")
         self.logger.info(f"   Questions processed: {len(successful_results)}/{len(questions)} ({success_rate:.1%})")
         self.logger.info(f"   Total predictions: {total_predictions}")
         self.logger.info(f"   Total Brier scores: {total_brier_scores}")
+        self.logger.info(f"   Overall Average Brier Score: {overall_avg_brier:.4f}" if overall_avg_brier else "   Overall Average Brier Score: N/A")
         self.logger.info(f"   Duration: {duration:.1f}s ({summary['questions_per_minute']:.1f} questions/minute)")
+        self.logger.info(f"   📁 Master log: {master_log_file}")
+        self.logger.info(f"   📁 Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
         
         # Log Brier scores by time horizon
         for horizon in self.TIME_HORIZONS:
             horizon_key = f"{horizon}d"
             stats = horizon_stats[horizon_key]
             if stats['avg_brier_score'] is not None:
-                self.logger.info(f"   {horizon}-day Brier Score: {stats['avg_brier_score']:.3f} (n={stats['brier_score_count']})")
+                self.logger.info(f"   {horizon}-day Brier Score: {stats['avg_brier_score']:.4f} (n={stats['brier_score_count']})")
             else:
                 self.logger.info(f"   {horizon}-day Brier Score: N/A (no resolutions)")
         
+        # Save final results to checkpoint
+        self.save_checkpoint({
+            'run_timestamp': run_timestamp,
+            'results': results
+        }, checkpoint_file)
+        
         return summary
+    
+    def save_checkpoint(self, checkpoint_data: Dict, checkpoint_file: Path):
+        """Save checkpoint data to file"""
+        try:
+            with open(checkpoint_file, 'w') as f:
+                json.dump(checkpoint_data, f, indent=2, default=str)
+            self.logger.info(f"💾 Checkpoint saved: {checkpoint_file}")
+        except Exception as e:
+            self.logger.error(f"❌ Failed to save checkpoint: {e}")
+    
+    def load_checkpoint(self, checkpoint_file: Path) -> Dict:
+        """Load checkpoint data from file"""
+        try:
+            if checkpoint_file.exists():
+                with open(checkpoint_file, 'r') as f:
+                    checkpoint_data = json.load(f)
+                self.logger.info(f"📂 Checkpoint loaded: {checkpoint_file}")
+                return checkpoint_data
+            else:
+                self.logger.info("📄 No checkpoint file found, starting fresh")
+                return {}
+        except Exception as e:
+            self.logger.error(f"❌ Failed to load checkpoint: {e}")
+            return {}
+    
+    def get_checkpoint_file(self, run_timestamp: str) -> Path:
+        """Get the checkpoint file path for a run"""
+        return self.checkpoints_dir / f"benchmark_checkpoint_{run_timestamp}.json"
+    
+    def find_latest_checkpoint(self) -> Path:
+        """Find the most recent checkpoint file"""
+        checkpoint_files = list(self.checkpoints_dir.glob("benchmark_checkpoint_*.json"))
+        if checkpoint_files:
+            # Sort by modification time and return the latest
+            latest = max(checkpoint_files, key=lambda f: f.stat().st_mtime)
+            self.logger.info(f"🔍 Found latest checkpoint: {latest}")
+            return latest
+        return None
 
 def main():
-    """Main function to run ForecastBench evaluation"""
+    """Main function to run enhanced ForecastBench evaluation"""
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Enhanced ForecastBench Runner with Checkpoint Support')
+    parser.add_argument('--max-questions', type=int, default=200, help='Maximum number of questions to process')
+    parser.add_argument('--max-workers', type=int, default=20, help='Maximum number of parallel workers')
+    parser.add_argument('--resume', type=str, help='Resume from checkpoint file (use "latest" for most recent)')
+    parser.add_argument('--list-checkpoints', action='store_true', help='List available checkpoints and exit')
+    
+    args = parser.parse_args()
+    
     # Get API keys
     openrouter_api_key = os.getenv('OPENROUTER_API_KEY')
     serp_api_key = os.getenv('SERP_API_KEY')
@@ -328,23 +621,95 @@ def main():
         print("❌ OPENROUTER_API_KEY environment variable required")
         return
     
+    if not serp_api_key:
+        print("❌ SERP_API_KEY environment variable required")
+        return
+    
     # Create runner
-    runner = ForecastBenchRunner(
+    runner = EnhancedForecastBenchRunner(
         openrouter_api_key=openrouter_api_key,
         serp_api_key=serp_api_key
     )
     
-    # Run benchmark (testing: first 3 questions, 1 worker)
-    results = runner.run_parallel_benchmark(max_questions=3, max_workers=1)
+    # Handle checkpoint listing
+    if args.list_checkpoints:
+        checkpoints_dir = Path("checkpoints")
+        if checkpoints_dir.exists():
+            checkpoint_files = list(checkpoints_dir.glob("benchmark_checkpoint_*.json"))
+            if checkpoint_files:
+                print("📋 Available checkpoints:")
+                for checkpoint_file in sorted(checkpoint_files, key=lambda f: f.stat().st_mtime, reverse=True):
+                    try:
+                        with open(checkpoint_file, 'r') as f:
+                            data = json.load(f)
+                        completed = data.get('completed_count', 0)
+                        total = data.get('total_questions', 0)
+                        timestamp = data.get('run_timestamp', 'unknown')
+                        print(f"   {checkpoint_file.name}: {completed}/{total} questions completed (run: {timestamp})")
+                    except Exception as e:
+                        print(f"   {checkpoint_file.name}: Error reading checkpoint - {e}")
+            else:
+                print("📋 No checkpoints found")
+        else:
+            print("📋 Checkpoints directory doesn't exist")
+        return
+    
+    print(f"🚀 Starting benchmark with {args.max_questions} questions and {args.max_workers} workers")
+    if args.resume:
+        print(f"🔄 Will attempt to resume from checkpoint: {args.resume}")
+    
+    # Run benchmark
+    results = runner.run_parallel_benchmark(
+        max_questions=args.max_questions, 
+        max_workers=args.max_workers,
+        resume_from_checkpoint=args.resume
+    )
     
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"forecastbench_results_{timestamp}.json"
+    output_file = f"enhanced_forecastbench_results_{timestamp}.json"
     
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=2, default=str)
     
     print(f"📊 Results saved to: {output_file}")
+    
+    # Print log file information
+    print(f"\n📁 LOGGING INFORMATION:")
+    print(f"   Master log: {results.get('master_log_file', 'N/A')}")
+    print(f"   Individual logs directory: {results.get('logs_directory', 'N/A')}")
+    print(f"   Log files pattern: question_*_{results.get('run_timestamp', 'TIMESTAMP')}.json")
+    
+    # Count individual log files
+    if 'results' in results:
+        log_files = [r.get('log_file') for r in results['results'] if r.get('log_file')]
+        print(f"   Individual log files created: {len(log_files)}")
+    
+    # Print the 12 Brier scores and average as requested
+    if 'results' in results:
+        print(f"\n🎯 REQUESTED RESULTS: 12 Brier Scores from First 3 Questions")
+        print("=" * 80)
+        
+        all_brier_scores = []
+        for i, result in enumerate(results['results']):
+            if result['success']:
+                print(f"\nQuestion {i+1}: {result['question_id']}")
+                for horizon in [7, 30, 90, 180]:
+                    horizon_key = f"{horizon}d"
+                    brier = result['brier_scores'].get(horizon_key)
+                    if brier is not None:
+                        all_brier_scores.append(brier)
+                        print(f"  {horizon}-day horizon: {brier:.6f}")
+                    else:
+                        print(f"  {horizon}-day horizon: N/A")
+        
+        if all_brier_scores:
+            average_brier = sum(all_brier_scores) / len(all_brier_scores)
+            print(f"\n📊 FINAL RESULTS:")
+            print(f"   Total Brier scores: {len(all_brier_scores)}")
+            print(f"   Average Brier score: {average_brier:.6f}")
+        else:
+            print(f"\n❌ No valid Brier scores calculated")
 
 if __name__ == "__main__":
     main()

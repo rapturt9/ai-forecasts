@@ -210,13 +210,6 @@ class CachedGoogleNewsTool(BaseTool):
             if fallback_result:
                 return fallback_result
             return f"❌ Google News search failed for '{query}': {str(e)}. No cached alternatives available."
-            result_text = self._format_search_results(query, search_type, unique_articles)
-            
-            return result_text
-            
-        except Exception as e:
-            print(f"❌ Error in Google News search: {str(e)}")
-            return self._simulate_search(query, search_type)
     
     def _generate_cache_key(self, query: str, search_type: str, priority: str, effective_timeframe: Dict[str, str] = None) -> str:
         """Generate a cache key for the query parameters including timeframe"""

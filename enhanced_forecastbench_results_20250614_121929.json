@@ -1,0 +1,926 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 10,
+  "successful_forecasts": 10,
+  "success_rate": 1.0,
+  "duration_seconds": 442.027284,
+  "questions_per_minute": 1.3573822741674924,
+  "total_predictions": 40,
+  "total_brier_scores": 36,
+  "overall_avg_brier_score": 0.07442645873228244,
+  "sum_brier_scores": 2.679352514362168,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.06525912930006023,
+      "brier_score_count": 9,
+      "avg_prediction": 0.387,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    },
+    "30d": {
+      "avg_brier_score": 0.06547024041117135,
+      "brier_score_count": 9,
+      "avg_prediction": 0.384,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    },
+    "90d": {
+      "avg_brier_score": 0.09296830408228245,
+      "brier_score_count": 9,
+      "avg_prediction": 0.35,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    },
+    "180d": {
+      "avg_brier_score": 0.07400816113561579,
+      "brier_score_count": 9,
+      "avg_prediction": 0.38999999999999996,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    }
+  },
+  "run_timestamp": "20250614_121207",
+  "master_log_file": "logs/benchmark_run_20250614_121207.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 5,
+      "question_id": "yfyPBZNkCMZiffCyICSj",
+      "question": "\ud83d\udc4d\ud83d\udc4e Manifold Leadership Approval Rating [Market Index]",
+      "freeze_value": "0.37336912312159404",
+      "comprehensive_context_length": 1407,
+      "predictions": {
+        "7d": {
+          "probability": 0.42,
+          "confidence": "low",
+          "reasoning": "Conservative probability estimate based on current market price with limited adjustment due to weak evidence quality and multiple uncertainty factors",
+          "base_rate": 0.5,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Manifold Markets prediction platform performance reviews"
+          ],
+          "total_articles_found": 1,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.42,
+          "confidence": "medium",
+          "reasoning": "Synthesized current market price, historical patterns, and trend indicators while accounting for limited public information and market structure complexity",
+          "base_rate": 0.45,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Manifold Markets prediction platform developments news"
+          ],
+          "total_articles_found": 1,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.42,
+          "confidence": "low",
+          "reasoning": "Market probability of 37.34% weighted against base rate with conservative adjustment due to information limitations",
+          "base_rate": 0.5,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Manifold Markets leadership changes developments 2024",
+            "Manifold Markets prediction platform updates 2024"
+          ],
+          "total_articles_found": 1,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.42,
+          "confidence": "low",
+          "reasoning": "Anchored to reference class base rate of 0.45, adjusted downward based on current market signal while accounting for significant uncertainty and information limitations",
+          "base_rate": 0.45,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Manifold Markets leadership changes developments 2024",
+            "Manifold Markets prediction platform developments"
+          ],
+          "total_articles_found": 1,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.01785306723385227,
+        "30d": 0.01785306723385227,
+        "90d": 0.01785306723385227,
+        "180d": 0.01785306723385227
+      },
+      "actual_values": {
+        "7d": 0.5536153705,
+        "30d": 0.5536153705,
+        "90d": 0.5536153705,
+        "180d": 0.5536153705
+      },
+      "log_file": "logs/question_6_yfyPBZNkCMZiffCyICSj_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 9,
+      "question_id": "2ZLAoe3EAFVhcFAXXfPp",
+      "question": "Will Lionel Messi retire before the end of 2024?",
+      "freeze_value": "0.150783373650064",
+      "comprehensive_context_length": 1319,
+      "predictions": {
+        "7d": {
+          "probability": 0.12,
+          "confidence": "high",
+          "reasoning": "Multiple recent explicit statements against retirement, valid contract through 2025, and continued high performance suggest very low probability of retirement by end of 2024",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Lionel Messi retirement announcement plans 2024",
+            "Lionel Messi retirement plans 2024"
+          ],
+          "total_articles_found": 16,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.15,
+          "confidence": "high",
+          "reasoning": "Multiple recent explicit statements against retirement, contract obligations through 2025, and continued high performance suggest very low probability of 2024 retirement",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Lionel Messi retirement announcement plans 2024",
+            "Lionel Messi retirement plans 2024"
+          ],
+          "total_articles_found": 16,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.15,
+          "confidence": "medium",
+          "reasoning": "Starting from base rate of similar players at 37 with injuries (0.35), adjusted down due to multiple recent explicit statements against retirement, but maintained significant probability due to serious injury situation",
+          "base_rate": 0.35,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Lionel Messi retirement announcement plans 2024",
+            "Lionel Messi retirement plans 2024"
+          ],
+          "total_articles_found": 17,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.15,
+          "confidence": "high",
+          "reasoning": "Multiple strong pieces of evidence (contract through 2025, explicit statements, continued high performance) indicate extremely low likelihood of 2024 retirement barring catastrophic events",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Lionel Messi retirement announcement plans 2024",
+            "Lionel Messi retirement plans 2024"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0144,
+        "30d": 0.0225,
+        "90d": 0.0225,
+        "180d": 0.0225
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_10_2ZLAoe3EAFVhcFAXXfPp_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 2,
+      "question_id": "q6wJThcy6TJnQKrbjALm",
+      "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+      "freeze_value": "0.6912524093033491",
+      "comprehensive_context_length": 939,
+      "predictions": {
+        "7d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "Based on current 14% market share, historical adoption patterns, and credible forecasts showing 35-45% likely by 2030, majority adoption by 2030 appears unlikely despite positive momentum",
+          "base_rate": 0.14,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "global electric vehicle sales projections 2030",
+            "electric vehicle adoption challenges barriers 2030 target"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "While EV adoption continues to grow rapidly from current 14% share, achieving majority status by 2030 faces significant hurdles in infrastructure, supply chain, and affordability",
+          "base_rate": 0.14,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "electric vehicle adoption challenges barriers 2030 global",
+            "global electric vehicle sales projections 2030"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.35,
+          "confidence": "high",
+          "reasoning": "While EV adoption is accelerating, the complexity of simultaneous infrastructure, supply chain, and consumer behavior changes required makes majority adoption by 2030 unlikely",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "global electric vehicle market share 2024 forecast 2030",
+            "challenges barriers EV adoption 2030 forecast slowdown"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "While long-term EV transition appears inevitable, reaching 50% global market share by 2030 faces substantial challenges in infrastructure, supply chain, and consumer adoption",
+          "base_rate": 0.14,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "electric vehicle policy changes battery technology breakthrough 2024",
+            "global electric vehicle sales projections 2030 market share"
+          ],
+          "total_articles_found": 30,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.15536136111148396,
+        "30d": 0.15536136111148396,
+        "90d": 0.15536136111148396,
+        "180d": 0.15536136111148396
+      },
+      "actual_values": {
+        "7d": 0.7441590556000001,
+        "30d": 0.7441590556000001,
+        "90d": 0.7441590556000001,
+        "180d": 0.7441590556000001
+      },
+      "log_file": "logs/question_3_q6wJThcy6TJnQKrbjALm_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 7,
+      "question_id": "YulPWDHFTUkekmrO3v4J",
+      "question": "[2024 Formula 1 Season] Will Oscar Piastri or Daniel Ricciardo win a race?",
+      "freeze_value": "0.39330923026596104",
+      "comprehensive_context_length": 1269,
+      "predictions": {
+        "7d": {
+          "probability": 0.08,
+          "confidence": "medium",
+          "reasoning": "Starting from historical base rate of 0.05 for midfield team victories, adjusted upward to 0.08 based on McLaren's improved form but constrained by very short time horizon and continued top team advantages",
+          "base_rate": 0.05,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "McLaren Racing Point F1 2024 performance analysis Piastri Ricciardo",
+            "Oscar Piastri Daniel Ricciardo F1 race win 2024"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.12,
+          "confidence": "medium",
+          "reasoning": "While McLaren shows improved form, particularly in qualifying, the combination of Red Bull's race pace advantage and short time horizon makes a win unlikely but not impossible",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "McLaren Racing Point F1 team performance analysis 2024",
+            "Oscar Piastri Daniel Ricciardo F1 race win 2024"
+          ],
+          "total_articles_found": 23,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.18,
+          "confidence": "medium",
+          "reasoning": "Starting from historical base rate of first-time winners, adjusted slightly upward based on McLaren's improved form and Piastri's podium, while maintaining conservative outlook due to continued top team dominance",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "McLaren Racing Point F1 performance analysis 2024",
+            "Oscar Piastri Daniel Ricciardo win F1 race 2024"
+          ],
+          "total_articles_found": 23,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.08,
+          "confidence": "high",
+          "reasoning": "Started from historical base rate for first-time winners, adjusted upward for McLaren's improved form while maintaining conservative outlook given dominance of top teams",
+          "base_rate": 0.03,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Oscar Piastri Daniel Ricciardo F1 win 2024 race victory",
+            "F1 first time winners statistics history McLaren Racing Point"
+          ],
+          "total_articles_found": 18,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": null,
+        "30d": null,
+        "90d": null,
+        "180d": null
+      },
+      "actual_values": {
+        "7d": null,
+        "30d": null,
+        "90d": null,
+        "180d": null
+      },
+      "log_file": "logs/question_8_YulPWDHFTUkekmrO3v4J_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 3,
+      "question_id": "cLxfTH5GDfmqeNJwClVF",
+      "question": "Will the majority of new cars sold worldwide be electric before the end of 2030?",
+      "freeze_value": "0.659999999999999",
+      "comprehensive_context_length": 1579,
+      "predictions": {
+        "7d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "Latest high-quality evidence from BloombergNEF, IEA, and financial analysts suggests global EV adoption will be significant but likely fall short of majority sales by 2030",
+          "base_rate": 0.35,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "global electric vehicle sales projections 2030",
+            "electric vehicle adoption challenges barriers 2030 forecast"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "Starting from infrastructure-dependent technology adoption base rate of 0.30, adjusted upward slightly to 0.35 based on current momentum but constrained by identified challenges and recent market signals",
+          "base_rate": 0.3,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "electric vehicle adoption challenges barriers 2030",
+            "global electric vehicle sales forecast 2030 market share"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "While EV adoption is accelerating, reaching global majority (>50%) by 2030 faces substantial challenges. The 0.35 probability reflects strong growth potential while acknowledging significant barriers to rapid adoption",
+          "base_rate": 0.14,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "global electric vehicle sales forecast 2030 IEA",
+            "electric vehicle adoption challenges slowdown 2024"
+          ],
+          "total_articles_found": 23,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "Based on current market trends, infrastructure challenges, and expert forecasts, majority EV sales by 2030 faces significant headwinds",
+          "base_rate": 0.35,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "global electric vehicle sales forecast 2030 IEA projection",
+            "electric vehicle adoption challenges barriers 2030 global market"
+          ],
+          "total_articles_found": 14,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0471423080651875,
+        "30d": 0.0471423080651875,
+        "90d": 0.0471423080651875,
+        "180d": 0.0471423080651875
+      },
+      "actual_values": {
+        "7d": 0.5671227949000001,
+        "30d": 0.5671227949000001,
+        "90d": 0.5671227949000001,
+        "180d": 0.5671227949000001
+      },
+      "log_file": "logs/question_4_cLxfTH5GDfmqeNJwClVF_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 6,
+      "question_id": "lFx5LHHUTgHnQPquiOMs",
+      "question": "Will Rafael Nadal win another Grand Slam before his retirement?",
+      "freeze_value": "0.05936166927615501",
+      "comprehensive_context_length": 1051,
+      "predictions": {
+        "7d": {
+          "probability": 0.15,
+          "confidence": "medium",
+          "reasoning": "Combined historical base rate with current evidence showing significant challenges, weighted against proven comeback ability but adjusted for age and modern competition",
+          "base_rate": 0.2,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Rafael Nadal Grand Slam return 2024",
+            "Rafael Nadal return injury 2024 Grand Slam"
+          ],
+          "total_articles_found": 17,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.08,
+          "confidence": "high",
+          "reasoning": "Combined historical base rate with current evidence showing significant challenges but allowing for small possibility of success given Nadal's exceptional career resilience",
+          "base_rate": 0.01,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Rafael Nadal experts predict chances US Open comeback 2024",
+            "Rafael Nadal grand slam return injury 2024"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.15,
+          "confidence": "medium",
+          "reasoning": "Analysis integrates historical data, current evidence, and unique contextual factors while maintaining appropriate skepticism about comeback chances at age 38",
+          "base_rate": 0.2,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Rafael Nadal injury return Grand Slam 2024",
+            "Rafael Nadal Grand Slam wins history injury comebacks"
+          ],
+          "total_articles_found": 17,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.15,
+          "confidence": "medium",
+          "reasoning": "Age, injury history, and competition level suggest significant challenges, while recent comeback shows promise but remains untested at Grand Slam level",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Rafael Nadal grand slam return 2024",
+            "Rafael Nadal return injury 2024 Grand Slam"
+          ],
+          "total_articles_found": 31,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0225,
+        "30d": 0.0064,
+        "90d": 0.0225,
+        "180d": 0.0225
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_7_lFx5LHHUTgHnQPquiOMs_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 8,
+      "question_id": "iPG19DGNrWEkbUBjfk6L",
+      "question": "Will Ding Liren repeat as World Chess Champion?",
+      "freeze_value": "0.23113899627783702",
+      "comprehensive_context_length": 896,
+      "predictions": {
+        "7d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "Started with 0.60 historical base rate, applied -0.25 adjustment based on multiple independent negative indicators for champion, particularly recent tournament performance and psychological factors",
+          "base_rate": 0.6,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Ding Liren world chess champion 2024",
+            "Gukesh D challenger Ding Liren world chess championship 2024"
+          ],
+          "total_articles_found": 35,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.35,
+          "confidence": "high",
+          "reasoning": "Historical champion advantage significantly outweighed by current form crisis, visible psychological issues, and strong challenger",
+          "base_rate": 0.6,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Gukesh D chess championship challenger Ding Liren 2024",
+            "Ding Liren World Chess Champion 2024 title defense"
+          ],
+          "total_articles_found": 35,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.25,
+          "confidence": "high",
+          "reasoning": "Starting from 60% historical defense rate, adjusted significantly downward based on documented poor form, psychological issues, and strong challenger profile",
+          "base_rate": 0.6,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Ding Liren World Chess Champion 2024 title defense",
+            "Gukesh D chess world championship challenger Ding Liren 2024"
+          ],
+          "total_articles_found": 35,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.35,
+          "confidence": "high",
+          "reasoning": "Strong evidence from multiple sources indicates significant challenges for champion retention, with current form and momentum strongly favoring challenger",
+          "base_rate": 0.6,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Ding Liren World Chess Champion 2024",
+            "Gukesh D chess challenger Ding Liren championship 2024"
+          ],
+          "total_articles_found": 35,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.12249999999999998,
+        "30d": 0.12249999999999998,
+        "90d": 0.0625,
+        "180d": 0.12249999999999998
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_9_iPG19DGNrWEkbUBjfk6L_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 1,
+      "question_id": "KCFbp1TH0RYN4j5zYdmh",
+      "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+      "freeze_value": "0.6458942140911571",
+      "comprehensive_context_length": 1194,
+      "predictions": {
+        "7d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Combined historical pattern of cancellations, current water quality failures, and limited time for improvement suggest high likelihood of at least one event modification",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Paris Olympics Seine river events cancelled postponed water quality 2024",
+            "Seine river water quality test events Paris Olympics history"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "High probability based on persistent water quality issues, official backup preparations, and limited improvement timeline, balanced against recent positive signals",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Paris Olympics Seine water quality cancellation postpone 2024"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.65,
+          "confidence": "high",
+          "reasoning": "Evidence shows persistent water quality issues balanced against recent improvements and backup preparations, with multiple credible paths to event modification",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Paris Olympics Seine water quality cancel postpone July 2024"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.95,
+          "confidence": "high",
+          "reasoning": "Based on confirmed postponement of men's triathlon, multiple cancelled training sessions, and persistent water quality issues",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Paris Olympics Seine river events cancelled postponed water quality",
+            "Seine river water quality history Paris Olympics test events cancelled"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.022500000000000006,
+        "30d": 0.022500000000000006,
+        "90d": 0.12249999999999998,
+        "180d": 0.0025000000000000044
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_2_KCFbp1TH0RYN4j5zYdmh_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 4,
+      "question_id": "ygVTjZRGDZvp0EQJ1L53",
+      "question": "Will sports betting be legal in California and Texas by 2030?",
+      "freeze_value": "0.805330724795234",
+      "comprehensive_context_length": 954,
+      "predictions": {
+        "7d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "National trend and fiscal pressures support legalization, but specific obstacles and historical patterns in both states suggest cautious outlook",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "California Texas sports betting history previous attempts failures",
+            "California Texas sports betting legalization 2024"
+          ],
+          "total_articles_found": 31,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.35,
+          "confidence": "medium",
+          "reasoning": "Both states face substantial, documented obstacles through at least 2025-2026. California has clearer potential pathway (2026/2028 tribal initiative) while Texas shows stronger institutional resistance. National trends continue but with decreasing momentum.",
+          "base_rate": 0.78,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Texas sports betting legislation 2024 2025 initiatives",
+            "California Texas sports betting legalization status 2024"
+          ],
+          "total_articles_found": 19,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.15,
+          "confidence": "medium",
+          "reasoning": "Started with 0.25 base rate from historical state adoption patterns, adjusted down to 0.15 based on strong evidence of specific barriers and timelines in both states extending beyond 2025",
+          "base_rate": 0.25,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "California Texas sports betting legalization 2024",
+            "California sports betting legalization 2024 2025"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.25,
+          "confidence": "medium",
+          "reasoning": "While national trend favors legalization, both states face unique and substantial barriers that make meeting 2030 deadline unlikely. Multiple independent conditions must be met in sequence.",
+          "base_rate": 0.78,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "California Texas sports betting ballot measure legislation 2024 2025",
+            "California Texas sports betting legalization status 2024",
+            "California tribal gaming sports betting history opposition"
+          ],
+          "total_articles_found": 33,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.16257542729001834,
+        "30d": 0.16257542729001834,
+        "90d": 0.3638580003300183,
+        "180d": 0.2532167138100183
+      },
+      "actual_values": {
+        "7d": 0.7532064326,
+        "30d": 0.7532064326,
+        "90d": 0.7532064326,
+        "180d": 0.7532064326
+      },
+      "log_file": "logs/question_5_ygVTjZRGDZvp0EQJ1L53_20250614_121207.json",
+      "success": true
+    },
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Given 13 consecutive months of records, significant temperature differential already established, and limited time for La Ni\u00f1a cooling to manifest, 2024 is highly likely to exceed 2023",
+          "base_rate": 0.65,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 global temperature record compared to 2023",
+            "La Nina cooling effect 2024 global temperature forecast"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.82,
+          "confidence": "medium",
+          "reasoning": "Strong first-half performance and record ocean heat content suggest 2024 will likely exceed 2023, despite expected La Ni\u00f1a development",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "El Nino impact global temperature 2024 forecast",
+            "2024 global temperature record hotter than 2023"
+          ],
+          "total_articles_found": 30,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "The unprecedented warmth in the first 7 months of 2024, combined with limited time for La Ni\u00f1a cooling effect, makes 2024 very likely to exceed 2023 temperatures",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 global temperature record hottest compared 2023",
+            "global temperature cooling trend la nina 2024"
+          ],
+          "total_articles_found": 30,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Strong evidence of record temperatures through first half of 2024, balanced against potential La Ni\u00f1a cooling effect and natural variability",
+          "base_rate": 0.65,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 global temperature record hottest year",
+            "2023 vs 2024 global temperature comparison",
+            "2024 versus 2023 global temperature comparison"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.022500000000000006,
+        "30d": 0.03240000000000002,
+        "90d": 0.022500000000000006,
+        "180d": 0.022500000000000006
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250614_121207.json",
+      "success": true
+    }
+  ]
+}

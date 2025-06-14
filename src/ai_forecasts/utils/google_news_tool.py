@@ -30,7 +30,7 @@ class CachedGoogleNewsTool(BaseTool):
     Caches search results by query signature and reuses data across agents
     """
     
-    name: str = "Cached Google News Search"
+    name: str = "Google News Search"
     description: str = """
     Search Google News efficiently with intelligent caching to minimize API calls.
     Automatically caches results by query parameters and reuses data when possible.
@@ -39,10 +39,10 @@ class CachedGoogleNewsTool(BaseTool):
     - Query-based caching with content deduplication
     - Cross-agent result sharing within session
     - Automatic cache invalidation for time-sensitive queries
-    - Strategic API usage with fallback to cached similar queries
+    - Strategic API usage with fallback to similar queries
     
     Use priority='high' for critical forecasting questions, 'medium' for supporting research,
-    'low' for background information. Cached results are used when available.
+    'low' for background information. Results are used when available.
     """
     args_schema: type = GoogleNewsInput
     

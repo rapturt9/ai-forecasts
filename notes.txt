@@ -1,0 +1,5 @@
+python run_forecastbench.py --max-questions 3 --max-workers 3 --failure-questions
+python run_forecastbench.py --max-questions 10 --max-workers 10
+python run_forecastbench.py --max-questions 200 --max-workers 20
+
+Test gpt 4.1, o4 mini

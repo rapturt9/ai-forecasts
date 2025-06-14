@@ -1,0 +1,146 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 1,
+  "successful_forecasts": 1,
+  "success_rate": 1.0,
+  "duration_seconds": 385.479901,
+  "questions_per_minute": 0.1556501385528788,
+  "total_predictions": 4,
+  "total_brier_scores": 4,
+  "overall_avg_brier_score": 0.02497500000000001,
+  "sum_brier_scores": 0.09990000000000004,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.022500000000000006,
+      "brier_score_count": 1,
+      "avg_prediction": 0.85,
+      "prediction_count": 1,
+      "avg_actual_value": 1.0,
+      "actual_value_count": 1
+    },
+    "30d": {
+      "avg_brier_score": 0.022500000000000006,
+      "brier_score_count": 1,
+      "avg_prediction": 0.85,
+      "prediction_count": 1,
+      "avg_actual_value": 1.0,
+      "actual_value_count": 1
+    },
+    "90d": {
+      "avg_brier_score": 0.022500000000000006,
+      "brier_score_count": 1,
+      "avg_prediction": 0.85,
+      "prediction_count": 1,
+      "avg_actual_value": 1.0,
+      "actual_value_count": 1
+    },
+    "180d": {
+      "avg_brier_score": 0.03240000000000002,
+      "brier_score_count": 1,
+      "avg_prediction": 0.82,
+      "prediction_count": 1,
+      "avg_actual_value": 1.0,
+      "actual_value_count": 1
+    }
+  },
+  "run_timestamp": "20250614_122138",
+  "master_log_file": "logs/benchmark_run_20250614_122138.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": {
+          "probability": 0.85,
+          "confidence": "medium",
+          "reasoning": "Record-breaking first half of 2024 plus remaining time horizon suggests high likelihood of exceeding 2023, despite potential La Ni\u00f1a cooling",
+          "base_rate": 0.65,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 temperature comparison 2023 year to date global",
+            "2024 global temperature record hottest year NOAA NASA"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Strong evidence from first half of 2024 showing unprecedented warming, balanced against potential cooling factors in remaining months",
+          "base_rate": 0.65,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 versus 2023 global temperature comparison",
+            "2024 global temperature record hottest year",
+            "2023 vs 2024 global temperature comparison"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Record temperatures through June 2024 provide strong foundation; La Ni\u00f1a cooling unlikely to offset first-half warmth",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 global temperature record compared to 2023",
+            "2024 global temperature cooling La Nina predictions"
+          ],
+          "total_articles_found": 22,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.82,
+          "confidence": "medium",
+          "reasoning": "First half 2024 temperatures far exceed 2023, creating buffer against later cooling; La Ni\u00f1a likely to moderate but not reverse the annual difference",
+          "base_rate": 0.85,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "2024 global temperature cooling La Nina forecast",
+            "2024 global temperature record hottest NOAA NASA"
+          ],
+          "total_articles_found": 22,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.022500000000000006,
+        "30d": 0.022500000000000006,
+        "90d": 0.022500000000000006,
+        "180d": 0.03240000000000002
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250614_122138.json",
+      "success": true
+    }
+  ]
+}

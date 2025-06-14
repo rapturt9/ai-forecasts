@@ -1,0 +1,968 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 10,
+  "successful_forecasts": 10,
+  "success_rate": 1.0,
+  "duration_seconds": 296.673778,
+  "questions_per_minute": 2.0224234310320472,
+  "total_predictions": 40,
+  "total_brier_scores": 36,
+  "overall_avg_brier_score": 0.07633064373339356,
+  "sum_brier_scores": 2.7479031744021682,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.07633064373339356,
+      "brier_score_count": 9,
+      "avg_prediction": 0.437,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    },
+    "30d": {
+      "avg_brier_score": 0.07633064373339356,
+      "brier_score_count": 9,
+      "avg_prediction": 0.437,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    },
+    "90d": {
+      "avg_brier_score": 0.07633064373339356,
+      "brier_score_count": 9,
+      "avg_prediction": 0.437,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    },
+    "180d": {
+      "avg_brier_score": 0.07633064373339356,
+      "brier_score_count": 9,
+      "avg_prediction": 0.437,
+      "prediction_count": 10,
+      "avg_actual_value": 0.5131226281777778,
+      "actual_value_count": 9
+    }
+  },
+  "run_timestamp": "20250614_135055",
+  "master_log_file": "logs/benchmark_run_20250614_135055.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": {
+          "probability": 0.72,
+          "confidence": "High",
+          "reasoning": "While both arguments present strong evidence, the unprecedented nature of current warming and substantial buffer from early 2024 outweigh potential La Ni\u00f1a cooling effects for the annual average. The 72% probability reflects strong confidence in continued warming while acknowledging legitimate cooling influences.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.72,
+          "confidence": "High",
+          "reasoning": "While both arguments present strong evidence, the unprecedented nature of current warming and substantial buffer from early 2024 outweigh potential La Ni\u00f1a cooling effects for the annual average. The 72% probability reflects strong confidence in continued warming while acknowledging legitimate cooling influences.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.72,
+          "confidence": "High",
+          "reasoning": "While both arguments present strong evidence, the unprecedented nature of current warming and substantial buffer from early 2024 outweigh potential La Ni\u00f1a cooling effects for the annual average. The 72% probability reflects strong confidence in continued warming while acknowledging legitimate cooling influences.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.72,
+          "confidence": "High",
+          "reasoning": "While both arguments present strong evidence, the unprecedented nature of current warming and substantial buffer from early 2024 outweigh potential La Ni\u00f1a cooling effects for the annual average. The 72% probability reflects strong confidence in continued warming while acknowledging legitimate cooling influences.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.07840000000000001,
+        "30d": 0.07840000000000001,
+        "90d": 0.07840000000000001,
+        "180d": 0.07840000000000001
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 1,
+      "question_id": "KCFbp1TH0RYN4j5zYdmh",
+      "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+      "freeze_value": "0.6458942140911571",
+      "comprehensive_context_length": 1194,
+      "predictions": {
+        "7d": {
+          "probability": 0.7,
+          "confidence": "High",
+          "reasoning": "A 70% probability balances the strong recent evidence of persistent water quality issues against remaining uncertainty about last-minute interventions. This aligns with historical patterns while accounting for the unique pressure to maintain the original venue.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.7,
+          "confidence": "High",
+          "reasoning": "A 70% probability balances the strong recent evidence of persistent water quality issues against remaining uncertainty about last-minute interventions. This aligns with historical patterns while accounting for the unique pressure to maintain the original venue.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.7,
+          "confidence": "High",
+          "reasoning": "A 70% probability balances the strong recent evidence of persistent water quality issues against remaining uncertainty about last-minute interventions. This aligns with historical patterns while accounting for the unique pressure to maintain the original venue.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.7,
+          "confidence": "High",
+          "reasoning": "A 70% probability balances the strong recent evidence of persistent water quality issues against remaining uncertainty about last-minute interventions. This aligns with historical patterns while accounting for the unique pressure to maintain the original venue.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.09000000000000002,
+        "30d": 0.09000000000000002,
+        "90d": 0.09000000000000002,
+        "180d": 0.09000000000000002
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_2_KCFbp1TH0RYN4j5zYdmh_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 7,
+      "question_id": "YulPWDHFTUkekmrO3v4J",
+      "question": "[2024 Formula 1 Season] Will Oscar Piastri or Daniel Ricciardo win a race?",
+      "freeze_value": "0.39330923026596104",
+      "comprehensive_context_length": 1269,
+      "predictions": {
+        "7d": {
+          "probability": 0.45,
+          "confidence": "Moderate to High",
+          "reasoning": "The 45% probability balances McLaren's demonstrated performance improvements and multiple competitive drivers against Red Bull's continued dominance and competition from other top teams. This is higher than the low advocate's position but lower than the high advocate's due to the reality of F1's competitive dynamics and historical patterns.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.45,
+          "confidence": "Moderate to High",
+          "reasoning": "The 45% probability balances McLaren's demonstrated performance improvements and multiple competitive drivers against Red Bull's continued dominance and competition from other top teams. This is higher than the low advocate's position but lower than the high advocate's due to the reality of F1's competitive dynamics and historical patterns.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.45,
+          "confidence": "Moderate to High",
+          "reasoning": "The 45% probability balances McLaren's demonstrated performance improvements and multiple competitive drivers against Red Bull's continued dominance and competition from other top teams. This is higher than the low advocate's position but lower than the high advocate's due to the reality of F1's competitive dynamics and historical patterns.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.45,
+          "confidence": "Moderate to High",
+          "reasoning": "The 45% probability balances McLaren's demonstrated performance improvements and multiple competitive drivers against Red Bull's continued dominance and competition from other top teams. This is higher than the low advocate's position but lower than the high advocate's due to the reality of F1's competitive dynamics and historical patterns.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": null,
+        "30d": null,
+        "90d": null,
+        "180d": null
+      },
+      "actual_values": {
+        "7d": null,
+        "30d": null,
+        "90d": null,
+        "180d": null
+      },
+      "log_file": "logs/question_8_YulPWDHFTUkekmrO3v4J_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 6,
+      "question_id": "lFx5LHHUTgHnQPquiOMs",
+      "question": "Will Rafael Nadal win another Grand Slam before his retirement?",
+      "freeze_value": "0.05936166927615501",
+      "comprehensive_context_length": 1051,
+      "predictions": {
+        "7d": {
+          "probability": 0.25,
+          "confidence": "High",
+          "reasoning": "Base rate of 12% for players over 35 returning from extended breaks, adjusted upward to 25% considering Nadal's clay expertise, extended timeline possibility, and protected ranking advantage. However, compelling evidence of physical challenges and next-gen dominance caps probability increase.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.25,
+          "confidence": "High",
+          "reasoning": "Base rate of 12% for players over 35 returning from extended breaks, adjusted upward to 25% considering Nadal's clay expertise, extended timeline possibility, and protected ranking advantage. However, compelling evidence of physical challenges and next-gen dominance caps probability increase.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.25,
+          "confidence": "High",
+          "reasoning": "Base rate of 12% for players over 35 returning from extended breaks, adjusted upward to 25% considering Nadal's clay expertise, extended timeline possibility, and protected ranking advantage. However, compelling evidence of physical challenges and next-gen dominance caps probability increase.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.25,
+          "confidence": "High",
+          "reasoning": "Base rate of 12% for players over 35 returning from extended breaks, adjusted upward to 25% considering Nadal's clay expertise, extended timeline possibility, and protected ranking advantage. However, compelling evidence of physical challenges and next-gen dominance caps probability increase.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0625,
+        "30d": 0.0625,
+        "90d": 0.0625,
+        "180d": 0.0625
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_7_lFx5LHHUTgHnQPquiOMs_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 5,
+      "question_id": "yfyPBZNkCMZiffCyICSj",
+      "question": "\ud83d\udc4d\ud83d\udc4e Manifold Leadership Approval Rating [Market Index]",
+      "freeze_value": "0.37336912312159404",
+      "comprehensive_context_length": 1407,
+      "predictions": {
+        "7d": {
+          "probability": 0.42,
+          "confidence": "Moderate-High",
+          "reasoning": "The 0.42 probability reflects a slight upward bias from current levels (37.3%) due to strong structural factors and leadership incentives, while incorporating legitimate downside risks from regulatory and trust challenges. The platform's direct feedback mechanisms and leadership alignment provide some buffer against external pressures.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.42,
+          "confidence": "Moderate-High",
+          "reasoning": "The 0.42 probability reflects a slight upward bias from current levels (37.3%) due to strong structural factors and leadership incentives, while incorporating legitimate downside risks from regulatory and trust challenges. The platform's direct feedback mechanisms and leadership alignment provide some buffer against external pressures.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.42,
+          "confidence": "Moderate-High",
+          "reasoning": "The 0.42 probability reflects a slight upward bias from current levels (37.3%) due to strong structural factors and leadership incentives, while incorporating legitimate downside risks from regulatory and trust challenges. The platform's direct feedback mechanisms and leadership alignment provide some buffer against external pressures.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.42,
+          "confidence": "Moderate-High",
+          "reasoning": "The 0.42 probability reflects a slight upward bias from current levels (37.3%) due to strong structural factors and leadership incentives, while incorporating legitimate downside risks from regulatory and trust challenges. The platform's direct feedback mechanisms and leadership alignment provide some buffer against external pressures.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.01785306723385227,
+        "30d": 0.01785306723385227,
+        "90d": 0.01785306723385227,
+        "180d": 0.01785306723385227
+      },
+      "actual_values": {
+        "7d": 0.5536153705,
+        "30d": 0.5536153705,
+        "90d": 0.5536153705,
+        "180d": 0.5536153705
+      },
+      "log_file": "logs/question_6_yfyPBZNkCMZiffCyICSj_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 3,
+      "question_id": "cLxfTH5GDfmqeNJwClVF",
+      "question": "Will the majority of new cars sold worldwide be electric before the end of 2030?",
+      "freeze_value": "0.659999999999999",
+      "comprehensive_context_length": 1579,
+      "predictions": {
+        "7d": {
+          "probability": 0.45,
+          "confidence": "High",
+          "reasoning": "The 45% probability represents a balanced assessment that acknowledges both the significant momentum in EV adoption and the substantial challenges to achieving majority market share by 2030. While China's production capacity and policy support provide strong tailwinds, infrastructure limitations and supply chain constraints present significant hurdles that are unlikely to be fully resolved within the timeline.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.45,
+          "confidence": "High",
+          "reasoning": "The 45% probability represents a balanced assessment that acknowledges both the significant momentum in EV adoption and the substantial challenges to achieving majority market share by 2030. While China's production capacity and policy support provide strong tailwinds, infrastructure limitations and supply chain constraints present significant hurdles that are unlikely to be fully resolved within the timeline.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.45,
+          "confidence": "High",
+          "reasoning": "The 45% probability represents a balanced assessment that acknowledges both the significant momentum in EV adoption and the substantial challenges to achieving majority market share by 2030. While China's production capacity and policy support provide strong tailwinds, infrastructure limitations and supply chain constraints present significant hurdles that are unlikely to be fully resolved within the timeline.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.45,
+          "confidence": "High",
+          "reasoning": "The 45% probability represents a balanced assessment that acknowledges both the significant momentum in EV adoption and the substantial challenges to achieving majority market share by 2030. While China's production capacity and policy support provide strong tailwinds, infrastructure limitations and supply chain constraints present significant hurdles that are unlikely to be fully resolved within the timeline.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.013717749085187478,
+        "30d": 0.013717749085187478,
+        "90d": 0.013717749085187478,
+        "180d": 0.013717749085187478
+      },
+      "actual_values": {
+        "7d": 0.5671227949000001,
+        "30d": 0.5671227949000001,
+        "90d": 0.5671227949000001,
+        "180d": 0.5671227949000001
+      },
+      "log_file": "logs/question_4_cLxfTH5GDfmqeNJwClVF_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 2,
+      "question_id": "q6wJThcy6TJnQKrbjALm",
+      "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+      "freeze_value": "0.6912524093033491",
+      "comprehensive_context_length": 939,
+      "predictions": {
+        "7d": {
+          "probability": 0.45,
+          "confidence": "Medium-High",
+          "reasoning": "A 45% probability balances the strong momentum in EV adoption with significant infrastructure and supply chain hurdles. This accounts for both the potential for accelerated adoption through policy support and technology improvements, while acknowledging the real challenges in scaling infrastructure and supply chains.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.45,
+          "confidence": "Medium-High",
+          "reasoning": "A 45% probability balances the strong momentum in EV adoption with significant infrastructure and supply chain hurdles. This accounts for both the potential for accelerated adoption through policy support and technology improvements, while acknowledging the real challenges in scaling infrastructure and supply chains.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.45,
+          "confidence": "Medium-High",
+          "reasoning": "A 45% probability balances the strong momentum in EV adoption with significant infrastructure and supply chain hurdles. This accounts for both the potential for accelerated adoption through policy support and technology improvements, while acknowledging the real challenges in scaling infrastructure and supply chains.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.45,
+          "confidence": "Medium-High",
+          "reasoning": "A 45% probability balances the strong momentum in EV adoption with significant infrastructure and supply chain hurdles. This accounts for both the potential for accelerated adoption through policy support and technology improvements, while acknowledging the real challenges in scaling infrastructure and supply chains.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.08652954999148392,
+        "30d": 0.08652954999148392,
+        "90d": 0.08652954999148392,
+        "180d": 0.08652954999148392
+      },
+      "actual_values": {
+        "7d": 0.7441590556000001,
+        "30d": 0.7441590556000001,
+        "90d": 0.7441590556000001,
+        "180d": 0.7441590556000001
+      },
+      "log_file": "logs/question_3_q6wJThcy6TJnQKrbjALm_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 8,
+      "question_id": "iPG19DGNrWEkbUBjfk6L",
+      "question": "Will Ding Liren repeat as World Chess Champion?",
+      "freeze_value": "0.23113899627783702",
+      "comprehensive_context_length": 896,
+      "predictions": {
+        "7d": {
+          "probability": 0.23,
+          "confidence": "High",
+          "reasoning": "The 23% probability synthesizes the 15% base rate of former champions regaining titles with slight positive adjustments for Ding's proven ability and experience, while accounting for significant recent performance decline and additional qualification hurdles.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.23,
+          "confidence": "High",
+          "reasoning": "The 23% probability synthesizes the 15% base rate of former champions regaining titles with slight positive adjustments for Ding's proven ability and experience, while accounting for significant recent performance decline and additional qualification hurdles.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.23,
+          "confidence": "High",
+          "reasoning": "The 23% probability synthesizes the 15% base rate of former champions regaining titles with slight positive adjustments for Ding's proven ability and experience, while accounting for significant recent performance decline and additional qualification hurdles.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.23,
+          "confidence": "High",
+          "reasoning": "The 23% probability synthesizes the 15% base rate of former champions regaining titles with slight positive adjustments for Ding's proven ability and experience, while accounting for significant recent performance decline and additional qualification hurdles.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0529,
+        "30d": 0.0529,
+        "90d": 0.0529,
+        "180d": 0.0529
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_9_iPG19DGNrWEkbUBjfk6L_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 9,
+      "question_id": "2ZLAoe3EAFVhcFAXXfPp",
+      "question": "Will Lionel Messi retire before the end of 2024?",
+      "freeze_value": "0.150783373650064",
+      "comprehensive_context_length": 1319,
+      "predictions": {
+        "7d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The 35% probability reflects strong evidence against retirement before 2024 end, while acknowledging some possibility of unexpected developments. The combination of contract obligations, recent statements, and ongoing commitments makes retirement in this timeframe relatively unlikely, though not impossible.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The 35% probability reflects strong evidence against retirement before 2024 end, while acknowledging some possibility of unexpected developments. The combination of contract obligations, recent statements, and ongoing commitments makes retirement in this timeframe relatively unlikely, though not impossible.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The 35% probability reflects strong evidence against retirement before 2024 end, while acknowledging some possibility of unexpected developments. The combination of contract obligations, recent statements, and ongoing commitments makes retirement in this timeframe relatively unlikely, though not impossible.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The 35% probability reflects strong evidence against retirement before 2024 end, while acknowledging some possibility of unexpected developments. The combination of contract obligations, recent statements, and ongoing commitments makes retirement in this timeframe relatively unlikely, though not impossible.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.12249999999999998,
+        "30d": 0.12249999999999998,
+        "90d": 0.12249999999999998,
+        "180d": 0.12249999999999998
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_10_2ZLAoe3EAFVhcFAXXfPp_20250614_135055.json",
+      "success": true
+    },
+    {
+      "question_idx": 4,
+      "question_id": "ygVTjZRGDZvp0EQJ1L53",
+      "question": "Will sports betting be legal in California and Texas by 2030?",
+      "freeze_value": "0.805330724795234",
+      "comprehensive_context_length": 954,
+      "predictions": {
+        "7d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The combination of California's tribal opposition (with 0.1 historical success rate) and Texas's structural barriers (0.0 historical success rate) makes success in both states by 2030 unlikely. While the time horizon allows multiple attempts, the requirement for both states to succeed makes 35% an appropriate probability.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The combination of California's tribal opposition (with 0.1 historical success rate) and Texas's structural barriers (0.0 historical success rate) makes success in both states by 2030 unlikely. While the time horizon allows multiple attempts, the requirement for both states to succeed makes 35% an appropriate probability.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The combination of California's tribal opposition (with 0.1 historical success rate) and Texas's structural barriers (0.0 historical success rate) makes success in both states by 2030 unlikely. While the time horizon allows multiple attempts, the requirement for both states to succeed makes 35% an appropriate probability.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.35,
+          "confidence": "High",
+          "reasoning": "The combination of California's tribal opposition (with 0.1 historical success rate) and Texas's structural barriers (0.0 historical success rate) makes success in both states by 2030 unlikely. While the time horizon allows multiple attempts, the requirement for both states to succeed makes 35% an appropriate probability.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.9,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "High-probability queries",
+            "Low-probability queries",
+            "Rebuttal evidence"
+          ],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.16257542729001834,
+        "30d": 0.16257542729001834,
+        "90d": 0.16257542729001834,
+        "180d": 0.16257542729001834
+      },
+      "actual_values": {
+        "7d": 0.7532064326,
+        "30d": 0.7532064326,
+        "90d": 0.7532064326,
+        "180d": 0.7532064326
+      },
+      "log_file": "logs/question_5_ygVTjZRGDZvp0EQJ1L53_20250614_135055.json",
+      "success": true
+    }
+  ]
+}

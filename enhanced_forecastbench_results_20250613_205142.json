@@ -1,0 +1,312 @@
+{
+  "base_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 3,
+  "successful_forecasts": 3,
+  "success_rate": 1.0,
+  "duration_seconds": 465.69249,
+  "questions_per_minute": 0.38652115691193556,
+  "total_predictions": 12,
+  "total_brier_scores": 12,
+  "overall_avg_brier_score": 0.9327666666666666,
+  "sum_brier_scores": 11.1932,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.9542333333333333,
+      "brier_score_count": 3,
+      "avg_prediction": 0.9766666666666667,
+      "prediction_count": 3,
+      "avg_actual_value": 0.0,
+      "actual_value_count": 3
+    },
+    "30d": {
+      "avg_brier_score": 0.9542333333333333,
+      "brier_score_count": 3,
+      "avg_prediction": 0.9766666666666667,
+      "prediction_count": 3,
+      "avg_actual_value": 0.0,
+      "actual_value_count": 3
+    },
+    "90d": {
+      "avg_brier_score": 0.8683666666666666,
+      "brier_score_count": 3,
+      "avg_prediction": 0.9299999999999999,
+      "prediction_count": 3,
+      "avg_actual_value": 0.0,
+      "actual_value_count": 3
+    },
+    "180d": {
+      "avg_brier_score": 0.9542333333333333,
+      "brier_score_count": 3,
+      "avg_prediction": 0.9766666666666667,
+      "prediction_count": 3,
+      "avg_actual_value": 0.0,
+      "actual_value_count": 3
+    }
+  },
+  "run_timestamp": "20250613_204357",
+  "master_log_file": "logs/benchmark_run_20250613_204357.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 2,
+      "question_id": "ccda7990a2565cabd7c375a036751bd3b953b8bed45d859010919cd3a84d7e78",
+      "question": "Will there be more than ten times as many 'Violence against civilians' in Montenegro for the 30 days before {resolution_date} compared to one plus the 30-day average of 'Violence against civilians' over the 360 days preceding {forecast_due_date}?\n\ne.g. If the forecast due date is 2024-01-01 and we have the following data:\nDate,'Violence against civilians'\n2023-11-11,1\n2023-10-10,2\nto calculate one plus the 30-day average of 'Violence against civilians' over the preceding 360 days, we\u2019d have: 1+(1+2)/12=1.25.\n\nIn this example, for the question to resolve positively, 13 (10 x 1.25) or more 'Violence against civilians' would need to occur in the 30 days leading up to the resolution.",
+      "freeze_value": "1.0",
+      "comprehensive_context_length": 2824,
+      "predictions": {
+        "7d": {
+          "probability": 0.95,
+          "confidence": "high",
+          "reasoning": "Single confirmed mass shooting with 12 casualties represents clear statistical outlier for Montenegro",
+          "base_rate": 0.05,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Montenegro violence against civilians attacks incidents"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.95,
+          "confidence": "high",
+          "reasoning": "Single confirmed mass shooting with 12 civilian casualties represents clear evidence of exceeding the 10x threshold compared to historical averages",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Montenegro civilian casualties incidents violence 2024 2025",
+            "Montenegro violence civilians attacks 2024"
+          ],
+          "total_articles_found": 14,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.95,
+          "confidence": "high",
+          "reasoning": "Single mass casualty event with 12 civilian deaths represents clear evidence for exceeding the historical baseline by more than tenfold",
+          "base_rate": 0.15,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Montenegro violent incidents crime attacks 2024",
+            "Montenegro violence civilians attacks 2024"
+          ],
+          "total_articles_found": 28,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.95,
+          "confidence": "high",
+          "reasoning": "Single confirmed mass shooting with 12 civilian deaths represents clear spike above historical baseline, meeting criteria for positive resolution",
+          "base_rate": 0.01,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Montenegro violence against civilians attacks incidents"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.9025,
+        "30d": 0.9025,
+        "90d": 0.9025,
+        "180d": 0.9025
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_3_ccda7990a2565cabd7c375a036751bd3b953b8bed45d859010919cd3a84d7e78_20250613_204357.json",
+      "success": true
+    },
+    {
+      "question_idx": 0,
+      "question_id": "4puVWhIkvQiHnTxbH4NL",
+      "question": "Will Apple\u2019s next iPhone (2024) include an on-device LLM \u201cChatBot\u201d?",
+      "freeze_value": "0.9357811764477981",
+      "comprehensive_context_length": 1129,
+      "predictions": {
+        "7d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Strong official confirmation and implementation evidence from multiple credible sources, with minor uncertainties only affecting implementation details rather than core occurrence",
+          "base_rate": 0.85,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Apple iPhone 16 on-device LLM AI chatbot"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Multiple high-quality sources confirm implementation, though exact technical details suggest hybrid approach rather than pure on-device processing",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Apple iPhone 16 on-device LLM AI chatbot",
+            "Apple iPhone 16 on-device LLM AI chatbot Siri announcement"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Based on official announcements and confirmed launch, with consideration of hybrid nature of implementation",
+          "base_rate": 0.65,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Apple iPhone 16 on-device LLM AI chatbot Siri"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Apple did include on-device LLM capabilities in iPhone 16, confirmed by multiple high-quality sources, though with significant implementation challenges",
+          "base_rate": 0.65,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Apple iPhone 16 on-device LLM AI chatbot"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.9801,
+        "30d": 0.9801,
+        "90d": 0.9801,
+        "180d": 0.9801
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_1_4puVWhIkvQiHnTxbH4NL_20250613_204357.json",
+      "success": true
+    },
+    {
+      "question_idx": 1,
+      "question_id": "1373",
+      "question": "Will at least five more exoplanets be found to be potentially habitable between 1 February 2024 and 31 December 2024?",
+      "freeze_value": "0.7547",
+      "comprehensive_context_length": 3545,
+      "predictions": {
+        "7d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Multiple credible sources confirm at least 6 potentially habitable exoplanets discovered in 2024, exceeding the threshold of 5, with strong evidence quality and independent verification",
+          "base_rate": 0.85,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Habitable Worlds Catalog updates 2024 new planets",
+            "new potentially habitable exoplanets discovered 2024"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "Based on confirmed discoveries from multiple credible sources exceeding the required threshold",
+          "base_rate": 0.75,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Habitable Worlds Catalog updates 2024 new planets",
+            "new potentially habitable exoplanets discovered 2024"
+          ],
+          "total_articles_found": 45,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.85,
+          "confidence": "high",
+          "reasoning": "Based on confirmed discoveries already meeting threshold, strong verification processes, and multiple independent confirmations using different methods",
+          "base_rate": 0.6,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "Habitable Worlds Catalog new additions 2024 exoplanets",
+            "new potentially habitable exoplanets discovered 2024"
+          ],
+          "total_articles_found": 30,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.99,
+          "confidence": "high",
+          "reasoning": "The threshold of 5 potentially habitable exoplanets was exceeded with high-quality evidence from multiple reputable sources, confirmed through different detection methods and peer review",
+          "base_rate": 0.6,
+          "evidence_quality": 0.85,
+          "cutoff_date": "2025-01-17",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 1,
+          "search_queries_used": [
+            "new potentially habitable exoplanets discovered 2024"
+          ],
+          "total_articles_found": 15,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.9801,
+        "30d": 0.9801,
+        "90d": 0.7224999999999999,
+        "180d": 0.9801
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_2_1373_20250613_204357.json",
+      "success": true
+    }
+  ]
+}

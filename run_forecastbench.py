@@ -10,10 +10,14 @@ import traceback
 import os
 import asyncio
 import concurrent.futures
+import sys
+import argparse
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
+import re
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -24,6 +28,36 @@ sys.path.append('src')
 
 from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
 from ai_forecasts.utils.agent_logger import agent_logger, AgentLogger
+
+def extract_question_ids_from_failure_file(file_path: str = "failure.txt") -> List[str]:
+    """
+    Return a deterministic list of question IDs from the top 10 most incorrect predictions,
+    excluding YulPWDHFTUkekmrO3v4J
+    
+    Args:
+        file_path: Path to the failure.txt file (unused, kept for compatibility)
+        
+    Returns:
+        List of question IDs from the failure analysis
+    """
+    # Deterministic list of question IDs from the top 10 most incorrect predictions
+    # Based on the failure.txt analysis, excluding YulPWDHFTUkekmrO3v4J
+    question_ids = [
+        "4puVWhIkvQiHnTxbH4NL",  # Question 20: Apple iPhone LLM ChatBot
+        "1373",                   # Question 47: Exoplanets discovery
+        "ccda7990a2565cabd7c375a036751bd3b953b8bed45d859010919cd3a84d7e78",  # Question 92: Montenegro violence
+        "0x60752c2a562d7faff00a82238520a13a9a5a5ee2927afd397d224dc54361afd6",  # Question 76: Tesla Robotaxi delay
+        "1353",                   # Question 57: Israel-Hamas ceasefire
+        "T10YIE",                 # Question 144: US 10-year breakeven inflation
+        "TMBACBW027SBOG",         # Question 135: Mortgage-backed securities
+        "9043472375a02690dfb338bd3d11605105562e5cae9672a989961b0c5bef9b51",  # Question 94: Bahrain protests
+        "4204aec5ff81b3d331f27141b072979d838ed95bcd0de36e887ca9a70523060a"   # Question 93: China protests
+    ]
+    
+    print(f"📋 Using deterministic list of {len(question_ids)} question IDs from failure analysis")
+    print(f"   Excluded: YulPWDHFTUkekmrO3v4J")
+    
+    return question_ids
 
 class EnhancedForecastBenchRunner:
     """Enhanced ForecastBench runner with comprehensive question context and corrected Brier score calculation"""
@@ -46,7 +80,7 @@ class EnhancedForecastBenchRunner:
         self.checkpoints_dir = Path("checkpoints")
         self.checkpoints_dir.mkdir(exist_ok=True)
         
-    def load_local_data(self) -> Tuple[List[Dict], Dict[str, Any]]:
+    def load_local_data(self) -> Tuple[List[Dict], Dict[str, Any], str]:
         """Load questions and resolutions from local JSON files"""
         try:
             # Load questions
@@ -58,14 +92,17 @@ class EnhancedForecastBenchRunner:
                 resolutions_data = json.load(f)
             
             questions = questions_data['questions']
+            forecast_due_date = questions_data.get('forecast_due_date', '2024-07-21')  # Default fallback
+            
             self.logger.info(f"✅ Loaded {len(questions)} questions from local file")
             self.logger.info(f"✅ Loaded {len(resolutions_data['resolutions'])} resolutions from local file")
+            self.logger.info(f"✅ Forecast due date: {forecast_due_date}")
             
-            return questions, resolutions_data
+            return questions, resolutions_data, forecast_due_date
             
         except Exception as e:
             self.logger.error(f"❌ Error loading local data: {e}")
-            return [], {}
+            return [], {}, "2024-07-21"  # Return default forecast due date on error
     
     def get_resolution_for_question_and_date(self, question_id: str, resolution_date: str, resolutions_data: Dict) -> float:
         """Get the resolution value for a specific question ID and date"""
@@ -135,8 +172,89 @@ class EnhancedForecastBenchRunner:
         
         return "\n\n".join(context_parts)
     
-    def process_single_question(self, question_data: Dict, question_idx: int, resolutions_data: Dict, base_date: datetime, run_timestamp: str) -> Dict:
-        """Process a single question with 4 time horizon predictions using enhanced context"""
+    def _has_valid_predictions(self, horizon_results: List) -> bool:
+        """Check if all horizon results have valid probability values (not None/N/A)"""
+        if not horizon_results or len(horizon_results) != len(self.TIME_HORIZONS):
+            return False
+        
+        for result in horizon_results:
+            if not hasattr(result, 'probability') or result.probability is None:
+                return False
+            # Check for invalid probability values
+            if not isinstance(result.probability, (int, float)) or result.probability < 0 or result.probability > 1:
+                return False
+        
+        return True
+
+    def _forecast_with_retry(self, superforecaster, question: str, comprehensive_context: str, cutoff_date: datetime, 
+                           time_horizons_str: List[str], effective_recommended_articles: int, 
+                           effective_max_queries: int, question_logger, max_retries: int = 3) -> List:
+        """Forecast with retry logic for handling N/A results"""
+        
+        for attempt in range(max_retries):
+            try:
+                self.logger.info(f"    🔄 Forecasting attempt {attempt + 1}/{max_retries}")
+                
+                horizon_results = superforecaster.forecast_with_google_news(
+                    question=question,
+                    background=comprehensive_context,
+                    cutoff_date=cutoff_date,
+                    time_horizons=time_horizons_str,
+                    is_benchmark=True,
+                    recommended_articles=effective_recommended_articles,
+                    max_search_queries=effective_max_queries
+                )
+                
+                # Check if we got valid results for all horizons
+                if self._has_valid_predictions(horizon_results):
+                    self.logger.info(f"    ✅ Valid predictions obtained on attempt {attempt + 1}")
+                    return horizon_results
+                else:
+                    # Log which horizons have invalid results
+                    invalid_horizons = []
+                    for i, result in enumerate(horizon_results):
+                        if not hasattr(result, 'probability') or result.probability is None:
+                            invalid_horizons.append(time_horizons_str[i])
+                        elif not isinstance(result.probability, (int, float)) or result.probability < 0 or result.probability > 1:
+                            invalid_horizons.append(f"{time_horizons_str[i]}(invalid_value)")
+                    
+                    self.logger.warning(f"    ⚠️ Attempt {attempt + 1} produced invalid results for horizons: {invalid_horizons}")
+                    question_logger.log("retry_warning", f"Attempt {attempt + 1} invalid results", {
+                        "invalid_horizons": invalid_horizons,
+                        "total_results": len(horizon_results)
+                    })
+                    
+                    if attempt < max_retries - 1:
+                        # Add a small delay before retry
+                        import time
+                        time.sleep(2)
+                        continue
+                    else:
+                        self.logger.error(f"    ❌ All {max_retries} attempts failed to produce valid results")
+                        return horizon_results  # Return the last attempt's results
+                        
+            except Exception as e:
+                self.logger.error(f"    ❌ Attempt {attempt + 1} failed with exception: {e}")
+                question_logger.error(f"Forecast attempt {attempt + 1} failed", {
+                    "error": str(e), 
+                    "attempt": attempt + 1,
+                    "max_retries": max_retries
+                })
+                
+                if attempt < max_retries - 1:
+                    # Add a delay before retry
+                    import time
+                    time.sleep(2)
+                    continue
+                else:
+                    # Re-raise the exception if all attempts failed
+                    raise e
+        
+        # Should not reach here, but return empty list as fallback
+        return []
+
+    def process_single_question(self, question_data: Dict, question_idx: int, resolutions_data: Dict, base_date: datetime, forecast_due_date: str, run_timestamp: str) -> Dict:
+        """Process a single question with 4 time horizon predictions using enhanced context and retry logic"""
         try:
             # Create individual logger for this question
             question_id = question_data.get('id', f"q_{question_idx}")
@@ -180,7 +298,11 @@ class EnhancedForecastBenchRunner:
                 resolution_dates.append(res_date.strftime('%Y-%m-%d'))
             
             # Generate predictions for all time horizons using the new multi-horizon method
-            cutoff_date = base_date + timedelta(days=180)  # Use the longest horizon as cutoff
+            # Use the forecast due date as cutoff - predictions should not use information after this date
+            cutoff_date = datetime.strptime(forecast_due_date, '%Y-%m-%d')
+            
+            self.logger.info(f"  📅 Using forecast due date as cutoff: {forecast_due_date}")
+            self.logger.info(f"  📅 Cutoff date object: {cutoff_date.strftime('%Y-%m-%d')}")
             
             # Use the updated forecast_with_google_news method for all time horizons at once
             time_horizons_str = [f"{h}d" for h in self.TIME_HORIZONS]
@@ -190,14 +312,17 @@ class EnhancedForecastBenchRunner:
             effective_max_queries = 5
             
             try:
-                horizon_results = superforecaster.forecast_with_google_news(
+                # Use retry logic for forecasting
+                horizon_results = self._forecast_with_retry(
+                    superforecaster=superforecaster,
                     question=question,
-                    background=comprehensive_context,
+                    comprehensive_context=comprehensive_context,
                     cutoff_date=cutoff_date,
-                    time_horizons=time_horizons_str,
-                    is_benchmark=True,
-                    recommended_articles=effective_recommended_articles,
-                    max_search_queries=effective_max_queries
+                    time_horizons_str=time_horizons_str,
+                    effective_recommended_articles=effective_recommended_articles,
+                    effective_max_queries=effective_max_queries,
+                    question_logger=question_logger,
+                    max_retries=3
                 )
                 
                 self.logger.info(f"  ✅ Multi-horizon forecast completed: {len(horizon_results)} predictions")
@@ -210,6 +335,23 @@ class EnhancedForecastBenchRunner:
                 for i, (horizon_days, resolution_date, result) in enumerate(zip(self.TIME_HORIZONS, resolution_dates, horizon_results)):
                     # Get actual resolution value
                     actual_value = self.get_resolution_for_question_and_date(question_id, resolution_date, resolutions_data)
+                    
+                    # Handle invalid or None results
+                    if not hasattr(result, 'probability') or result.probability is None:
+                        self.logger.warning(f"  ⚠️ {horizon_days}d horizon: Invalid probability (None/N/A)")
+                        horizon_key = f"{horizon_days}d"
+                        predictions[horizon_key] = {
+                            'probability': None,
+                            'error': 'Invalid probability result',
+                            'confidence': 'N/A',
+                            'reasoning': 'Failed to generate valid probability after retries',
+                            'cutoff_date': cutoff_date.strftime("%Y-%m-%d"),
+                            'resolution_date': resolution_date,
+                            'time_horizon': horizon_key
+                        }
+                        brier_scores[horizon_key] = None
+                        actual_values[horizon_key] = actual_value
+                        continue
                     
                     # Calculate Brier score if resolution data available
                     brier_score = None
@@ -288,8 +430,15 @@ class EnhancedForecastBenchRunner:
                 'success': False
             }
     
-    def run_parallel_benchmark(self, max_questions: int = 200, max_workers: int = 3, resume_from_checkpoint: str = None) -> Dict[str, Any]:
-        """Run enhanced ForecastBench evaluation with comprehensive context and checkpoint support"""
+    def run_parallel_benchmark(self, max_questions: int = 200, max_workers: int = 3, resume_from_checkpoint: str = None, question_ids: List[str] = None) -> Dict[str, Any]:
+        """Run enhanced ForecastBench evaluation with comprehensive context and checkpoint support
+        
+        Args:
+            max_questions: Maximum number of questions to process
+            max_workers: Number of parallel workers
+            resume_from_checkpoint: Path to checkpoint file or 'latest'
+            question_ids: Optional list of specific question IDs to test on
+        """
         
         # Handle checkpoint resumption or create new timestamp
         if resume_from_checkpoint:
@@ -338,7 +487,7 @@ class EnhancedForecastBenchRunner:
         self.logger.info(f"   Checkpoint file: {checkpoint_file}")
         
         # Load questions and resolutions from local files
-        questions, resolutions_data = self.load_local_data()
+        questions, resolutions_data, forecast_due_date = self.load_local_data()
         if not questions:
             master_logger.error("Failed to load ForecastBench questions")
             master_logger.finalize_session()
@@ -349,11 +498,52 @@ class EnhancedForecastBenchRunner:
             master_logger.finalize_session()
             return {"error": "Failed to load resolution data"}
         
-        master_logger.log("data_loading", f"Loaded {len(questions)} questions and {len(resolutions_data.get('resolutions', []))} resolutions")
+        master_logger.log("data_loading", f"Loaded {len(questions)} questions and {len(resolutions_data.get('resolutions', []))} resolutions, forecast due date: {forecast_due_date}")
         
-        # Limit questions for testing
+        # Filter questions by question IDs if specified
+        if question_ids:
+            original_count = len(questions)
+            # Create a mapping of question ID to question data
+            questions_by_id = {q.get('id', ''): q for q in questions}
+            
+            # Filter questions to only include those with matching IDs
+            filtered_questions = []
+            found_ids = []
+            missing_ids = []
+            
+            for question_id in question_ids:
+                if question_id in questions_by_id:
+                    filtered_questions.append(questions_by_id[question_id])
+                    found_ids.append(question_id)
+                else:
+                    missing_ids.append(question_id)
+            
+            questions = filtered_questions
+            
+            self.logger.info(f"🔍 Question ID filtering applied:")
+            self.logger.info(f"   Original questions: {original_count}")
+            self.logger.info(f"   Requested question IDs: {len(question_ids)}")
+            self.logger.info(f"   Found matching questions: {len(found_ids)}")
+            self.logger.info(f"   Found IDs: {found_ids}")
+            
+            if missing_ids:
+                self.logger.warning(f"   Missing question IDs: {missing_ids}")
+            
+            master_logger.log("question_id_filtering", f"Filtered to {len(questions)} questions from {original_count}", {
+                "requested_ids": question_ids,
+                "found_ids": found_ids,
+                "missing_ids": missing_ids
+            })
+            
+            if not questions:
+                self.logger.error("❌ No questions found matching the specified question IDs")
+                master_logger.error("No questions found matching specified IDs")
+                master_logger.finalize_session()
+                return {"error": "No questions found matching the specified question IDs"}
+        
+        # Limit questions for testing (apply after filtering)
         questions = questions[:max_questions]
-        master_logger.log("question_selection", f"Processing first {len(questions)} questions")
+        master_logger.log("question_selection", f"Processing {len(questions)} questions")
         
         # Base date for time horizon calculations (forecast due date)
         base_date = datetime(2024, 7, 21)
@@ -383,7 +573,7 @@ class EnhancedForecastBenchRunner:
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 # Submit tasks for remaining questions
                 future_to_idx = {
-                    executor.submit(self.process_single_question, q, idx, resolutions_data, base_date, run_timestamp): idx 
+                    executor.submit(self.process_single_question, q, idx, resolutions_data, base_date, forecast_due_date, run_timestamp): idx 
                     for idx, q in remaining_questions
                 }
                 
@@ -508,9 +698,11 @@ class EnhancedForecastBenchRunner:
         total_predictions = sum(len([r for r in successful_results if r['predictions'].get(f"{h}d")]) for h in self.TIME_HORIZONS)
         total_brier_scores = len(all_brier_scores)
         overall_avg_brier = statistics.mean(all_brier_scores) if all_brier_scores else None
+        sum_brier_scores = sum(all_brier_scores) if all_brier_scores else None
         
         summary = {
             'base_date': base_date.strftime("%Y-%m-%d"),
+            'forecast_due_date': forecast_due_date,
             'time_horizons': self.TIME_HORIZONS,
             'total_questions': len(questions),
             'successful_forecasts': len(successful_results),
@@ -520,6 +712,7 @@ class EnhancedForecastBenchRunner:
             'total_predictions': total_predictions,
             'total_brier_scores': total_brier_scores,
             'overall_avg_brier_score': overall_avg_brier,
+            'sum_brier_scores': sum_brier_scores,
             'horizon_statistics': horizon_stats,
             'run_timestamp': run_timestamp,
             'master_log_file': str(master_log_file),
@@ -538,9 +731,11 @@ class EnhancedForecastBenchRunner:
         # Log comprehensive results
         self.logger.info(f"🎯 Enhanced ForecastBench Evaluation Complete!")
         self.logger.info(f"   Questions processed: {len(successful_results)}/{len(questions)} ({success_rate:.1%})")
+        self.logger.info(f"   Forecast due date (cutoff): {forecast_due_date}")
         self.logger.info(f"   Total predictions: {total_predictions}")
         self.logger.info(f"   Total Brier scores: {total_brier_scores}")
         self.logger.info(f"   Overall Average Brier Score: {overall_avg_brier:.4f}" if overall_avg_brier else "   Overall Average Brier Score: N/A")
+        self.logger.info(f"   Sum of All Brier Scores: {sum_brier_scores:.4f}" if sum_brier_scores else "   Sum of All Brier Scores: N/A")
         self.logger.info(f"   Duration: {duration:.1f}s ({summary['questions_per_minute']:.1f} questions/minute)")
         self.logger.info(f"   📁 Master log: {master_log_file}")
         self.logger.info(f"   📁 Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
@@ -610,6 +805,8 @@ def main():
     parser.add_argument('--max-workers', type=int, default=20, help='Maximum number of parallel workers')
     parser.add_argument('--resume', type=str, help='Resume from checkpoint file (use "latest" for most recent)')
     parser.add_argument('--list-checkpoints', action='store_true', help='List available checkpoints and exit')
+    parser.add_argument('--question-ids', type=str, nargs='+', help='Specific question IDs to test (space-separated)')
+    parser.add_argument('--failure-questions', action='store_true', help='Test only questions from failure.txt (excludes YulPWDHFTUkekmrO3v4J)')
     
     args = parser.parse_args()
     
@@ -654,15 +851,31 @@ def main():
             print("📋 Checkpoints directory doesn't exist")
         return
     
+    # Handle question ID filtering
+    question_ids_to_run = None
+    if args.failure_questions:
+        question_ids_to_run = extract_question_ids_from_failure_file()
+        if question_ids_to_run:
+            print(f"🎯 Testing {len(question_ids_to_run)} questions from failure.txt")
+        else:
+            print("❌ No question IDs found in failure.txt")
+            return
+    elif args.question_ids:
+        question_ids_to_run = args.question_ids
+        print(f"🎯 Testing {len(question_ids_to_run)} specific question IDs: {question_ids_to_run}")
+    
     print(f"🚀 Starting benchmark with {args.max_questions} questions and {args.max_workers} workers")
     if args.resume:
         print(f"🔄 Will attempt to resume from checkpoint: {args.resume}")
+    if question_ids_to_run:
+        print(f"🔍 Filtering to specific question IDs: {len(question_ids_to_run)} questions")
     
     # Run benchmark
     results = runner.run_parallel_benchmark(
         max_questions=args.max_questions, 
         max_workers=args.max_workers,
-        resume_from_checkpoint=args.resume
+        resume_from_checkpoint=args.resume,
+        question_ids=question_ids_to_run
     )
     
     # Save results
@@ -685,29 +898,90 @@ def main():
         log_files = [r.get('log_file') for r in results['results'] if r.get('log_file')]
         print(f"   Individual log files created: {len(log_files)}")
     
-    # Print the 12 Brier scores and average as requested
+    # Print detailed results with prediction, actual value, and reasoning
     if 'results' in results:
-        print(f"\n🎯 REQUESTED RESULTS: 12 Brier Scores from First 3 Questions")
-        print("=" * 80)
+        print(f"\n🎯 DETAILED RESULTS: Predictions, Actual Values, and Reasoning")
+        print("=" * 120)
         
         all_brier_scores = []
         for i, result in enumerate(results['results']):
             if result['success']:
                 print(f"\nQuestion {i+1}: {result['question_id']}")
+                print(f"Question Text: {result['question'][:100]}{'...' if len(result['question']) > 100 else ''}")
+                
+                # Display freeze information if available
+                freeze_value = result.get('freeze_value')
+                if freeze_value is not None:
+                    try:
+                        freeze_val_float = float(freeze_value)
+                        print(f"Market Freeze Value: {freeze_val_float:.4f}")
+                    except (ValueError, TypeError):
+                        print(f"Market Freeze Value: {freeze_value}")
+                else:
+                    print(f"Market Freeze Value: N/A")
+                
                 for horizon in [7, 30, 90, 180]:
                     horizon_key = f"{horizon}d"
                     brier = result['brier_scores'].get(horizon_key)
+                    prediction_data = result['predictions'].get(horizon_key, {})
+                    actual = result['actual_values'].get(horizon_key)
+                    
+                    print(f"\n  {horizon}-day horizon:")
+                    
                     if brier is not None:
                         all_brier_scores.append(brier)
-                        print(f"  {horizon}-day horizon: {brier:.6f}")
+                        print(f"    Brier Score: {brier:.6f}")
                     else:
-                        print(f"  {horizon}-day horizon: N/A")
+                        print(f"    Brier Score: N/A")
+                    
+                    # Prediction
+                    prediction = prediction_data.get('probability')
+                    if prediction is not None:
+                        print(f"    Prediction: {prediction:.4f}")
+                    else:
+                        print(f"    Prediction: N/A")
+                    
+                    # Actual value
+                    if actual is not None:
+                        print(f"    Actual Value: {actual:.4f}")
+                    else:
+                        print(f"    Actual Value: N/A")
+                    
+                    # Show comparison with freeze value if both available
+                    if freeze_value is not None and prediction is not None:
+                        try:
+                            freeze_val_float = float(freeze_value)
+                            freeze_diff = abs(prediction - freeze_val_float)
+                            print(f"    Difference from Market: {freeze_diff:.4f}")
+                        except (ValueError, TypeError):
+                            print(f"    Market Value (non-numeric): {freeze_value}")
+                            print(f"    Difference from Market: N/A")
+                    
+                    # Reasoning (truncated for readability)
+                    reasoning = prediction_data.get('reasoning', '')
+                    if reasoning and isinstance(reasoning, str):
+                        # Truncate reasoning to first 200 characters for display
+                        reasoning_display = reasoning[:200].strip()
+                        if len(reasoning) > 200:
+                            reasoning_display += "..."
+                        print(f"    Reasoning: {reasoning_display}")
+                    else:
+                        print(f"    Reasoning: N/A")
+                    
+                    # Additional info
+                    confidence = prediction_data.get('confidence')
+                    if confidence:
+                        print(f"    Confidence: {confidence}")
+                
+                print(f"\n{'-' * 100}")
         
         if all_brier_scores:
             average_brier = sum(all_brier_scores) / len(all_brier_scores)
-            print(f"\n📊 FINAL RESULTS:")
+            sum_brier = sum(all_brier_scores)
+            print(f"\n📊 SUMMARY STATISTICS:")
             print(f"   Total Brier scores: {len(all_brier_scores)}")
             print(f"   Average Brier score: {average_brier:.6f}")
+            print(f"   Sum of all Brier scores: {sum_brier:.6f}")
         else:
             print(f"\n❌ No valid Brier scores calculated")
 

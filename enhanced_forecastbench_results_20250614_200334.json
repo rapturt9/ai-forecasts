@@ -1,0 +1,433 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 5,
+  "successful_forecasts": 5,
+  "success_rate": 1.0,
+  "duration_seconds": 44.903119,
+  "questions_per_minute": 6.681050374251286,
+  "total_predictions": 20,
+  "total_brier_scores": 20,
+  "overall_avg_brier_score": 0.04210227835583794,
+  "sum_brier_scores": 0.8420455671167588,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.041487459659337936,
+      "brier_score_count": 5,
+      "avg_prediction": 0.7,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    },
+    "30d": {
+      "avg_brier_score": 0.04898745965933794,
+      "brier_score_count": 5,
+      "avg_prediction": 0.69,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    },
+    "90d": {
+      "avg_brier_score": 0.031882605793337945,
+      "brier_score_count": 5,
+      "avg_prediction": 0.72,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    },
+    "180d": {
+      "avg_brier_score": 0.04605158831133794,
+      "brier_score_count": 5,
+      "avg_prediction": 0.69,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    }
+  },
+  "run_timestamp": "20250614_200249",
+  "master_log_file": "logs/benchmark_run_20250614_200249.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": {
+          "probability": 0.75,
+          "confidence": "Medium",
+          "reasoning": "The persistent trend of increasing global temperatures due to human-induced climate change makes it likely that 2024 will be warmer than 2023. However, natural variability and potential mitigation efforts introduce some degree of uncertainty. The current market probability of 0.756 also suggests a strong belief in the likelihood of this outcome.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.75,
+          "confidence": "Medium",
+          "reasoning": "The current scientific consensus supports the continuation of global warming trends, suggesting a high probability that 2024 will be hotter than 2023. However, the potential for natural variability or large-scale policy change creates some uncertainty, hence the medium confidence level.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.75,
+          "confidence": "Medium",
+          "reasoning": "While the long-term trend points towards a continuous increase in global temperatures, there are unpredictable factors that could potentially lead to a temporary decrease in 2024. These include volcanic activities, changes in solar radiation, and natural climate variability. Despite these potential cooling influences, the current and ongoing increase in greenhouse gas emissions continues to be a major driver of global warming, making it likely that 2024 will be warmer than 2023. However, due to the potential impact of unpredictable factors, the confidence level is set at medium.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.8,
+          "confidence": "High",
+          "reasoning": "The long-term trend of global warming, driven by human activities, strongly suggests that 2024 will likely be warmer than 2023. However, there is some uncertainty due to natural variability and potential unexpected events, so the probability is not 100%.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0625,
+        "30d": 0.0625,
+        "90d": 0.0625,
+        "180d": 0.03999999999999998
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250614_200249.json",
+      "success": true
+    },
+    {
+      "question_idx": 3,
+      "question_id": "cLxfTH5GDfmqeNJwClVF",
+      "question": "Will the majority of new cars sold worldwide be electric before the end of 2030?",
+      "freeze_value": "0.659999999999999",
+      "comprehensive_context_length": 1579,
+      "predictions": {
+        "7d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "While the trend is towards an increase in the production and purchase of electric vehicles, the transition is still in its early stages. There are significant infrastructural and societal changes required to support this shift. However, the commitment of major car manufacturers and the increasing demand driven by environmental concerns suggest a higher probability. The medium confidence level reflects the uncertainty regarding the pace of this transition and the various potential barriers.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "While there are significant barriers to EV adoption, the trend towards electrification is strong and seems likely to continue. Many countries and companies are making commitments to phase out ICE vehicles, and there are strong environmental and economic reasons to move towards EVs. However, there is still uncertainty around how quickly these changes will happen, hence the medium confidence level.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.65,
+          "confidence": "Medium",
+          "reasoning": "Given the current market probability and the pace of electric vehicle adoption, a 65% probability seems reasonable. However, the confidence level is medium due to uncertainties regarding infrastructure development, technological advancements, and economic factors that could accelerate or hinder the adoption of electric cars.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "There is a clear global shift towards EV adoption, and the rate of growth in the EV market is remarkable. Major automakers are investing heavily in EV technology, and governments are implementing policies to encourage EV adoption. However, challenges such as infrastructure development, cost, and supply chain issues could slow down the transition. Given these factors, I estimate a 70% chance that the majority of new cars sold worldwide will be electric by 2030. The confidence level is medium due to the uncertainties surrounding the pace of EV adoption and the potential impact of unforeseen factors.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.017656351635187438,
+        "30d": 0.017656351635187438,
+        "90d": 0.006868631125187459,
+        "180d": 0.017656351635187438
+      },
+      "actual_values": {
+        "7d": 0.5671227949000001,
+        "30d": 0.5671227949000001,
+        "90d": 0.5671227949000001,
+        "180d": 0.5671227949000001
+      },
+      "log_file": "logs/question_4_cLxfTH5GDfmqeNJwClVF_20250614_200249.json",
+      "success": true
+    },
+    {
+      "question_idx": 4,
+      "question_id": "ygVTjZRGDZvp0EQJ1L53",
+      "question": "Will sports betting be legal in California and Texas by 2030?",
+      "freeze_value": "0.805330724795234",
+      "comprehensive_context_length": 954,
+      "predictions": {
+        "7d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "Given the national trend towards legalization and the potential tax revenue, it seems more likely than not that sports betting will be legalized in both states by 2030. However, given the specific challenges in each state, there is still significant uncertainty around this forecast.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "Given the current trend towards legalization nationwide and the potential economic benefits, it's likely that sports betting may be legalized in both states by 2030. However, potential political and societal opposition introduces some uncertainty into this forecast. The medium confidence level reflects this balance between the forces pushing for and against legalization.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.75,
+          "confidence": "Medium",
+          "reasoning": "The probability of sports betting becoming legal in California and Texas by 2030 is estimated to be high due to the nationwide trend and potential tax revenue. However, the confidence level is only medium due to the potential opposition from interest groups and the complexity of the legalization process. It's also important to note that while the trend is moving towards legalization, each state has unique political and legal landscapes that could slow or halt this process.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.65,
+          "confidence": "Medium",
+          "reasoning": "1. High Probability Argument: The trend towards legalization of sports betting is growing in the United States. As of the end of 2024, over half of the states have legalized sports betting in some form. This shift in sentiment is driven by the potential for significant tax revenue, the popularity of sports, and the increasing acceptance of gambling as a form of entertainment. California and Texas, as two of the most populous states in the country, would represent a significant market for sports betting. Additionally, as more states legalize sports betting, the pressure increases on those that haven't to do so, in order not to lose potential tax revenues to neighboring states. \n\n2. Low Probability Argument: Despite the trend towards legalization, there remain significant opposition and hurdles. In many states, including California and Texas, legalization of sports betting would require a change to the state constitution, which requires a public vote and can be a lengthy and uncertain process. There is also opposition from certain interest groups, including some religious and social conservative groups, who see gambling as morally problematic and potentially harmful to the community. \n\n3. Probability Estimate: 0.7\n\n4. Confidence Level: Medium\n\n5. Reasoning: The trend towards legalization of sports betting in the U.S. is strong, indicating a high probability that this will continue. However, the need for a constitutional amendment in both California and Texas introduces significant uncertainty into the process, hence the medium confidence level. The current market probability of 0.805 seems slightly optimistic, so I have adjusted it downwards to 0.7.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.002830924470018345,
+        "30d": 0.002830924470018345,
+        "90d": 1.0281210018342603e-05,
+        "180d": 0.010651567730018333
+      },
+      "actual_values": {
+        "7d": 0.7532064326,
+        "30d": 0.7532064326,
+        "90d": 0.7532064326,
+        "180d": 0.7532064326
+      },
+      "log_file": "logs/question_5_ygVTjZRGDZvp0EQJ1L53_20250614_200249.json",
+      "success": true
+    },
+    {
+      "question_idx": 1,
+      "question_id": "KCFbp1TH0RYN4j5zYdmh",
+      "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+      "freeze_value": "0.6458942140911571",
+      "comprehensive_context_length": 1194,
+      "predictions": {
+        "7d": {
+          "probability": 0.65,
+          "confidence": "Medium",
+          "reasoning": "Given the historical challenges with the water quality of the Seine, there is a reasonable risk of an event being postponed or cancelled. However, the intense focus on remediation efforts and the high stakes of the Olympic Games make it likely that every effort will be made to avoid such an outcome. The probability reflects a slight lean towards the risk of cancellation or postponement due to water quality issues, but it's not a foregone conclusion.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.6,
+          "confidence": "Medium",
+          "reasoning": "The probability is estimated to be slightly less than the current market probability. This is because while there are legitimate concerns about the water quality of the Seine, the Paris Olympic committee is actively working to address these issues. Additionally, advancements in technology and clean-up methods increase the chances of a successful clean-up. However, given the fact that past events have been cancelled due to water quality issues, it is not possible to completely rule out the possibility of cancellations or postponements. Hence, the confidence level is medium.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "Given the historical data and the current market probability, there's a higher likelihood of an event being postponed or cancelled due to the Seine's water quality. However, the concerted efforts by the Paris 2024 committee to clean up the river and the potential for venue changes mitigate this risk to some extent. The medium confidence level reflects the uncertainty around these mitigating factors and their effectiveness.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.6,
+          "confidence": "Medium",
+          "reasoning": "While there is a notable risk of water quality issues leading to postponements or cancellations, it seems likely that significant effort will be made to prevent this from happening. However, given the past issues with the Seine's water quality and the current market probability, a relatively high probability estimate seems appropriate. The confidence level is placed at medium due to uncertainties regarding the effectiveness of cleanup efforts and potential changes in environmental conditions.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.12249999999999998,
+        "30d": 0.16000000000000003,
+        "90d": 0.09000000000000002,
+        "180d": 0.16000000000000003
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_2_KCFbp1TH0RYN4j5zYdmh_20250614_200249.json",
+      "success": true
+    },
+    {
+      "question_idx": 2,
+      "question_id": "q6wJThcy6TJnQKrbjALm",
+      "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+      "freeze_value": "0.6912524093033491",
+      "comprehensive_context_length": 939,
+      "predictions": {
+        "7d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "The transition to electric vehicles is well underway, driven by environmental concerns, technological advancements, and governmental regulations. However, several potential obstacles, including insufficient charging infrastructure and consumer acceptance, could slow this transition. Given the current market probability of approximately 0.69 and considering the discussed factors, a slightly higher probability of 0.70 for the majority of new cars sold being electric vehicles by the end of 2030 seems reasonable. The confidence level is medium due to the uncertainties surrounding the pace of progress in infrastructure development and technology advancements.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "While there are compelling trends pointing towards the increasing adoption of EVs, there are still significant challenges that need to be overcome, particularly in terms of infrastructure and cost. The rate of adoption may be faster in developed markets, but slower in emerging markets. Given these uncertainties, the probability is high but with a medium confidence level.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.75,
+          "confidence": "Medium",
+          "reasoning": "The current market probability is 0.69, and given the momentum behind the shift to EVs, it seems likely that the probability will increase over time. However, the significant obstacles that remain suggest a medium level of confidence in this forecast.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.7,
+          "confidence": "Medium",
+          "reasoning": "Although there are significant obstacles to the widespread adoption of EVs, the momentum behind the shift towards cleaner transportation options is strong. Governments, manufacturers, and consumers are increasingly recognizing the environmental and economic benefits of EVs. However, due to the uncertainties surrounding raw material supply, charging infrastructure, EV prices, and consumer acceptance, a medium confidence level is appropriate.",
+          "base_rate": 0.5,
+          "evidence_quality": 0.8,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.0019500221914839008,
+        "30d": 0.0019500221914839008,
+        "90d": 3.411663148389062e-05,
+        "180d": 0.0019500221914839008
+      },
+      "actual_values": {
+        "7d": 0.7441590556000001,
+        "30d": 0.7441590556000001,
+        "90d": 0.7441590556000001,
+        "180d": 0.7441590556000001
+      },
+      "log_file": "logs/question_3_q6wJThcy6TJnQKrbjALm_20250614_200249.json",
+      "success": true
+    }
+  ]
+}

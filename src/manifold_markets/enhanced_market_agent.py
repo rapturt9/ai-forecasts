@@ -77,7 +77,9 @@ class EnhancedMarketAgent:
         serp_api_key: str,
         max_kelly_fraction: float = 0.25,
         min_edge: float = 0.03,
-        risk_tolerance: str = "moderate"
+        risk_tolerance: str = "moderate",
+        use_inspect_ai: bool = None,
+        debate_mode: bool = True
     ):
         """
         Initialize enhanced market agent
@@ -95,7 +97,9 @@ class EnhancedMarketAgent:
         self.historical_data = ManifoldHistoricalDataManager()
         self.forecaster = GoogleNewsSuperforecaster(
             openrouter_api_key=openrouter_api_key,
-            serp_api_key=serp_api_key
+            serp_api_key=serp_api_key,
+            use_inspect_ai=use_inspect_ai,
+            debate_mode=debate_mode
         )
         
         self.risk_tolerance = risk_tolerance

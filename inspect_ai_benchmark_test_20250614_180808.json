@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-06-14T18:08:08.886940",
+  "question": "Will the S&P 500 close above 6000 by the end of 2025?",
+  "background": "Testing Inspect AI integration with benchmark using debate methodology",
+  "time_horizons": [
+    "30d",
+    "90d"
+  ],
+  "cutoff_date": "2024-12-01T00:00:00",
+  "framework": "inspect_ai",
+  "debate_mode": true,
+  "results": [
+    {
+      "time_horizon": "30d",
+      "probability": 0.5,
+      "confidence_level": "Low",
+      "methodology_components": [
+        "error_fallback"
+      ],
+      "reasoning_summary": ""
+    },
+    {
+      "time_horizon": "90d",
+      "probability": 0.5,
+      "confidence_level": "Low",
+      "methodology_components": [
+        "error_fallback"
+      ],
+      "reasoning_summary": ""
+    }
+  ]
+}

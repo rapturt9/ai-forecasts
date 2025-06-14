@@ -1,6 +1,6 @@
 # AI Forecasting System
 
-A minimal, focused AI forecasting system with 3 core functionalities and essential components only.
+A minimal, focused AI forecasting system with advanced agent frameworks (Inspect AI + CrewAI) and 3 core functionalities.
 
 ## 🎯 Core Functionalities
 
@@ -16,6 +16,24 @@ Complete trading interface for strategy development and forecast prediction with
 
 Live trading and historical backtesting using Manifold Markets API with Kelly Criterion optimization.
 
+## 🧠 Agent Framework
+
+### Dual Framework Support
+
+The system supports both **Inspect AI** (recommended) and **CrewAI** frameworks:
+
+- **Inspect AI**: Enhanced evaluation, monitoring, and parallel execution capabilities
+- **CrewAI**: Backwards compatibility and proven stability
+- **Automatic Fallback**: Seamless fallback to CrewAI if Inspect AI is unavailable
+- **Environment Control**: Configure via `USE_INSPECT_AI` environment variable
+
+### Benefits of Inspect AI
+
+- **Better Evaluation**: Built-in evaluation and monitoring tools
+- **Parallel Processing**: True parallel execution of debate agents
+- **Enhanced Debugging**: Better observability and error handling
+- **Structured Tasks**: More organized task definition and execution
+
 ## 🤖 Agent Groups
 
 ### Single Core Agent Group
@@ -23,7 +41,8 @@ Live trading and historical backtesting using Manifold Markets API with Kelly Cr
 - **Google News Superforecaster** (`src/ai_forecasts/agents/google_news_superforecaster.py`)
   - Advanced superforecasting with Google News integration
   - Bias correction and evidence quality assessment
-  - CrewAI multi-agent system with comprehensive analysis
+  - **Dual Framework Support**: Inspect AI (default) + CrewAI for backwards compatibility
+  - Enhanced debate methodology with parallel agent execution
 
 ### Market Agent Group
 
@@ -49,9 +68,14 @@ cd trading-interface && npm install && cd ..
 Create a `.env` file in the root directory:
 
 ```bash
+# Core API Keys
 OPENROUTER_API_KEY=your_openrouter_key_here
 MANIFOLD_API_KEY=your_manifold_key_here  # Optional for live trading
 SERP_API_KEY=your_serp_key_here          # Optional for Google News
+
+# Agent Framework Configuration
+USE_INSPECT_AI=true                      # Use Inspect AI (recommended) or CrewAI
+DEFAULT_MODEL=openai/gpt-4.1             # Model for forecasting
 ```
 
 ### Start the Complete System

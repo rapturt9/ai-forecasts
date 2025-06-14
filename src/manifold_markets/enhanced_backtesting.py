@@ -332,14 +332,18 @@ class EnhancedBacktester:
         manifold_api_key: str,
         openrouter_api_key: str,
         serp_api_key: str,
-        initial_balance: float = 1000.0
+        initial_balance: float = 1000.0,
+        use_inspect_ai: bool = None,
+        debate_mode: bool = True
     ):
         self.manifold_client = ManifoldMarketsClient(api_key=manifold_api_key)
         self.market_selector = CrewAIMarketSelector(openrouter_api_key)
         self.market_agent = EnhancedMarketAgent(
             manifold_api_key=manifold_api_key,
             openrouter_api_key=openrouter_api_key,
-            serp_api_key=serp_api_key
+            serp_api_key=serp_api_key,
+            use_inspect_ai=use_inspect_ai,
+            debate_mode=debate_mode
         )
         self.kelly_calculator = KellyCriterionCalculator()
         self.initial_balance = initial_balance

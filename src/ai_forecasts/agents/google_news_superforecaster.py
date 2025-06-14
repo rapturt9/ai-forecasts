@@ -237,7 +237,7 @@ class GoogleNewsSuperforecaster:
     def __init__(self, openrouter_api_key: str, serp_api_key: str = None, training_cutoff: str = "2024-07-01", 
                  recommended_articles: int = 10, max_search_queries: int = None, logger = None, 
                  debate_mode: bool = True, debate_rounds: int = 2, enhanced_quality_mode: bool = True,
-                 search_budget_per_advocate: int = 10):
+                 search_budget_per_advocate: int = 10, use_inspect_ai: bool = None):
         self.logger = logger if logger is not None else agent_logger
         self.openrouter_api_key = openrouter_api_key
         self.serp_api_key = serp_api_key or os.getenv("SERP_API_KEY")
@@ -246,6 +246,33 @@ class GoogleNewsSuperforecaster:
         self.debate_rounds = debate_rounds  # Number of back-and-forth rounds in debate mode
         self.enhanced_quality_mode = enhanced_quality_mode  # Enable quality pruning and misconception refuting
         self.search_budget_per_advocate = search_budget_per_advocate  # Total searches allowed per advocate across all rounds
+        # Determine whether to use Inspect AI based on parameter or environment variable
+        if use_inspect_ai is None:
+            self.use_inspect_ai = os.getenv('USE_INSPECT_AI', 'false').lower() == 'true'
+        else:
+            self.use_inspect_ai = use_inspect_ai
+        
+        # If Inspect AI mode is enabled, delegate to the Inspect AI implementation
+        if self.use_inspect_ai:
+            try:
+                from .inspect_ai_superforecaster import InspectAISuperforecaster
+                self._inspect_ai_forecaster = InspectAISuperforecaster(
+                    openrouter_api_key=openrouter_api_key,
+                    serp_api_key=serp_api_key,
+                    training_cutoff=training_cutoff,
+                    recommended_articles=recommended_articles,
+                    max_search_queries=max_search_queries,
+                    logger=logger,
+                    debate_mode=debate_mode,
+                    debate_rounds=debate_rounds,
+                    enhanced_quality_mode=enhanced_quality_mode,
+                    search_budget_per_advocate=search_budget_per_advocate
+                )
+                self.logger.info("✅ Inspect AI mode enabled - using Inspect AI implementation")
+                return  # Skip CrewAI initialization
+            except ImportError as e:
+                self.logger.warning(f"⚠️ Inspect AI not available, falling back to CrewAI: {e}")
+                self.use_inspect_ai = False
         
         # Search configuration parameters - optimized for efficiency
         self.recommended_articles = recommended_articles  # Target number of articles per search task
@@ -421,6 +448,35 @@ class GoogleNewsSuperforecaster:
             tools=[]  # No search tools - judge only evaluates existing evidence
         )
     
+    async def forecast_market(
+        self,
+        question: str,
+        background: str = "",
+        freeze_datetime: datetime = None,
+        enhanced_prompt: str = ""
+    ) -> ForecastResult:
+        """
+        Forecast a single market question (async wrapper for manifold integration)
+        
+        Args:
+            question: The market question to forecast
+            background: Additional context
+            freeze_datetime: Cutoff date for information
+            enhanced_prompt: Additional prompt instructions
+            
+        Returns:
+            Single ForecastResult
+        """
+        # Use the main forecasting method with a single time horizon
+        results = self.forecast_with_google_news(
+            question=question,
+            background=background + (" " + enhanced_prompt if enhanced_prompt else ""),
+            time_horizons=["1 month"],  # Default horizon for market forecasting
+            cutoff_date=freeze_datetime
+        )
+        
+        # Return the first result
+        return results[0] if results else None
     
     def forecast_with_google_news(
         self, 
@@ -448,6 +504,17 @@ class GoogleNewsSuperforecaster:
         Returns:
             List of ForecastResult objects (single item if no time_horizons specified)
         """
+        
+        # Delegate to Inspect AI implementation if enabled
+        if self.use_inspect_ai and hasattr(self, '_inspect_ai_forecaster'):
+            return self._inspect_ai_forecaster.forecast_with_google_news(
+                question=question,
+                background=background,
+                cutoff_date=cutoff_date,
+                time_horizons=time_horizons,
+                recommended_articles=recommended_articles,
+                max_search_queries=max_search_queries
+            )
         
         # Use cutoff_date as current date for agents, or actual current date if not provided
         effective_current_date = cutoff_date if cutoff_date else datetime.now()

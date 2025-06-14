@@ -262,10 +262,13 @@ class EnhancedForecastBenchRunner:
             question_logger = AgentLogger(log_file=str(log_file))
             
             # Initialize superforecaster for this thread with custom logger
+            # Use Inspect AI by default with debate mode
             superforecaster = GoogleNewsSuperforecaster(
                 openrouter_api_key=self.openrouter_api_key,
                 serp_api_key=self.serp_api_key,
-                logger=question_logger
+                logger=question_logger,
+                use_inspect_ai=True,
+                debate_mode=True
             )
             
             question = question_data.get('question', '')

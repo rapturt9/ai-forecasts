@@ -24,7 +24,7 @@ import uvicorn
 # Import our agents and systems
 from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
 from manifold_markets.enhanced_backtesting import EnhancedBacktester
-from run_forecastbench import ForecastBenchRunner
+from run_forecastbench import EnhancedForecastBenchRunner
 
 # Import database
 from database import db_manager, init_database
@@ -35,8 +35,8 @@ monitoring_processes = {}
 
 app = FastAPI(
     title="AI Forecasting & Trading API",
-    description="CrewAI-powered forecasting and trading system",
-    version="1.0.0"
+    description="Advanced AI-powered forecasting and trading system with Inspect AI and CrewAI support",
+    version="2.0.0"
 )
 
 # Enable CORS for frontend
@@ -105,7 +105,7 @@ async def root():
 
 @app.post("/api/forecast", response_model=ForecastResponse)
 async def generate_forecast(request: ForecastRequest, background_tasks: BackgroundTasks):
-    """Generate a forecast using CrewAI agents"""
+    """Generate a forecast using Inspect AI or CrewAI agents with debate methodology"""
     try:
         # Create forecast session in database
         session_id = db_manager.create_forecast_session(
@@ -122,7 +122,7 @@ async def generate_forecast(request: ForecastRequest, background_tasks: Backgrou
         return ForecastResponse(
             forecast_probability=0.5,  # Placeholder
             confidence_level="Processing",
-            reasoning="Forecast generation in progress. CrewAI agents are analyzing the question and gathering evidence.",
+            reasoning="Forecast generation in progress. AI agents are analyzing the question and gathering evidence using debate methodology.",
             strategies=["Analysis in progress..."],
             evidence_quality="Processing",
             news_sources_count=0,
@@ -365,7 +365,7 @@ async def get_current_markets():
 # Background task functions
 
 async def run_forecast_generation(session_id: str, request: ForecastRequest):
-    """Generate forecast using CrewAI agents in the background"""
+    """Generate forecast using Inspect AI or CrewAI agents in the background"""
     try:
         # Get API keys from environment
         openrouter_key = os.getenv('OPENROUTER_API_KEY')
@@ -379,18 +379,26 @@ async def run_forecast_generation(session_id: str, request: ForecastRequest):
             )
             return
         
-        # Initialize the superforecaster
+        # Initialize the superforecaster with Inspect AI enabled by default
+        use_inspect_ai = os.getenv('USE_INSPECT_AI', 'true').lower() == 'true'
         superforecaster = GoogleNewsSuperforecaster(
             openrouter_api_key=openrouter_key,
-            serp_api_key=serp_key
+            serp_api_key=serp_key,
+            use_inspect_ai=use_inspect_ai,
+            debate_mode=True  # Use debate mode by default as requested
         )
         
         # Generate forecast
-        result = superforecaster.forecast_with_google_news(
+        results = superforecaster.forecast_with_google_news(
             question=request.question,
             background=request.background or "",
-            time_horizon=request.time_horizon or "1 year"
+            time_horizons=[request.time_horizon or "1 year"]
         )
+        
+        # Take the first result for the API response
+        result = results[0] if results else None
+        if not result:
+            raise Exception("No forecast results generated")
         
         # Generate strategies for achieving the outcome
         base_rate_str = f"{result.base_rate:.1%}" if result.base_rate else "N/A"

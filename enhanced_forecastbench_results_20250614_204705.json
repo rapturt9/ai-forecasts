@@ -1,0 +1,433 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 5,
+  "successful_forecasts": 5,
+  "success_rate": 1.0,
+  "duration_seconds": 2.027795,
+  "questions_per_minute": 147.94394896920056,
+  "total_predictions": 20,
+  "total_brier_scores": 20,
+  "overall_avg_brier_score": 0.25,
+  "sum_brier_scores": 5.0,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.25,
+      "brier_score_count": 5,
+      "avg_prediction": 0.5,
+      "prediction_count": 5,
+      "avg_actual_value": 0.4,
+      "actual_value_count": 5
+    },
+    "30d": {
+      "avg_brier_score": 0.25,
+      "brier_score_count": 5,
+      "avg_prediction": 0.5,
+      "prediction_count": 5,
+      "avg_actual_value": 0.2,
+      "actual_value_count": 5
+    },
+    "90d": {
+      "avg_brier_score": 0.25,
+      "brier_score_count": 5,
+      "avg_prediction": 0.5,
+      "prediction_count": 5,
+      "avg_actual_value": 0.2,
+      "actual_value_count": 5
+    },
+    "180d": {
+      "avg_brier_score": 0.25,
+      "brier_score_count": 5,
+      "avg_prediction": 0.5,
+      "prediction_count": 5,
+      "avg_actual_value": 0.2,
+      "actual_value_count": 5
+    }
+  },
+  "run_timestamp": "20250614_204703",
+  "master_log_file": "logs/benchmark_run_20250614_204703.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 1,
+      "question_id": "meteofrance_TEMPERATURE_celsius.07481.D",
+      "question": "What is the probability that the daily average temperature at the French weather station at Lyon\u2013Saint Exup\u00e9ry Airport will be higher on {resolution_date} than on {forecast_due_date}?",
+      "freeze_value": "23.663",
+      "comprehensive_context_length": 1407,
+      "predictions": {
+        "7d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.25,
+        "30d": 0.25,
+        "90d": 0.25,
+        "180d": 0.25
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_2_meteofrance_TEMPERATURE_celsius.07481.D_20250614_204703.json",
+      "success": true
+    },
+    {
+      "question_idx": 4,
+      "question_id": "1386",
+      "question": "Will a North American testing center (OTIC) issue an O-RAN Certificate between 1 April 2024 and 31 March 2025?",
+      "freeze_value": "0.6089",
+      "comprehensive_context_length": 2726,
+      "predictions": {
+        "7d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.25,
+        "30d": 0.25,
+        "90d": 0.25,
+        "180d": 0.25
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_5_1386_20250614_204703.json",
+      "success": true
+    },
+    {
+      "question_idx": 0,
+      "question_id": "DCOILBRENTEU",
+      "question": "Will the price of Brent crude oil have increased by {resolution_date} as compared to its value on {forecast_due_date}?",
+      "freeze_value": "87.15",
+      "comprehensive_context_length": 1314,
+      "predictions": {
+        "7d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.25,
+        "30d": 0.25,
+        "90d": 0.25,
+        "180d": 0.25
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_1_DCOILBRENTEU_20250614_204703.json",
+      "success": true
+    },
+    {
+      "question_idx": 2,
+      "question_id": "1285",
+      "question": "Will a JCPOA participant country begin the process of imposing \u201csnapback\u201d sanctions on Iran by 31 December 2024?",
+      "freeze_value": "0.018600000000000002",
+      "comprehensive_context_length": 4846,
+      "predictions": {
+        "7d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.25,
+        "30d": 0.25,
+        "90d": 0.25,
+        "180d": 0.25
+      },
+      "actual_values": {
+        "7d": 0.0,
+        "30d": 0.0,
+        "90d": 0.0,
+        "180d": 0.0
+      },
+      "log_file": "logs/question_3_1285_20250614_204703.json",
+      "success": true
+    },
+    {
+      "question_idx": 3,
+      "question_id": "DPSACBW027SBOG",
+      "question": "Will the amount of money representing deposits in all US commercial banks have increased by {resolution_date} as compared to its value on {forecast_due_date}?",
+      "freeze_value": "17594.2769",
+      "comprehensive_context_length": 1722,
+      "predictions": {
+        "7d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "probability": 0.5,
+          "confidence": "Low",
+          "reasoning": "Error in Inspect AI forecast: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}",
+          "base_rate": 0.5,
+          "evidence_quality": 0.0,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": [],
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.25,
+        "30d": 0.25,
+        "90d": 0.25,
+        "180d": 0.25
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_4_DPSACBW027SBOG_20250614_204703.json",
+      "success": true
+    }
+  ]
+}

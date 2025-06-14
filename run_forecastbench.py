@@ -26,7 +26,7 @@ load_dotenv()
 import sys
 sys.path.append('src')
 
-from ai_forecasts.agents.google_news_superforecaster import GoogleNewsSuperforecaster
+from ai_forecasts.agents.inspect_ai_superforecaster import create_superforecaster
 from ai_forecasts.utils.agent_logger import agent_logger, AgentLogger
 
 def extract_question_ids_from_failure_file(file_path: str = "failure.txt") -> List[str]:
@@ -262,12 +262,11 @@ class EnhancedForecastBenchRunner:
             question_logger = AgentLogger(log_file=str(log_file))
             
             # Initialize superforecaster for this thread with custom logger
-            # Use Inspect AI by default with debate mode
-            superforecaster = GoogleNewsSuperforecaster(
+            # Use Inspect AI with debate mode
+            superforecaster = create_superforecaster(
                 openrouter_api_key=self.openrouter_api_key,
                 serp_api_key=self.serp_api_key,
                 logger=question_logger,
-                use_inspect_ai=True,
                 debate_mode=True
             )
             
@@ -810,6 +809,7 @@ def main():
     parser.add_argument('--list-checkpoints', action='store_true', help='List available checkpoints and exit')
     parser.add_argument('--question-ids', type=str, nargs='+', help='Specific question IDs to test (space-separated)')
     parser.add_argument('--failure-questions', action='store_true', help='Test only questions from failure.txt (excludes YulPWDHFTUkekmrO3v4J)')
+    parser.add_argument('--seed', type=int, help='Random seed for reproducible results')
     
     args = parser.parse_args()
     
@@ -824,6 +824,15 @@ def main():
     if not serp_api_key:
         print("❌ SERP_API_KEY environment variable required")
         return
+    
+    # Set random seed if provided
+    if args.seed is not None:
+        import random
+        import numpy as np
+        random.seed(args.seed)
+        np.random.seed(args.seed)
+        os.environ["PYTHONHASHSEED"] = str(args.seed)
+        print(f"🎲 Random seed set to: {args.seed}")
     
     # Create runner
     runner = EnhancedForecastBenchRunner(

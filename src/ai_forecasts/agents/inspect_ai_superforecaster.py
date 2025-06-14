@@ -24,16 +24,7 @@ from inspect_ai.agent import Agent
 
 from ..utils.agent_logger import agent_logger
 from ..utils.llm_client import LLMClient
-from .forecasting_prompts import (
-    get_research_analyst_backstory,
-    get_evidence_evaluator_backstory,
-    get_forecasting_critic_backstory,
-    get_calibrated_synthesizer_backstory,
-    get_research_task_description,
-    get_evaluation_task_description,
-    get_critic_task_description,
-    get_synthesis_task_description
-)
+# Removed forecasting_prompts import - using only debate methodology
 
 from .debate_forecasting_prompts import (
     get_high_advocate_backstory,
@@ -50,8 +41,21 @@ from .debate_forecasting_prompts import (
     EnhancedJudgeOutput
 )
 
-# Import the same result structure for compatibility
-from .google_news_superforecaster import ForecastResult
+# Define ForecastResult locally for compatibility
+@dataclass
+class ForecastResult:
+    """Result structure for forecast predictions"""
+    question: str
+    prediction: float
+    confidence: float
+    reasoning: str
+    search_count: int = 0
+    api_calls: int = 0
+    timestamp: str = ""
+    
+    def __post_init__(self):
+        if not self.timestamp:
+            self.timestamp = datetime.now().isoformat()
 
 # Import cached SERP API Google News Tool with intelligent caching
 from ..utils.google_news_tool import CachedGoogleNewsTool
@@ -233,7 +237,8 @@ class InspectAISuperforecaster:
         cutoff_date: datetime = None,
         recommended_articles: int = None,
         max_search_queries: int = None,
-        prior_probability: float = None
+        prior_probability: float = None,
+        is_benchmark: bool = False
     ) -> List[ForecastResult]:
         """
         Generate forecasts using Inspect AI debate methodology
@@ -275,20 +280,9 @@ class InspectAISuperforecaster:
                 # Create a fallback result
                 fallback_result = ForecastResult(
                     question=question,
-                    probability=0.5,  # Neutral fallback
-                    confidence_level="Low",
-                    reasoning=f"Error occurred during forecasting: {str(e)}",
-                    base_rate=0.5,
-                    evidence_quality=0.0,
-                    methodology_components={"error_fallback": True},
-                    full_analysis={"error": str(e)},
-                    news_research_summary={"error": "Failed to complete research"},
-                    news_sources=[],
-                    search_queries_used=[],
-                    total_articles_found=0,
-                    search_timeframe={"start": "", "end": ""},
-                    time_horizon=time_horizon,
-                    time_horizon_adjustment="Error fallback"
+                    prediction=0.5,  # Neutral fallback
+                    confidence=0.3,  # Low confidence
+                    reasoning=f"Error occurred during forecasting: {str(e)}"
                 )
                 results.append(fallback_result)
         
@@ -366,27 +360,9 @@ class InspectAISuperforecaster:
             # Create the result object
             result = ForecastResult(
                 question=question,
-                probability=probability,
-                confidence_level=confidence,
-                reasoning=reasoning,
-                base_rate=0.5,
-                evidence_quality=0.8,
-                methodology_components={
-                    "inspect_ai_debate": True,
-                    "debate_methodology": True,
-                    "openai_integration": True
-                },
-                full_analysis={
-                    "debate_mode": True,
-                    "time_horizon": time_horizon,
-                    "framework": "inspect_ai_simulation"
-                },
-                news_research_summary={"method": "inspect_ai_debate_simulation"},
-                news_sources=[],
-                search_queries_used=[],
-                total_articles_found=0,
-                search_timeframe={"start": "06/01/2024", "end": datetime.now().strftime("%m/%d/%Y")},
-                time_horizon=time_horizon
+                prediction=probability,
+                confidence=confidence,
+                reasoning=reasoning
             )
             
             return result
@@ -396,19 +372,9 @@ class InspectAISuperforecaster:
             # Return fallback result
             return ForecastResult(
                 question=question,
-                probability=0.5,
-                confidence_level="Low",
-                reasoning=f"Error in Inspect AI forecast: {str(e)}",
-                base_rate=0.5,
-                evidence_quality=0.0,
-                methodology_components={"error_fallback": True},
-                full_analysis={"error": str(e)},
-                news_research_summary={"error": "Failed to complete research"},
-                news_sources=[],
-                search_queries_used=[],
-                total_articles_found=0,
-                search_timeframe={"start": "", "end": ""},
-                time_horizon=time_horizon
+                prediction=0.5,
+                confidence=0.3,
+                reasoning=f"Error in Inspect AI forecast: {str(e)}"
             )
     
     def _run_standard_forecast(self, question: str, background: str, time_horizon: str) -> ForecastResult:
@@ -447,27 +413,9 @@ class InspectAISuperforecaster:
         
         result = ForecastResult(
             question=question,
-            probability=probability,
-            confidence_level=confidence,
-            reasoning=reasoning,
-            base_rate=0.5,
-            evidence_quality=0.7,
-            methodology_components={
-                "inspect_ai_standard": True,
-                "research_analyst": True,
-                "google_news_research": True
-            },
-            full_analysis={
-                "debate_mode": False,
-                "time_horizon": time_horizon,
-                "eval_result": str(eval_result)
-            },
-            news_research_summary={"method": "inspect_ai_standard"},
-            news_sources=[],
-            search_queries_used=[],
-            total_articles_found=0,
-            search_timeframe={"start": "06/01/2024", "end": datetime.now().strftime("%m/%d/%Y")},
-            time_horizon=time_horizon
+            prediction=probability,
+            confidence=confidence,
+            reasoning=reasoning
         )
         
         return result
@@ -522,19 +470,14 @@ class InspectAISuperforecaster:
 
 
 # Compatibility function to maintain the same interface
-def create_superforecaster(use_inspect_ai: bool = True, **kwargs) -> Union['InspectAISuperforecaster', 'GoogleNewsSuperforecaster']:
+def create_superforecaster(**kwargs) -> 'InspectAISuperforecaster':
     """
-    Factory function to create either Inspect AI or CrewAI superforecaster
+    Factory function to create Inspect AI superforecaster
     
     Args:
-        use_inspect_ai: If True, use Inspect AI implementation; if False, use CrewAI
         **kwargs: Arguments to pass to the superforecaster constructor
         
     Returns:
-        Superforecaster instance
+        InspectAISuperforecaster instance
     """
-    if use_inspect_ai:
-        return InspectAISuperforecaster(**kwargs)
-    else:
-        from .google_news_superforecaster import GoogleNewsSuperforecaster
-        return GoogleNewsSuperforecaster(**kwargs)
+    return InspectAISuperforecaster(**kwargs)

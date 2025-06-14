@@ -1,5 +1,5 @@
 """
-Google News Search Tool for CrewAI Agents
+Google News Search Tool for AI Forecasting
 Provides efficient Google News search capabilities via SERP API
 Optimized to conserve API calls while maximizing information gathering
 Includes intelligent caching to minimize redundant API calls
@@ -12,7 +12,6 @@ import pickle
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Union
 from datetime import datetime, timedelta
-from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 
@@ -24,7 +23,7 @@ class GoogleNewsInput(BaseModel):
     cutoff_date: Optional[str] = Field(None, description="ISO date string for benchmark cutoff (YYYY-MM-DD). Articles must be at least 1 day before this date.")
 
 
-class CachedGoogleNewsTool(BaseTool):
+class CachedGoogleNewsTool:
     """
     Cached Google News search tool with intelligent caching to minimize API calls
     Caches search results by query signature and reuses data across agents
@@ -47,7 +46,6 @@ class CachedGoogleNewsTool(BaseTool):
     args_schema: type = GoogleNewsInput
     
     def __init__(self, serp_api_key: str = None, search_timeframe: Dict[str, str] = None, cache_dir: str = None):
-        super().__init__()
         # Store configuration in internal attributes
         self._serp_api_key = serp_api_key or os.getenv("SERP_API_KEY")
         self._search_timeframe = search_timeframe or {

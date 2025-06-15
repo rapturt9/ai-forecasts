@@ -1,0 +1,433 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 5,
+  "successful_forecasts": 5,
+  "success_rate": 1.0,
+  "duration_seconds": 1.796523,
+  "questions_per_minute": 166.98923420407087,
+  "total_predictions": 20,
+  "total_brier_scores": 20,
+  "overall_avg_brier_score": 0.14827058574702304,
+  "sum_brier_scores": 2.9654117149404606,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.11423753733515045,
+      "brier_score_count": 5,
+      "avg_prediction": 0.5744045949409811,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    },
+    "30d": {
+      "avg_brier_score": 0.24195517280175108,
+      "brier_score_count": 5,
+      "avg_prediction": 0.40798871375768214,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    },
+    "90d": {
+      "avg_brier_score": 0.15638055483321617,
+      "brier_score_count": 5,
+      "avg_prediction": 0.5869636880456301,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    },
+    "180d": {
+      "avg_brier_score": 0.08050907801797438,
+      "brier_score_count": 5,
+      "avg_prediction": 0.6460803690401931,
+      "prediction_count": 5,
+      "avg_actual_value": 0.81289765662,
+      "actual_value_count": 5
+    }
+  },
+  "run_timestamp": "20250615_090924",
+  "master_log_file": "logs/benchmark_run_20250615_090924.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 2,
+      "question_id": "q6wJThcy6TJnQKrbjALm",
+      "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+      "freeze_value": "0.6912524093033491",
+      "comprehensive_context_length": 939,
+      "predictions": {
+        "7d": {
+          "prediction": 0.611541438766307,
+          "confidence": 0.6075032265668001,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.612",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "prediction": 0.2749103798428827,
+          "confidence": 0.7516065864310087,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.275",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "prediction": 0.7446554014662463,
+          "confidence": 0.809441818496468,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.745",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "prediction": 0.7457026186195042,
+          "confidence": 0.8189195360081454,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.746",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.017587432294648243,
+        "30d": 0.22019431969980827,
+        "90d": 2.463592189397408e-07,
+        "180d": 2.3825867951805856e-06
+      },
+      "actual_values": {
+        "7d": 0.7441590556000001,
+        "30d": 0.7441590556000001,
+        "90d": 0.7441590556000001,
+        "180d": 0.7441590556000001
+      },
+      "log_file": "logs/question_3_q6wJThcy6TJnQKrbjALm_20250615_090924.json",
+      "success": true
+    },
+    {
+      "question_idx": 3,
+      "question_id": "cLxfTH5GDfmqeNJwClVF",
+      "question": "Will the majority of new cars sold worldwide be electric before the end of 2030?",
+      "freeze_value": "0.659999999999999",
+      "comprehensive_context_length": 1579,
+      "predictions": {
+        "7d": {
+          "prediction": 0.6891769713312099,
+          "confidence": 0.8030098462268734,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.689",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "prediction": 0.6199075502236185,
+          "confidence": 0.763482444180965,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.620",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "prediction": 0.37220041321439357,
+          "confidence": 0.6466438499435344,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.372",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "prediction": 0.5289824731637606,
+          "confidence": 0.8919347291938112,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.529",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.014897221984300905,
+        "30d": 0.0027862303945742697,
+        "90d": 0.03799473488198926,
+        "180d": 0.0014546841421438626
+      },
+      "actual_values": {
+        "7d": 0.5671227949000001,
+        "30d": 0.5671227949000001,
+        "90d": 0.5671227949000001,
+        "180d": 0.5671227949000001
+      },
+      "log_file": "logs/question_4_cLxfTH5GDfmqeNJwClVF_20250615_090924.json",
+      "success": true
+    },
+    {
+      "question_idx": 1,
+      "question_id": "KCFbp1TH0RYN4j5zYdmh",
+      "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+      "freeze_value": "0.6458942140911571",
+      "comprehensive_context_length": 1194,
+      "predictions": {
+        "7d": {
+          "prediction": 0.43753745574821634,
+          "confidence": 0.608939165831421,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.438",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "prediction": 0.7475443653422613,
+          "confidence": 0.6019496279034183,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.748",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "prediction": 0.17419667470411832,
+          "confidence": 0.6290149130500392,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.174",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "prediction": 0.4028275017666828,
+          "confidence": 0.7656121893819681,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.403",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.31636411368618966,
+        "30d": 0.06373384747044163,
+        "90d": 0.6819511320697357,
+        "180d": 0.3566149926462212
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_2_KCFbp1TH0RYN4j5zYdmh_20250615_090924.json",
+      "success": true
+    },
+    {
+      "question_idx": 4,
+      "question_id": "ygVTjZRGDZvp0EQJ1L53",
+      "question": "Will sports betting be legal in California and Texas by 2030?",
+      "freeze_value": "0.805330724795234",
+      "comprehensive_context_length": 954,
+      "predictions": {
+        "7d": {
+          "prediction": 0.3200234546952954,
+          "confidence": 0.6669632214446468,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.320",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "prediction": 0.1212287757470909,
+          "confidence": 0.6596512952059945,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.121",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "prediction": 0.8657704577654249,
+          "confidence": 0.7009783635337881,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.866",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "prediction": 0.7635237314023959,
+          "confidence": 0.7855559257092738,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.764",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.18764749234638775,
+        "30d": 0.3993957587612933,
+        "90d": 0.012670659761442424,
+        "180d": 0.00010644665457792106
+      },
+      "actual_values": {
+        "7d": 0.7532064326,
+        "30d": 0.7532064326,
+        "90d": 0.7532064326,
+        "180d": 0.7532064326
+      },
+      "log_file": "logs/question_5_ygVTjZRGDZvp0EQJ1L53_20250615_090924.json",
+      "success": true
+    },
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": {
+          "prediction": 0.8137436541638764,
+          "confidence": 0.6260816497888249,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.814",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-07-28",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "7d"
+        },
+        "30d": {
+          "prediction": 0.27635249763255737,
+          "confidence": 0.7767797051627726,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.276",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-08-20",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "30d"
+        },
+        "90d": {
+          "prediction": 0.7779954930779679,
+          "confidence": 0.7811178094100674,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.778",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2024-10-19",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "90d"
+        },
+        "180d": {
+          "prediction": 0.7893655202486218,
+          "confidence": 0.7732056435770286,
+          "reasoning": "Mock forecast due to API credit exhaustion. Generated random prediction: 0.789",
+          "base_rate": null,
+          "evidence_quality": null,
+          "cutoff_date": "2024-07-21",
+          "resolution_date": "2025-01-17",
+          "news_sources_count": 0,
+          "search_queries_used": 0,
+          "total_articles_found": 0,
+          "time_horizon": "180d"
+        }
+      },
+      "brier_scores": {
+        "7d": 0.03469142636422568,
+        "30d": 0.523665707682638,
+        "90d": 0.049286001093694604,
+        "180d": 0.04436688406013374
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0,
+        "90d": 1.0,
+        "180d": 1.0
+      },
+      "log_file": "logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250615_090924.json",
+      "success": true
+    }
+  ]
+}

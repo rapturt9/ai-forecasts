@@ -1,0 +1,8 @@
+{
+  "target_achieved": false,
+  "best_score": Infinity,
+  "best_iteration": 0,
+  "total_iterations": 20,
+  "all_results": [],
+  "cycle": 4
+}

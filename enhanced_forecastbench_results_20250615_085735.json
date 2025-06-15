@@ -1,0 +1,65 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 1,
+  "successful_forecasts": 0,
+  "success_rate": 0.0,
+  "duration_seconds": 0.479977,
+  "questions_per_minute": 125.00598987034795,
+  "total_predictions": 0,
+  "total_brier_scores": 0,
+  "overall_avg_brier_score": null,
+  "sum_brier_scores": null,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    },
+    "30d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    },
+    "90d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    },
+    "180d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    }
+  },
+  "run_timestamp": "20250615_085734",
+  "master_log_file": "logs/benchmark_run_20250615_085734.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "error": "'AgentLogger' object is not callable",
+      "success": false
+    }
+  ]
+}

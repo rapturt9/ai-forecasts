@@ -1,5 +1,5 @@
 """Utility modules for the AI Forecasting System"""
 
-from .llm_client import LLMClient
+# LLMClient removed - using only Inspect AI
 
-__all__ = ["LLMClient"]
+__all__ = []

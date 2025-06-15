@@ -1,0 +1,52 @@
+{
+  "summary": {
+    "total_cycles": 5,
+    "successful_cycles": 0,
+    "success_rate": 0.0,
+    "target_brier_score": 0.06,
+    "optimization_type": "full_5_cycle"
+  },
+  "cycle_results": [
+    {
+      "target_achieved": false,
+      "best_score": Infinity,
+      "best_iteration": 0,
+      "total_iterations": 20,
+      "all_results": [],
+      "cycle": 1
+    },
+    {
+      "target_achieved": false,
+      "best_score": Infinity,
+      "best_iteration": 0,
+      "total_iterations": 20,
+      "all_results": [],
+      "cycle": 2
+    },
+    {
+      "target_achieved": false,
+      "best_score": Infinity,
+      "best_iteration": 0,
+      "total_iterations": 20,
+      "all_results": [],
+      "cycle": 3
+    },
+    {
+      "target_achieved": false,
+      "best_score": Infinity,
+      "best_iteration": 0,
+      "total_iterations": 20,
+      "all_results": [],
+      "cycle": 4
+    },
+    {
+      "target_achieved": false,
+      "best_score": Infinity,
+      "best_iteration": 0,
+      "total_iterations": 20,
+      "all_results": [],
+      "cycle": 5
+    }
+  ],
+  "timestamp": "2025-06-14T23:28:33.413304"
+}

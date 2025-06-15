@@ -1,0 +1,1 @@
+python run_forecastbench.py --seed 10 --max-questions 5 --max-workers 5

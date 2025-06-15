@@ -1,0 +1,93 @@
+{
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "time_horizons": [
+    7,
+    30,
+    90,
+    180
+  ],
+  "total_questions": 5,
+  "successful_forecasts": 0,
+  "success_rate": 0.0,
+  "duration_seconds": 0.403867,
+  "questions_per_minute": 742.8187992581717,
+  "total_predictions": 0,
+  "total_brier_scores": 0,
+  "overall_avg_brier_score": null,
+  "sum_brier_scores": null,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    },
+    "30d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    },
+    "90d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    },
+    "180d": {
+      "avg_brier_score": null,
+      "brier_score_count": 0,
+      "avg_prediction": null,
+      "prediction_count": 0,
+      "avg_actual_value": null,
+      "actual_value_count": 0
+    }
+  },
+  "run_timestamp": "20250615_111453",
+  "master_log_file": "logs/benchmark_run_20250615_111453.json",
+  "logs_directory": "logs",
+  "results": [
+    {
+      "question_idx": 3,
+      "question_id": "cLxfTH5GDfmqeNJwClVF",
+      "question": "Will the majority of new cars sold worldwide be electric before the end of 2030?",
+      "error": "name 'logger' is not defined",
+      "success": false
+    },
+    {
+      "question_idx": 4,
+      "question_id": "ygVTjZRGDZvp0EQJ1L53",
+      "question": "Will sports betting be legal in California and Texas by 2030?",
+      "error": "name 'logger' is not defined",
+      "success": false
+    },
+    {
+      "question_idx": 1,
+      "question_id": "KCFbp1TH0RYN4j5zYdmh",
+      "question": "Will any event of the Paris 2024 Olympic Games be postponed or cancelled due to the water quality of the Seine?",
+      "error": "name 'logger' is not defined",
+      "success": false
+    },
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "error": "name 'logger' is not defined",
+      "success": false
+    },
+    {
+      "question_idx": 2,
+      "question_id": "q6wJThcy6TJnQKrbjALm",
+      "question": "Will the majority of new cars sold be electric vehicles by the end of 2030?",
+      "error": "name 'logger' is not defined",
+      "success": false
+    }
+  ]
+}

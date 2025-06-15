@@ -1,0 +1,62 @@
+{
+  "configuration": {
+    "time_horizons": [
+      7,
+      30
+    ],
+    "search_budget_per_advocate": 5,
+    "debate_rounds": 2,
+    "training_cutoff": "2024-07-01"
+  },
+  "base_date": "2024-07-21",
+  "forecast_due_date": "2024-07-21",
+  "total_questions": 1,
+  "successful_forecasts": 1,
+  "success_rate": 1.0,
+  "duration_seconds": 0.511466,
+  "questions_per_minute": 117.30985050814718,
+  "total_predictions": 2,
+  "total_brier_scores": 2,
+  "overall_avg_brier_score": 0.25,
+  "horizon_statistics": {
+    "7d": {
+      "avg_brier_score": 0.25,
+      "brier_score_count": 1,
+      "avg_prediction": 0.5,
+      "prediction_count": 1,
+      "avg_actual_value": 1.0,
+      "actual_value_count": 1
+    },
+    "30d": {
+      "avg_brier_score": 0.25,
+      "brier_score_count": 1,
+      "avg_prediction": 0.5,
+      "prediction_count": 1,
+      "avg_actual_value": 1.0,
+      "actual_value_count": 1
+    }
+  },
+  "run_timestamp": "20250615_141812",
+  "results": [
+    {
+      "question_idx": 0,
+      "question_id": "TPkEjiNb1wVCIGFnPcDD",
+      "question": "Will the average global temperature in 2024 exceed 2023?",
+      "freeze_value": "0.7565624485542961",
+      "comprehensive_context_length": 893,
+      "predictions": {
+        "7d": 0.5,
+        "30d": 0.5
+      },
+      "brier_scores": {
+        "7d": 0.25,
+        "30d": 0.25
+      },
+      "actual_values": {
+        "7d": 1.0,
+        "30d": 1.0
+      },
+      "success": true
+    }
+  ]
+}

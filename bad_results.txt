@@ -1,0 +1,63 @@
+The model's performance is gauged using the Brier score, where a **higher** score indicates **worse** performance. Conversely, a lower score is better, with 0 being a perfect prediction.
+
+Here are the 10 questions where the model performed the worst, based on the **highest Brier score observed across any of their time horizons**:
+
+1.  **Question:** Will Belichick head coach another team in the 2024-25 NFL season?
+    *   **Highest Brier Score:** 0.81 (for all horizons)
+    *   **Model Predicted:** 0.90 (90% probability of coaching another team)
+    *   **Actual Outcome (Target):** 0.00 (He did *not* coach another team)
+    *   **Why it performed poorly:** The model was highly overconfident that Bill Belichick would coach another NFL team in the 2024-25 season, assigning a 90% probability to this outcome. However, the actual outcome was that he did not. This represents a significant misjudgment where the model strongly predicted an event that did not occur, leading to a very high Brier score. The reasoning "overwhelming evidence showing zero current job pathway, direct and public media commitments for 2024-25" implies a prediction of *no* coaching, but the probability (0.9) reflects the opposite. This indicates a potential misinterpretation in the reasoning's summary versus the actual probability assigned.
+
+2.  **Question:** No Eigenlayer token launch in 2024?
+    *   **Highest Brier Score:** 0.7569 (for all horizons)
+    *   **Model Predicted:** 0.87 (87% probability of *no* Eigenlayer token launch)
+    *   **Actual Outcome (Target):** 0.00 (Meaning there *was* an Eigenlayer token launch)
+    *   **Why it performed poorly:** The question was framed as a negative ("No Eigenlayer token launch"). The model predicted a very high 87% chance that there would be no launch. The actual outcome was that a launch *did* occur (resolved to 0.0, indicating the "No" condition was false). This shows high overconfidence in a negative prediction that was disproven by reality. The model "robustly supported" the "No" case, but was incorrect.
+
+3.  **Question:** Will there be between 16 and 20 named storms during Atlantic Hurricane Season?
+    *   **Highest Brier Score:** 0.7396 (for all horizons)
+    *   **Model Predicted:** 0.14 (14% probability of 16-20 storms)
+    *   **Actual Outcome (Target):** 1.00 (Meaning there *were* between 16-20 named storms)
+    *   **Why it performed poorly:** The model was highly underconfident in predicting the number of named storms. It assigned only a 14% probability to the event occurring, while it actually did occur. The reasoning highlights expert consensus for 20+ storms and shifts probability mass "above the 16-20 interval," indicating the model believed it was *less likely* to be in this range, when it actually was.
+
+4.  **Question:** Will Taylor Swift release Reputation (Taylor's Version) before the end of 2024?
+    *   **Highest Brier Score:** 0.6724 (for all horizons)
+    *   **Model Predicted:** 0.82 (82% probability of release)
+    *   **Actual Outcome (Target):** 0.00 (She did *not* release it by then)
+    *   **Why it performed poorly:** The model showed strong overconfidence in its prediction that Taylor Swift would release "Reputation (Taylor's Version)" by the end of 2024. Despite its reasoning citing "historical certainty of delivery post-tease," the event did not materialize, leading to a substantial Brier score.
+
+5.  **Question:** What is the probability that the daily average temperature at the French weather station at Poitiers–Biard Airport will be higher on resolution_date than on forecast_due_date?
+    *   **Highest Brier Score:** 0.6084 (for all horizons)
+    *   **Model Predicted:** 0.22 (22% probability of higher temperature)
+    *   **Actual Outcome (Target):** 1.00 (The temperature *was* higher)
+    *   **Why it performed poorly:** The model was significantly underconfident about the temperature increase at Poitiers–Biard Airport. It predicted a low 22% chance of the temperature being higher, but the actual outcome was that it indeed was. The reasoning mentions "low, but non-negligible, likelihood" and focuses on uncertainty.
+
+6.  **Question:** Will a video game be played in the Olympics as an official event by the end of 2030?
+    *   **Highest Brier Score:** 0.5809 (for all horizons)
+    *   **Model Predicted:** 0.83 (83% probability of a video game in Olympics)
+    *   **Actual Outcome (Target):** 0.0678 (The event did *not* fully meet the criteria of an "official event" within the specified period, or at least not in a way that resolved to 1.0.)
+    *   **Why it performed poorly:** The model was highly overconfident that a video game would be played as an official Olympic event by the end of 2030, predicting an 83% chance. The event either did not occur or did not meet the exact resolution criteria, scoring very low. The model's belief was based on "independently verifiable institutional action" but missed some nuances of the "official" definition or expected speed of implementation.
+
+7.  **Question:** What is the probability that the daily average temperature at the French weather station at Lyon–Saint Exupéry Airport will be higher on resolution_date than on forecast_due_date?
+    *   **Highest Brier Score:** 0.5329 (for all horizons)
+    *   **Model Predicted:** 0.73 (73% probability of higher temperature)
+    *   **Actual Outcome (Target):** 0.00 (The temperature was *not* higher)
+    *   **Why it performed poorly:** The model was overconfident in predicting a higher temperature at Lyon–Saint Exupéry Airport. It assigned a 73% probability to this outcome, which ultimately did not occur. The reasoning indicates confidence based on "robust evidence and base rate data" but failed to account for factors that led to a lower or stable temperature.
+
+8.  **Question:** What is the probability that the daily average temperature at the French weather station at Pointe-à-Pitre International Airport will be higher on resolution_date than on forecast_due_date?
+    *   **Highest Brier Score:** 0.5329 (for 30d and 90d horizons)
+    *   **Model Predicted:** 0.27 (27% probability of higher temperature)
+    *   **Actual Outcome (Target):** 1.00 (The temperature *was* higher for this horizon)
+    *   **Why it performed poorly:** Similar to the Poitiers prediction, the model was significantly underconfident about the temperature increase. It predicted only a 27% chance of a higher temperature, but this was incorrect for the 30d and 90d horizons. The model acknowledged "only a slight upward adjustment for current climate anomalies," indicating it likely weighed historical averages too heavily against current conditions.
+
+9.  **Question:** What is the probability that the daily average temperature at the French weather station at Tours will be higher on resolution_date than on forecast_due_date?
+    *   **Highest Brier Score:** 0.5184 (for all horizons)
+    *   **Model Predicted:** 0.72 (72% probability of higher temperature)
+    *   **Actual Outcome (Target):** 0.00 (The temperature was *not* higher)
+    *   **Why it performed poorly:** The model was considerably overconfident in predicting a higher temperature at Tours, assigning a 72% probability to an outcome that did not occur. The reasoning suggests a general expectation of warming trends, but this did not manifest in the specific prediction window.
+
+10. **Question:** According to Wikipedia, will Alireza Firouzja have an Elo rating on {resolution_date} that's at least 1% higher than on {forecast_due_date}?
+    *   **Highest Brier Score:** 0.5184 (for all horizons)
+    *   **Model Predicted:** 0.72 (72% probability of a 1% higher rating)
+    *   **Actual Outcome (Target):** 0.00 (His rating was *not* 1% higher)
+    *   **Why it performed poorly:** The model was overly optimistic about Alireza Firouzja's Elo rating increasing by at least 1%, predicting a 72% chance of this happening. The actual outcome was that his rating did not achieve this increase, indicating the model misjudged the factors affecting his rating within the given timeframe.

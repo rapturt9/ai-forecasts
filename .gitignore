@@ -3,3 +3,6 @@
 /cache/google_news
 /logs
 /checkpoints
+# no node_modules in any of the subfolders
+**/node_modules
+/trading-interface/.next

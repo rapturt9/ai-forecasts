@@ -13,6 +13,7 @@ import concurrent.futures
 import sys
 import argparse
 import time
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -23,11 +24,20 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Configure Python's native logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('forecastbench.log')
+    ]
+)
+
 import sys
 sys.path.append('src')
 
 from ai_forecasts.agents.inspect_ai_superforecaster import create_superforecaster
-# AgentLogger removed - using simple logging
 
 def extract_question_ids_from_failure_file(file_path: str = "failure.txt") -> List[str]:
     """
@@ -72,27 +82,16 @@ class EnhancedForecastBenchRunner:
     def __init__(self, openrouter_api_key: str, serp_api_key: str = None):
         self.openrouter_api_key = openrouter_api_key
         self.serp_api_key = serp_api_key
-        # Simple logger replacement
-        self.logger = self
         
-        # Create logs and checkpoints directories
+        # Create logs, checkpoints, and results directories
         self.logs_dir = Path("logs")
         self.logs_dir.mkdir(exist_ok=True)
         self.checkpoints_dir = Path("checkpoints")
         self.checkpoints_dir.mkdir(exist_ok=True)
+        self.results_dir = Path("results")
+        self.results_dir.mkdir(exist_ok=True)
     
-    def info(self, message: str):
-        """Simple info logger"""
-        print(f"[INFO] {message}")
     
-    def error(self, message: str):
-        """Simple error logger"""
-        print(f"[ERROR] {message}")
-    
-    def warning(self, message: str):
-        """Simple warning logger"""
-        print(f"[WARNING] {message}")
-        
     def load_local_data(self) -> Tuple[List[Dict], Dict[str, Any], str]:
         """Load questions and resolutions from local JSON files"""
         try:
@@ -107,14 +106,14 @@ class EnhancedForecastBenchRunner:
             questions = questions_data['questions']
             forecast_due_date = questions_data.get('forecast_due_date', '2024-07-21')  # Default fallback
             
-            self.logger.info(f"✅ Loaded {len(questions)} questions from local file")
-            self.logger.info(f"✅ Loaded {len(resolutions_data['resolutions'])} resolutions from local file")
-            self.logger.info(f"✅ Forecast due date: {forecast_due_date}")
+            print(f"✅ Loaded {len(questions)} questions from local file")
+            print(f"✅ Loaded {len(resolutions_data['resolutions'])} resolutions from local file")
+            print(f"✅ Forecast due date: {forecast_due_date}")
             
             return questions, resolutions_data, forecast_due_date
             
         except Exception as e:
-            self.logger.error(f"❌ Error loading local data: {e}")
+            print(f"❌ Error loading local data: {e}")
             return [], {}, "2024-07-21"  # Return default forecast due date on error
     
     def get_resolution_for_question_and_date(self, question_id: str, resolution_date: str, resolutions_data: Dict) -> float:
@@ -206,7 +205,7 @@ class EnhancedForecastBenchRunner:
         
         for attempt in range(max_retries):
             try:
-                self.logger.info(f"    🔄 Forecasting attempt {attempt + 1}/{max_retries}")
+                print(f"    🔄 Forecasting attempt {attempt + 1}/{max_retries}")
                 
                 horizon_results = superforecaster.forecast_with_google_news(
                     question=question,
@@ -220,7 +219,7 @@ class EnhancedForecastBenchRunner:
                 
                 # Check if we got valid results for all horizons
                 if self._has_valid_predictions(horizon_results):
-                    self.logger.info(f"    ✅ Valid predictions obtained on attempt {attempt + 1}")
+                    print(f"    ✅ Valid predictions obtained on attempt {attempt + 1}")
                     return horizon_results
                 else:
                     # Log which horizons have invalid results
@@ -231,7 +230,7 @@ class EnhancedForecastBenchRunner:
                         elif not isinstance(result.prediction, (int, float)) or result.prediction < 0 or result.prediction > 1:
                             invalid_horizons.append(f"{time_horizons_str[i]}(invalid_value)")
                     
-                    self.logger.warning(f"    ⚠️ Attempt {attempt + 1} produced invalid results for horizons: {invalid_horizons}")
+                    print(f"    ⚠️ Attempt {attempt + 1} produced invalid results for horizons: {invalid_horizons}")
                     print(f"⚠️ Attempt {attempt + 1} invalid results", {
                         "invalid_horizons": invalid_horizons,
                         "total_results": len(horizon_results)
@@ -243,11 +242,11 @@ class EnhancedForecastBenchRunner:
                         time.sleep(2)
                         continue
                     else:
-                        self.logger.error(f"    ❌ All {max_retries} attempts failed to produce valid results")
+                        print(f"    ❌ All {max_retries} attempts failed to produce valid results")
                         return horizon_results  # Return the last attempt's results
                         
             except Exception as e:
-                self.logger.error(f"    ❌ Attempt {attempt + 1} failed with exception: {e}")
+                print(f"    ❌ Attempt {attempt + 1} failed with exception: {e}")
                 print(f"❌ Forecast attempt {attempt + 1} failed", {
                     "error": str(e), 
                     "attempt": attempt + 1,
@@ -269,7 +268,7 @@ class EnhancedForecastBenchRunner:
     def process_single_question(self, question_data: Dict, question_idx: int, resolutions_data: Dict, base_date: datetime, forecast_due_date: str, run_timestamp: str) -> Dict:
         """Process a single question with 4 time horizon predictions using enhanced context and retry logic"""
         try:
-            # Create individual logger for this question
+            # Create forecaster for this question
             question_id = question_data.get('id', f"q_{question_idx}")
             log_file = self.logs_dir / f"question_{question_idx+1}_{question_id}_{run_timestamp}.json"
             # Initialize superforecaster for this thread
@@ -277,7 +276,6 @@ class EnhancedForecastBenchRunner:
             superforecaster = create_superforecaster(
                 openrouter_api_key=self.openrouter_api_key,
                 serp_api_key=self.serp_api_key,
-                logger=None,  # Use default logger
                 debate_mode=True
             )
             
@@ -290,9 +288,9 @@ class EnhancedForecastBenchRunner:
             # Start processing this question
             print(f"Processing question {question_idx+1}: {question[:100]}...")
             
-            self.logger.info(f"Processing question {question_idx + 1}: {question[:80]}...")
-            self.logger.info(f"Comprehensive context length: {len(comprehensive_context)} characters")
-            self.logger.info(f"Question logs: {log_file}")
+            print(f"Processing question {question_idx + 1}: {question[:80]}...")
+            print(f"Comprehensive context length: {len(comprehensive_context)} characters")
+            print(f"Question logs: {log_file}")
             
             # Calculate resolution dates for all time horizons
             resolution_dates = []
@@ -304,8 +302,8 @@ class EnhancedForecastBenchRunner:
             # Use the forecast due date as cutoff - predictions should not use information after this date
             cutoff_date = datetime.strptime(forecast_due_date, '%Y-%m-%d')
             
-            self.logger.info(f"  📅 Using forecast due date as cutoff: {forecast_due_date}")
-            self.logger.info(f"  📅 Cutoff date object: {cutoff_date.strftime('%Y-%m-%d')}")
+            print(f"  📅 Using forecast due date as cutoff: {forecast_due_date}")
+            print(f"  📅 Cutoff date object: {cutoff_date.strftime('%Y-%m-%d')}")
             
             # Use the updated forecast_with_google_news method for all time horizons at once
             time_horizons_str = [f"{h}d" for h in self.TIME_HORIZONS]
@@ -328,7 +326,7 @@ class EnhancedForecastBenchRunner:
                     max_retries=3
                 )
                 
-                self.logger.info(f"  ✅ Multi-horizon forecast completed: {len(horizon_results)} predictions")
+                print(f"  ✅ Multi-horizon forecast completed: {len(horizon_results)} predictions")
                 
                 # Process each horizon result
                 predictions = {}
@@ -341,7 +339,7 @@ class EnhancedForecastBenchRunner:
                     
                     # Handle invalid or None results
                     if not hasattr(result, 'prediction') or result.prediction is None:
-                        self.logger.warning(f"  ⚠️ {horizon_days}d horizon: Invalid probability (None/N/A)")
+                        print(f"  ⚠️ {horizon_days}d horizon: Invalid probability (None/N/A)")
                         horizon_key = f"{horizon_days}d"
                         predictions[horizon_key] = {
                             'prediction': None,
@@ -380,10 +378,10 @@ class EnhancedForecastBenchRunner:
                     brier_scores[horizon_key] = brier_score
                     actual_values[horizon_key] = actual_value
                     
-                    self.logger.info(f"  ✅ {horizon_days}d horizon: prob={result.prediction:.3f}, actual={actual_value}, brier={brier_score:.3f}" if brier_score is not None else f"  ✅ {horizon_days}d horizon: prob={result.prediction:.3f}, actual={actual_value}")
+                    print(f"  ✅ {horizon_days}d horizon: prob={result.prediction:.3f}, actual={actual_value}, brier={brier_score:.3f}" if brier_score is not None else f"  ✅ {horizon_days}d horizon: prob={result.prediction:.3f}, actual={actual_value}")
                 
             except Exception as e:
-                self.logger.error(f"Multi-horizon forecasting failed for question {question_idx + 1}: {e}")
+                print(f"Multi-horizon forecasting failed for question {question_idx + 1}: {e}")
                 print(f"❌ Multi-horizon forecasting failed: {str(e)}")
                 
                 # Fallback to empty results
@@ -414,7 +412,7 @@ class EnhancedForecastBenchRunner:
             }
             
         except Exception as e:
-            self.logger.error(f"Error processing question {question_idx + 1}: {e}")
+            print(f"Error processing question {question_idx + 1}: {e}")
             traceback.print_exc()
             
             # Try to finalize logger even on error
@@ -450,9 +448,9 @@ class EnhancedForecastBenchRunner:
                 if checkpoint_file:
                     checkpoint_data = self.load_checkpoint(checkpoint_file)
                     run_timestamp = checkpoint_data.get('run_timestamp', datetime.now().strftime("%Y%m%d_%H%M%S"))
-                    self.logger.info(f"🔄 Resuming from latest checkpoint: {checkpoint_file}")
+                    print(f"🔄 Resuming from latest checkpoint: {checkpoint_file}")
                 else:
-                    self.logger.info("📄 No checkpoint found, starting fresh")
+                    print("📄 No checkpoint found, starting fresh")
                     run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     checkpoint_data = {}
             else:
@@ -475,12 +473,12 @@ class EnhancedForecastBenchRunner:
         # Start session equivalent
         print(f"Starting benchmark session with {max_questions} questions, {max_workers} workers")
         
-        self.logger.info(f"🚀 Starting Enhanced ForecastBench evaluation with comprehensive context")
-        self.logger.info(f"   Questions: {max_questions}, Workers: {max_workers}")
-        self.logger.info(f"   Time horizons: {self.TIME_HORIZONS} days")
-        self.logger.info(f"   Master log: {master_log_file}")
-        self.logger.info(f"   Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
-        self.logger.info(f"   Checkpoint file: {checkpoint_file}")
+        print(f"🚀 Starting Enhanced ForecastBench evaluation with comprehensive context")
+        print(f"   Questions: {max_questions}, Workers: {max_workers}")
+        print(f"   Time horizons: {self.TIME_HORIZONS} days")
+        print(f"   Master log: {master_log_file}")
+        print(f"   Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
+        print(f"   Checkpoint file: {checkpoint_file}")
         
         # Load questions and resolutions from local files
         questions, resolutions_data, forecast_due_date = self.load_local_data()
@@ -514,14 +512,14 @@ class EnhancedForecastBenchRunner:
             
             questions = filtered_questions
             
-            self.logger.info(f"🔍 Question ID filtering applied:")
-            self.logger.info(f"   Original questions: {original_count}")
-            self.logger.info(f"   Requested question IDs: {len(question_ids)}")
-            self.logger.info(f"   Found matching questions: {len(found_ids)}")
-            self.logger.info(f"   Found IDs: {found_ids}")
+            print(f"🔍 Question ID filtering applied:")
+            print(f"   Original questions: {original_count}")
+            print(f"   Requested question IDs: {len(question_ids)}")
+            print(f"   Found matching questions: {len(found_ids)}")
+            print(f"   Found IDs: {found_ids}")
             
             if missing_ids:
-                self.logger.warning(f"   Missing question IDs: {missing_ids}")
+                print(f"   Missing question IDs: {missing_ids}")
             
             print("question_id_filtering", f"Filtered to {len(questions)} questions from {original_count}", {
                 "requested_ids": question_ids,
@@ -530,7 +528,7 @@ class EnhancedForecastBenchRunner:
             })
             
             if not questions:
-                self.logger.error("❌ No questions found matching the specified question IDs")
+                print("❌ No questions found matching the specified question IDs")
                 print("No questions found matching specified IDs")
                 
                 return {"error": "No questions found matching the specified question IDs"}
@@ -546,7 +544,7 @@ class EnhancedForecastBenchRunner:
         # Resume from checkpoint if available
         if checkpoint_data and 'results' in checkpoint_data:
             completed_indices = set(r['question_idx'] for r in checkpoint_data['results'] if r.get('success', False))
-            self.logger.info(f"⏮️ Found checkpoint with {len(completed_indices)} completed questions")
+            print(f"⏮️ Found checkpoint with {len(completed_indices)} completed questions")
             results = checkpoint_data['results']
             start_time = datetime.fromisoformat(checkpoint_data.get('start_time', datetime.now().isoformat()))
         else:
@@ -558,9 +556,9 @@ class EnhancedForecastBenchRunner:
         remaining_questions = [(idx, q) for idx, q in enumerate(questions) if idx not in completed_indices]
         
         if not remaining_questions:
-            self.logger.info("✅ All questions already completed from checkpoint!")
+            print("✅ All questions already completed from checkpoint!")
         else:
-            self.logger.info(f"📋 Processing {len(remaining_questions)} remaining questions (out of {len(questions)} total)")
+            print(f"📋 Processing {len(remaining_questions)} remaining questions (out of {len(questions)} total)")
         
         # Process remaining questions in parallel
         if remaining_questions:
@@ -590,14 +588,14 @@ class EnhancedForecastBenchRunner:
                                 if brier is not None:
                                     brier_info.append(f"{horizon}d:{brier:.3f}")
                             brier_str = f" (Brier: {', '.join(brier_info)})" if brier_info else ""
-                            self.logger.info(f"✅ Completed question {result['question_idx'] + 1}/{total_questions} ({completed_count}/{total_questions}){brier_str}")
+                            print(f"✅ Completed question {result['question_idx'] + 1}/{total_questions} ({completed_count}/{total_questions}){brier_str}")
                             print("question_completed", f"Question {result['question_idx'] + 1} completed", {
                                 "question_id": result['question_id'],
                                 "log_file": result.get('log_file'),
                                 "brier_scores": result['brier_scores']
                             })
                         else:
-                            self.logger.error(f"❌ Failed question {result['question_idx'] + 1}/{total_questions}")
+                            print(f"❌ Failed question {result['question_idx'] + 1}/{total_questions}")
                             print(f"Question {result['question_idx'] + 1} failed", {
                                 "question_id": result.get('question_id'),
                                 "error": result.get('error')
@@ -619,7 +617,7 @@ class EnhancedForecastBenchRunner:
                             
                     except Exception as e:
                         idx = future_to_idx[future]
-                        self.logger.error(f"❌ Exception in question {idx + 1}: {e}")
+                        print(f"❌ Exception in question {idx + 1}: {e}")
                         print(f"Question {idx + 1} exception", {"error": str(e), "traceback": traceback.format_exc()})
                         results.append({
                             'question_idx': idx,
@@ -723,25 +721,25 @@ class EnhancedForecastBenchRunner:
         
         
         # Log comprehensive results
-        self.logger.info(f"🎯 Enhanced ForecastBench Evaluation Complete!")
-        self.logger.info(f"   Questions processed: {len(successful_results)}/{len(questions)} ({success_rate:.1%})")
-        self.logger.info(f"   Forecast due date (cutoff): {forecast_due_date}")
-        self.logger.info(f"   Total predictions: {total_predictions}")
-        self.logger.info(f"   Total Brier scores: {total_brier_scores}")
-        self.logger.info(f"   Overall Average Brier Score: {overall_avg_brier:.4f}" if overall_avg_brier else "   Overall Average Brier Score: N/A")
-        self.logger.info(f"   Sum of All Brier Scores: {sum_brier_scores:.4f}" if sum_brier_scores else "   Sum of All Brier Scores: N/A")
-        self.logger.info(f"   Duration: {duration:.1f}s ({summary['questions_per_minute']:.1f} questions/minute)")
-        self.logger.info(f"   📁 Master log: {master_log_file}")
-        self.logger.info(f"   📁 Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
+        print(f"🎯 Enhanced ForecastBench Evaluation Complete!")
+        print(f"   Questions processed: {len(successful_results)}/{len(questions)} ({success_rate:.1%})")
+        print(f"   Forecast due date (cutoff): {forecast_due_date}")
+        print(f"   Total predictions: {total_predictions}")
+        print(f"   Total Brier scores: {total_brier_scores}")
+        print(f"   Overall Average Brier Score: {overall_avg_brier:.4f}" if overall_avg_brier else "   Overall Average Brier Score: N/A")
+        print(f"   Sum of All Brier Scores: {sum_brier_scores:.4f}" if sum_brier_scores else "   Sum of All Brier Scores: N/A")
+        print(f"   Duration: {duration:.1f}s ({summary['questions_per_minute']:.1f} questions/minute)")
+        print(f"   📁 Master log: {master_log_file}")
+        print(f"   📁 Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
         
         # Log Brier scores by time horizon
         for horizon in self.TIME_HORIZONS:
             horizon_key = f"{horizon}d"
             stats = horizon_stats[horizon_key]
             if stats['avg_brier_score'] is not None:
-                self.logger.info(f"   {horizon}-day Brier Score: {stats['avg_brier_score']:.4f} (n={stats['brier_score_count']})")
+                print(f"   {horizon}-day Brier Score: {stats['avg_brier_score']:.4f} (n={stats['brier_score_count']})")
             else:
-                self.logger.info(f"   {horizon}-day Brier Score: N/A (no resolutions)")
+                print(f"   {horizon}-day Brier Score: N/A (no resolutions)")
         
         # Save final results to checkpoint
         self.save_checkpoint({
@@ -756,9 +754,9 @@ class EnhancedForecastBenchRunner:
         try:
             with open(checkpoint_file, 'w') as f:
                 json.dump(checkpoint_data, f, indent=2, default=str)
-            self.logger.info(f"💾 Checkpoint saved: {checkpoint_file}")
+            print(f"💾 Checkpoint saved: {checkpoint_file}")
         except Exception as e:
-            self.logger.error(f"❌ Failed to save checkpoint: {e}")
+            print(f"❌ Failed to save checkpoint: {e}")
     
     def load_checkpoint(self, checkpoint_file: Path) -> Dict:
         """Load checkpoint data from file"""
@@ -766,13 +764,13 @@ class EnhancedForecastBenchRunner:
             if checkpoint_file.exists():
                 with open(checkpoint_file, 'r') as f:
                     checkpoint_data = json.load(f)
-                self.logger.info(f"📂 Checkpoint loaded: {checkpoint_file}")
+                print(f"📂 Checkpoint loaded: {checkpoint_file}")
                 return checkpoint_data
             else:
-                self.logger.info("📄 No checkpoint file found, starting fresh")
+                print("📄 No checkpoint file found, starting fresh")
                 return {}
         except Exception as e:
-            self.logger.error(f"❌ Failed to load checkpoint: {e}")
+            print(f"❌ Failed to load checkpoint: {e}")
             return {}
     
     def get_checkpoint_file(self, run_timestamp: str) -> Path:
@@ -785,7 +783,7 @@ class EnhancedForecastBenchRunner:
         if checkpoint_files:
             # Sort by modification time and return the latest
             latest = max(checkpoint_files, key=lambda f: f.stat().st_mtime)
-            self.logger.info(f"🔍 Found latest checkpoint: {latest}")
+            print(f"🔍 Found latest checkpoint: {latest}")
             return latest
         return None
 
@@ -884,7 +882,7 @@ def main():
     
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"enhanced_forecastbench_results_{timestamp}.json"
+    output_file = runner.results_dir / f"enhanced_forecastbench_results_{timestamp}.json"
     
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=2, default=str)

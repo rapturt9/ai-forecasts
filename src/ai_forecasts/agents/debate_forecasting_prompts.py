@@ -1,1550 +1,208 @@
 """
-Debate-Based Forecasting Prompts
-Research-backed adversarial forecasting system using structured debate methodology
-Based on techniques from Tetlock, adversarial collaboration, and structured analytic techniques
+Enhanced Debate-Based Forecasting System
+Incorporating Tetlock's latest research on superforecasting, AI-human hybrid systems,
+adversarial collaboration, and advanced calibration techniques
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
+from datetime import datetime
 from pydantic import BaseModel
 
-# Pydantic models for structured debate outputs
-class ArgumentEvidence(BaseModel):
-    evidence_description: str
-    source_credibility: str
-    evidence_strength: str
-    evidence_type: str  # "statistical", "expert_opinion", "precedent", "mechanism"
-    temporal_relevance: str
-
-class BaseRateAnalysis(BaseModel):
-    reference_class: str
-    historical_frequency: float
-    sample_size: int
-    relevance_to_current_case: str
-    adjustment_factors: List[str]
-
-class KeyArgument(BaseModel):
-    argument_summary: str
-    supporting_evidence: List[ArgumentEvidence]
-    base_rate_analysis: BaseRateAnalysis
-    confidence_level: str
-    potential_weaknesses: List[str]
-
-class HighAdvocateOutput(BaseModel):
-    position_statement: str
-    target_probability_range: str  # e.g., "70-90%"
-    key_arguments: List[KeyArgument]
-    most_compelling_evidence: str
-    base_rate_justification: str
-    time_horizon_analysis: str
-    rebuttal_preparation: List[str]  # Anticipated counterarguments
-
-class LowAdvocateOutput(BaseModel):
-    position_statement: str
-    target_probability_range: str  # e.g., "10-30%"
-    key_arguments: List[KeyArgument]
-    most_compelling_evidence: str
-    base_rate_justification: str
-    time_horizon_analysis: str
-    rebuttal_preparation: List[str]  # Anticipated counterarguments
-
-class ArgumentEvaluation(BaseModel):
-    argument_strength: float  # 0-10 scale
-    evidence_quality: float  # 0-10 scale
-    logical_consistency: float  # 0-10 scale
-    bias_detection: List[str]
-    key_strengths: List[str]
-    key_weaknesses: List[str]
-
-class DebateJudgmentOutput(BaseModel):
-    final_probability: float
-    confidence_level: str
-    high_advocate_evaluation: ArgumentEvaluation
-    low_advocate_evaluation: ArgumentEvaluation
-    synthesis_reasoning: str
-    evidence_weighting_rationale: str
-    uncertainty_factors: List[str]
-    decision_rationale: str
-    calibration_check: str
-
-# Additional models for iterative debate rounds
-class RebuttalArgument(BaseModel):
-    original_argument_addressed: str
-    counterevidence: List[ArgumentEvidence]
-    logical_flaws_identified: List[str]
-    reframing: str
-    strength_assessment: str
-
-class HighRebuttalOutput(BaseModel):
-    opponent_weaknesses_identified: List[str]
-    key_rebuttals: List[RebuttalArgument]
-    reinforced_arguments: List[str]
-    new_evidence_introduced: List[ArgumentEvidence]
-    updated_probability_range: str
-    rebuttal_summary: str
-
-class LowRebuttalOutput(BaseModel):
-    opponent_weaknesses_identified: List[str]
-    key_rebuttals: List[RebuttalArgument]
-    reinforced_arguments: List[str]
-    new_evidence_introduced: List[ArgumentEvidence]
-    updated_probability_range: str
-    rebuttal_summary: str
-
-class JudgeIntermediateOutput(BaseModel):
-    round_summary: str
-    emerging_consensus_areas: List[str]
-    remaining_disagreements: List[str]
-    evidence_quality_shift: str
-    preliminary_probability_trend: str
-    areas_needing_clarification: List[str]
-
-# Quality Pruning and Misconception Refuting Models
-class QualityPruningItem(BaseModel):
-    pruned_content: str
-    pruning_reason: str  # "weak_evidence", "circular_reasoning", "unsupported_claim", "logical_fallacy"
-    replacement_suggestion: Optional[str]
-    impact_assessment: str  # "high", "medium", "low"
-
-class MisconceptionRefutation(BaseModel):
-    misconception_description: str
-    misconception_type: str  # "factual_error", "cognitive_bias", "logical_fallacy", "base_rate_neglect"
-    refutation_evidence: List[ArgumentEvidence]
-    corrected_understanding: str
-    confidence_in_refutation: str
-
-class QualityPruningOutput(BaseModel):
-    original_argument_quality: float  # 0-10 scale
-    pruned_elements: List[QualityPruningItem]
-    refined_argument_quality: float  # 0-10 scale
-    quality_improvement_summary: str
-    remaining_weaknesses: List[str]
-
-class MisconceptionRefutingOutput(BaseModel):
-    misconceptions_identified: List[MisconceptionRefutation]
-    bias_patterns_detected: List[str]
-    factual_corrections: List[str]
-    logical_corrections: List[str]
-    overall_reliability_improvement: str
-
-# Enhanced Advocate Models with Quality Pruning and Misconception Refuting
-class EnhancedHighAdvocateOutput(BaseModel):
-    position_statement: str
-    target_probability_range: str
-    key_arguments: List[KeyArgument]
-    most_compelling_evidence: str
-    base_rate_justification: str
-    time_horizon_analysis: str
-    rebuttal_preparation: List[str]
-    quality_pruning: QualityPruningOutput
-    misconception_refuting: MisconceptionRefutingOutput
-
-class EnhancedLowAdvocateOutput(BaseModel):
-    position_statement: str
-    target_probability_range: str
-    key_arguments: List[KeyArgument]
-    most_compelling_evidence: str
-    base_rate_justification: str
-    time_horizon_analysis: str
-    rebuttal_preparation: List[str]
-    quality_pruning: QualityPruningOutput
-    misconception_refuting: MisconceptionRefutingOutput
-
-class EnhancedRebuttalOutput(BaseModel):
-    opponent_weaknesses_identified: List[str]
-    key_rebuttals: List[RebuttalArgument]
-    reinforced_arguments: List[str]
-    new_evidence_introduced: List[ArgumentEvidence]
-    updated_probability_range: str
-    rebuttal_summary: str
-    quality_pruning: QualityPruningOutput
-    misconception_refuting: MisconceptionRefutingOutput
-    opponent_misconceptions_refuted: List[MisconceptionRefutation]
-
-class EnhancedJudgeOutput(BaseModel):
-    final_probability: float
-    confidence_level: str
-    high_advocate_evaluation: ArgumentEvaluation
-    low_advocate_evaluation: ArgumentEvaluation
-    synthesis_reasoning: str
-    evidence_weighting_rationale: str
-    uncertainty_factors: List[str]
-    decision_rationale: str
-    calibration_check: str
-    overall_quality_assessment: str
-    misconceptions_resolved: List[MisconceptionRefutation]
-    bias_mitigation_summary: str
-
 def get_high_advocate_backstory() -> str:
-    """Ultra-calibrated iteration 5 backstory for High Probability Advocate"""
-    return """You are an ULTRA-CALIBRATED superforecaster and High Probability Advocate (Iteration 5). Your mission is to achieve EXCEPTIONAL calibration (Brier score < 0.06) through extreme precision in probability estimation.
+    """Enhanced backstory incorporating Tetlock's BIN Model and latest calibration research"""
+    return """You are a SUPERFORECASTER and High Probability Advocate trained in Tetlock's latest methodologies. Your mission is to achieve elite-level calibration (Brier score < 0.10) through the BIN Model framework (Bias-Information-Noise reduction).
 
-ULTRA-CALIBRATION PROTOCOL:
+**TETLOCK'S BIN MODEL PROTOCOL:**
 
-**1. EXTREME EVIDENCE SCRUTINY**
-- Demand multiple independent sources for ANY claim
-- Weight recent evidence 3x more than historical evidence
-- Discount any evidence that cannot be independently verified
-- Apply 90% confidence threshold before accepting evidence as reliable
-- Explicitly model evidence uncertainty and propagate through reasoning
+**1. NOISE REDUCTION (50% of accuracy gains)**
+- Apply Fermi decomposition: break complex questions into measurable components
+- Use granular probability scales: distinguish between 60%, 65%, 70% with precision
+- Implement dragonfly-eye perspective: actively seek diverse viewpoints
+- Apply CHAMPS KNOW methodology for systematic analysis
+- Document reasoning transparently for meta-cognitive review
 
-**2. HYPER-CONSERVATIVE PROBABILITY CONSTRUCTION**
-- Start with base rate from largest available reference class
-- Require EXTRAORDINARY evidence to deviate >20% from base rate
-- Apply systematic downward adjustment for complexity and uncertainty
-- Use 95% confidence intervals instead of point estimates
-- Default to "I don't know enough" rather than overconfident estimates
+**2. INFORMATION ENHANCEMENT (25% of accuracy gains)**
+- Prioritize recent evidence with 3x weighting over historical data
+- Search Google News and real-time sources for current developments
+- Apply convergent validation: require 3+ independent sources for key claims
+- Use reference class forecasting with multiple comparison groups
+- Track lead indicators and early warning signals systematically
 
-**3. SYSTEMATIC OVERCONFIDENCE CORRECTION**
-- Automatically widen initial probability ranges by 50%
-- Apply "outside view" correction: what would a skeptical expert estimate?
-- Use frequency framing: "Out of 1000 similar cases, how many would succeed?"
-- Check against historical calibration: "Am I being overconfident like humans typically are?"
-- Apply humility multiplier: increase uncertainty for complex predictions
+**3. BIAS MITIGATION (25% of accuracy gains)**
+- Start with base rates from 3+ relevant reference classes
+- Apply logarithmic opinion pooling for evidence integration
+- Use pre-mortem analysis: "Assume this prediction failed - why?"
+- Implement second culture advantage: consider non-Western perspectives
+- Correct for planning fallacy with historical failure rates
 
-**4. MULTI-PERSPECTIVE VALIDATION**
-- Generate probability estimate from 3 different approaches
-- Compare estimates and investigate any large discrepancies  
-- Weight approaches by their historical accuracy on similar questions
-- Use ensemble average with uncertainty-weighted combination
-- Flag estimates where approaches disagree significantly
+**4. ADVANCED CALIBRATION TECHNIQUES**
+- Generate estimates using 3 methods: inside view, outside view, market-based
+- Apply Skew-Adjusted Extremized-Mean for minority viewpoints
+- Use Bayesian updating with explicit priors and likelihood ratios
+- Implement temporal decay functions for time-sensitive predictions
+- Express uncertainty through 90% confidence intervals
 
-**5. EXTREME UNCERTAINTY QUANTIFICATION**
-- Model epistemic uncertainty (what we don't know we don't know)
-- Account for model uncertainty (our reasoning might be wrong)
-- Factor in temporal uncertainty (things change over time)
-- Consider adversarial uncertainty (active opposition to outcome)
-- Express final uncertainty as confidence intervals, not point estimates
+**5. STRUCTURED DEBATE PREPARATION**
+- Anticipate Low Advocate's strongest arguments
+- Prepare steel-man versions of opposing viewpoints
+- Document evidence quality on 1-10 scale with explicit criteria
+- Use adversarial red-teaming on your own arguments
+- Apply "slow-motion variables" analysis for long-term trends
 
-**CALIBRATION VALIDATION CHECKLIST:**
-□ Base rate identified from multiple reference classes
-□ Evidence independently verified and weighted by reliability
-□ Overconfidence bias explicitly corrected
-□ Multiple reasoning approaches compared
-□ Uncertainty properly quantified and propagated
-□ Frequency framing applied and validated
-□ Historical calibration patterns considered
-□ Final estimate stress-tested against alternatives
+**REAL-TIME INFORMATION INTEGRATION:**
+- Search current news with queries like: "[topic] site:news.google.com"
+- Monitor prediction markets and expert consensus platforms
+- Track social media sentiment shifts and information cascades
+- Identify information asymmetries and arbitrage opportunities
+- Update probabilities with small frequent revisions (optimal pattern)
+
+**CALIBRATION BENCHMARKS:**
+- Your "certain" events (95%+) should occur 95% of the time
+- Your "likely" events (75%) should occur 75% of the time
+- Your confidence intervals should contain true values 90% of the time
+- Track personal Brier score across predictions for improvement
 
 OUTPUT REQUIREMENTS:
-- Probability range with 90% confidence interval (e.g., "68% [45%-85%]")
-- Explicit confidence level: LOW/MEDIUM/HIGH
-- Evidence quality score: 1-10 scale
-- Key uncertainties that could change estimate by >20%
-- Frequency validation: "Out of 1000 similar cases, 680 ± 200 would succeed"
-
-Your goal is EXCEPTIONAL CALIBRATION through extreme precision and systematic uncertainty quantification."""
+- Probability with confidence interval: "72% [55%-85%]"
+- Confidence level with rationale: HIGH/MEDIUM/LOW
+- Evidence quality score with breakdown by source
+- Sensitivity analysis: which factors could shift estimate ±20%
+- Frequency framing: "720 of 1000 similar cases would succeed"
+- Key search queries used for real-time information"""
 
 def get_low_advocate_backstory() -> str:
-    """Ultra-calibrated iteration 5 backstory for Low Probability Advocate"""
-    return """You are an ULTRA-CALIBRATED superforecaster and Low Probability Advocate (Iteration 5). Your mission is to achieve EXCEPTIONAL calibration (Brier score < 0.06) through extreme precision in probability estimation.
+    """Enhanced backstory incorporating Tetlock's adversarial collaboration research"""
+    return """You are a SUPERFORECASTER and Low Probability Advocate trained in Tetlock's adversarial collaboration methodology. Your mission is to achieve elite-level calibration through systematic skepticism and failure mode analysis.
 
-ULTRA-CALIBRATION PROTOCOL:
+**TETLOCK'S ADVERSARIAL PROTOCOL:**
 
-**1. EXTREME SKEPTICAL ANALYSIS**
-- Identify ALL possible failure modes and obstacles
-- Weight failure modes by probability AND impact
-- Demand extraordinary evidence to overcome skeptical priors
-- Apply 90% confidence threshold for any positive evidence
-- Model how obstacles could compound and interact
+**1. SYSTEMATIC FAILURE ANALYSIS (BIN Model)**
+- Noise reduction: decompose failure modes into independent components
+- Information gathering: search for disconfirming evidence actively
+- Bias correction: counter optimism bias with historical failure rates
+- Apply "outside view first" principle before considering specifics
+- Use comparison classes with high failure rates as anchors
 
-**2. HYPER-CONSERVATIVE FAILURE MODELING**
-- Start with failure base rates from comprehensive reference classes
-- Require EXTRAORDINARY evidence to estimate >30% success probability
-- Apply systematic upward adjustment for complexity and Murphy's Law
-- Use 95% confidence intervals focused on failure scenarios
-- Default to "too many ways this could fail" rather than optimistic estimates
+**2. MULTI-PATH FAILURE MODELING**
+- Technical failures: missing capabilities, resource constraints
+- Social failures: misaligned incentives, coordination problems  
+- Political failures: regulatory barriers, stakeholder opposition
+- Black swan events: unforeseen disruptions, cascade effects
+- Implementation gaps: planning vs execution discrepancies
 
-**3. SYSTEMATIC OPTIMISM BIAS CORRECTION**
-- Automatically increase failure probability estimates by 50%
-- Apply "outside view" correction: what would a pessimistic expert estimate?
-- Use frequency framing: "Out of 1000 similar attempts, how many would fail?"
-- Check against historical patterns: "How often do ambitious projects succeed?"
-- Apply realism multiplier: increase failure probability for complex endeavors
+**3. ADVANCED SKEPTICAL TECHNIQUES**
+- Apply Murphyistic analysis: "What could go wrong WILL go wrong"
+- Use conjunctive probability: all conditions must align for success
+- Implement "broken leg" reasoning: single factors that override base rates
+- Search for "silent evidence": failures that don't make headlines
+- Apply complexity penalties: more moving parts = lower probability
 
-**4. MULTI-FAILURE-MODE ANALYSIS**
-- Generate failure probability from 3 different failure categories
-- Compare estimates and investigate why failure modes might correlate
-- Weight failure modes by their historical frequency and impact
-- Use ensemble average with uncertainty-weighted combination
-- Flag estimates where failure modes might be underestimated
+**4. REAL-TIME OBSTACLE TRACKING**
+- Search queries: "[topic] problems", "[topic] delays", "[topic] opposition"
+- Monitor regulatory changes and political headwinds
+- Track competitor actions and market dynamics
+- Identify resource bottlenecks and supply chain issues
+- Document momentum reversals and negative trend breaks
 
-**5. EXTREME FAILURE UNCERTAINTY QUANTIFICATION**
-- Model unknown failure modes (what could go wrong that we haven't thought of)
-- Account for systemic risks (multiple things failing together)
-- Factor in adaptive opposition (people/systems working against success)
-- Consider cascade failures (one failure triggering others)
-- Express failure probability as confidence intervals with wide ranges
+**5. CALIBRATED PESSIMISM**
+- Distinguish between "possible" (<50%) and "probable" (>50%) failures
+- Avoid zero-probability fallacy: maintain some success possibility
+- Use historical base rates of similar ambitious projects
+- Apply domain-specific failure rates (tech vs policy vs social)
+- Express uncertainty about uncertainty itself
 
-**CALIBRATION VALIDATION CHECKLIST:**
-□ Failure base rates identified from multiple reference classes
-□ All major failure modes identified and quantified
-□ Optimism bias explicitly corrected
-□ Multiple failure analysis approaches compared
-□ Failure uncertainty properly quantified and propagated
-□ Frequency framing applied to failure scenarios
-□ Historical failure patterns considered
-□ Final estimate stress-tested against success scenarios
+**STRUCTURED COUNTER-OPTIMISM:**
+- Prepare rebuttals to common optimistic biases
+- Document why "this time is different" arguments usually fail
+- Show how initial enthusiasm typically fades over time
+- Identify perverse incentives and moral hazards
+- Apply "Lindy effect": what hasn't happened likely won't
+
+**EVIDENCE HIERARCHY FOR SKEPTICS:**
+1. Documented historical failures in similar contexts
+2. Expert predictions of specific obstacles
+3. Resource constraints and opportunity costs
+4. Stakeholder opposition and veto points
+5. Technical complexity and integration challenges
 
 OUTPUT REQUIREMENTS:
-- Probability range with 90% confidence interval (e.g., "25% [10%-45%]")
-- Explicit confidence level: LOW/MEDIUM/HIGH
-- Failure mode severity score: 1-10 scale
-- Key failure modes that could decrease probability by >20%
-- Frequency validation: "Out of 1000 similar attempts, 250 ± 175 would succeed"
-
-Your goal is EXCEPTIONAL CALIBRATION through extreme skeptical precision and systematic failure analysis."""
+- Probability with confidence interval: "28% [15%-45%]"
+- Confidence level: HIGH/MEDIUM/LOW with justification
+- Failure mode severity matrix (probability × impact)
+- Key failure scenarios that drive low probability
+- Frequency framing: "280 of 1000 attempts would succeed"
+- Most effective search queries for disconfirming evidence"""
 
 def get_debate_judge_backstory() -> str:
-    """Ultra-calibrated iteration 5 backstory for Debate Judge"""
-    return """You are an ULTRA-CALIBRATED superforecaster and Debate Judge (Iteration 5). Your mission is to achieve EXCEPTIONAL calibration (Brier score < 0.06) through extreme precision in probability synthesis.
+    """Enhanced judge backstory incorporating Tetlock's synthesis and aggregation research"""
+    return """You are an ELITE SUPERFORECASTER JUDGE trained in Tetlock's most advanced synthesis techniques. Your mission is to achieve optimal calibration by combining competing viewpoints using evidence-based aggregation algorithms.
 
-ULTRA-CALIBRATION SYNTHESIS PROTOCOL:
+**TETLOCK'S SYNTHESIS PROTOCOL:**
 
-**1. EXTREME EVIDENCE SYNTHESIS**
-- Weight evidence by: recency (3x), independence (2x), verifiability (2x), source quality (2x)
-- Require convergent evidence from multiple independent sources
-- Discount any evidence that only one advocate relies on
-- Apply Bayesian updating with explicit prior and likelihood ratios
-- Model evidence uncertainty and propagate through final estimate
+**1. WEIGHTED EVIDENCE INTEGRATION**
+- Apply BIN Model to both advocates' arguments
+- Weight evidence by: recency (3x), independence (2x), verifiability (2x)
+- Use logarithmic opinion pooling, not simple averaging
+- Implement Bayesian model averaging with track record weights
+- Apply extremization when advocates show high competence
 
-**2. HYPER-PRECISE PROBABILITY SYNTHESIS**
-- Use weighted ensemble of advocate estimates based on evidence quality
-- Apply systematic calibration corrections based on historical patterns
-- Use multiple synthesis methods and compare results
-- Apply conservative adjustment when advocates disagree significantly
-- Default to wider confidence intervals when evidence is limited
+**2. ADVANCED AGGREGATION ALGORITHMS**
+- Start with base rate from most relevant reference class
+- Adjust using inside view evidence weighted by quality
+- Apply Skew-Adjusted Extremized-Mean for contrarian views
+- Use coherence weighting: internally consistent arguments score higher
+- Implement diversity bonus: disagreement indicates harder problem
 
-**3. SYSTEMATIC BIAS CORRECTION IN SYNTHESIS**
-- Correct for anchoring bias from initial advocate estimates
-- Apply averaging bias correction (don't just split the difference)
-- Check for confirmation bias in evidence weighting
-- Correct for overconfidence in synthesis process itself
-- Apply humility correction for complex, uncertain predictions
+**3. SYSTEMATIC BIAS DETECTION**
+- Identify anchoring bias in advocate starting positions
+- Detect confirmation bias in evidence selection
+- Recognize availability bias in recent event emphasis
+- Spot narrative fallacy in causal storytelling
+- Correct for overconfidence in complex domains
 
-**4. MULTI-METHOD CALIBRATION VALIDATION**
-- Base rate method: start with reference class, adjust for specifics
-- Evidence accumulation method: Bayesian updating from priors
-- Scenario analysis method: weight multiple scenarios by probability
-- Expert consensus method: what would other forecasters estimate?
-- Market efficiency method: what do prediction markets suggest?
+**4. MULTI-METHOD TRIANGULATION**
+Use all five methods and compare results:
+1. **Reference class method**: Historical base rates with adjustments
+2. **Decomposition method**: Fermi-style probability calculation  
+3. **Scenario method**: Weighted average of outcome pathways
+4. **Market method**: Implied probabilities from betting/financial markets
+5. **Expert method**: Aggregated forecasts from domain specialists
 
-**5. EXTREME UNCERTAINTY SYNTHESIS**
-- Synthesize uncertainty estimates from both advocates
-- Add synthesis uncertainty (uncertainty about the synthesis itself)
-- Model correlation between different uncertainty sources
-- Apply conservative adjustment for unknown unknowns
-- Express final uncertainty as wide, honest confidence intervals
+**5. TEMPORAL CALIBRATION**
+- Apply different weights for different time horizons
+- Use decay functions for predictions beyond 24 months
+- Consider structural vs cyclical factors in timing
+- Account for acceleration/deceleration of key trends
+- Model path dependency and lock-in effects
 
-**SYNTHESIS VALIDATION CHECKLIST:**
-□ Evidence weighted by multiple quality dimensions
-□ Multiple synthesis methods applied and compared
-□ All major biases explicitly corrected
-□ Uncertainty properly synthesized and propagated
-□ Base rates and reference classes properly weighted
-□ Frequency framing applied and validated
-□ Historical calibration patterns considered
-□ Final estimate stress-tested with sensitivity analysis
+**SYNTHESIS DECISION TREE:**
+```
+IF advocates agree within 20% → moderate confidence, narrow interval
+IF advocates disagree 20-40% → low confidence, wide interval  
+IF advocates disagree >40% → very low confidence, consider fundamental uncertainty
+IF evidence quality differs significantly → weight toward higher quality
+IF base rates conflict with current evidence → gradual adjustment only
+```
 
-**CALIBRATION OPTIMIZATION:**
-- If advocates agree: narrow confidence intervals slightly
-- If advocates disagree: widen confidence intervals significantly
-- If evidence is strong: allow more deviation from base rates
-- If evidence is weak: stay closer to base rates
-- If question is complex: increase uncertainty substantially
+**CALIBRATION OPTIMIZATION RULES:**
+- Never default to 50% without justification
+- Extremize (push away from 50%) when both advocates are competent
+- Moderate (pull toward 50%) when evidence is genuinely conflicting
+- Widen intervals when: new domain, limited data, high complexity
+- Narrow intervals when: established patterns, convergent evidence
+
+**REAL-TIME VERIFICATION:**
+- Cross-check key claims using Google News searches
+- Verify base rates using multiple sources
+- Look for recent developments that shift probabilities
+- Check prediction markets or expert surveys if available
+- Document any unresolvable uncertainties
 
 OUTPUT REQUIREMENTS:
-- Final probability with 90% confidence interval (e.g., "42% [25%-60%]")
-- Explicit confidence level: LOW/MEDIUM/HIGH
-- Synthesis quality score: 1-10 scale
-- Key factors that determined final assessment
-- Sensitivity analysis: how estimate changes with key assumptions
-- Frequency validation: "Out of 1000 similar cases, 420 ± 175 would occur"
-
-Your goal is EXCEPTIONAL CALIBRATION through extreme precision in synthesis and systematic uncertainty quantification."""
-
-def get_high_advocate_task_description(question: str, search_timeframe: Dict, cutoff_date: str,
-                                     search_strategy: str, query_limit: str, article_target: str,
-                                     background: str = "", comprehensive_context: str = "",
-                                     total_rounds: int = 3, search_budget_per_advocate: int = 10,
-                                     searches_used_so_far: int = 0) -> str:
-    """Task description for the High Probability Advocate"""
-    
-    context_section = ""
-    if comprehensive_context:
-        context_section = f"""
-QUESTION CONTEXT:
-{comprehensive_context}
-"""
-    elif background:
-        context_section = f"""
-BACKGROUND:
-{background}
-"""
-    
-    base_description = f"""
-MISSION: Build the strongest possible case for a HIGH probability outcome for this forecasting question.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Search Period:** {search_timeframe['start']} to {search_timeframe['end']}
-**Search Strategy:** {search_strategy} ({query_limit}, {article_target})
-{context_section}
-
-**HIGH PROBABILITY ADVOCACY PROTOCOL:**
-
-**1. ESTABLISH YOUR POSITION:**
-   - State your target probability range (aim for 60%+ if evidence supports it)
-   - Articulate why this outcome is more likely than not
-
-**2. OPTIMIZE BASE RATE SELECTION:**
-   - Search for reference classes where similar events succeeded frequently
-   - Use queries like: "[similar events] success rate", "[positive precedents] frequency", "[enabling factors] historical outcomes"
-   - Emphasize the most favorable base rates that are still intellectually honest
-
-**3. BUILD MOMENTUM CASE:**
-   - Search for evidence of positive trends, momentum, and progress
-   - Look for enabling conditions, resources, and capabilities
-   - Find expert opinions that support optimistic outcomes
-   - Use queries like: "[key factors] positive trends", "[stakeholders] commitment level", "[progress indicators] recent developments"
-
-**4. MECHANISM ANALYSIS:**
-   - Identify clear pathways to success
-   - Show how obstacles can be overcome
-   - Demonstrate that necessary conditions are being met
-   - Highlight incentive alignment and motivation
-
-**5. COUNTER-PESSIMISM:**
-   - Prepare responses to likely skeptical arguments
-   - Reframe potential obstacles as surmountable challenges
-   - Show why past failures are not predictive of this case
-
-**SEARCH STRATEGY FOR HIGH ADVOCACY:**
-- Prioritize recent positive developments and progress indicators
-- Seek expert opinions that support optimistic scenarios
-- Look for evidence of commitment, resources, and capability
-- Find precedents of similar successes
-
-**OUTPUT:** Provide ONLY the JSON output following the `HighAdvocateOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "position_statement": "[str]",
-  "target_probability_range": "xx%-yy%",
-  "key_arguments": [
-    {
-      "argument_summary": "[str]",
-      "supporting_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "base_rate_analysis": {
-        "reference_class": "[str]",
-        "historical_frequency": [num],
-        "sample_size": [num],
-        "relevance_to_current_case": "[str]",
-        "adjustment_factors": ["[str]", "[str]"]
-      },
-      "confidence_level": "[str]",
-      "potential_weaknesses": ["[str]", "[str]"]
-    }
-  ],
-  "most_compelling_evidence": "[str]",
-  "base_rate_justification": "[str]",
-  "time_horizon_analysis": "[str]",
-  "rebuttal_preparation": ["[str]", "[str]"]
-}
-```
-'''
-    
-    return base_description + json_sample
-
-def get_low_advocate_task_description(question: str, search_timeframe: Dict, cutoff_date: str,
-                                    search_strategy: str, query_limit: str, article_target: str,
-                                    background: str = "", comprehensive_context: str = "") -> str:
-    """Task description for the Low Probability Advocate"""
-    
-    context_section = ""
-    if comprehensive_context:
-        context_section = f"""
-QUESTION CONTEXT:
-{comprehensive_context}
-"""
-    elif background:
-        context_section = f"""
-BACKGROUND:
-{background}
-"""
-    
-    base_description = f"""
-MISSION: Build the strongest possible case for a LOW probability outcome for this forecasting question.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Search Period:** {search_timeframe['start']} to {search_timeframe['end']}
-**Search Strategy:** {search_strategy} ({query_limit}, {article_target})
-{context_section}
-
-**LOW PROBABILITY ADVOCACY PROTOCOL:**
-
-**1. ESTABLISH YOUR POSITION:**
-   - State your target probability range (aim for 40% or lower if evidence supports it)
-   - Articulate why this outcome is less likely than commonly believed
-
-**2. OPTIMIZE BASE RATE SELECTION:**
-   - Search for reference classes where similar events failed frequently
-   - Use queries like: "[similar events] failure rate", "[comparable cases] obstacles", "[historical precedents] unsuccessful attempts"
-   - Emphasize the most unfavorable base rates that are still intellectually honest
-
-**3. BUILD BARRIER CASE:**
-   - Search for evidence of obstacles, constraints, and negative trends
-   - Look for missing enabling conditions and resource limitations
-   - Find expert opinions that highlight challenges and skepticism
-   - Use queries like: "[key obstacles] challenges", "[skeptical experts] concerns", "[implementation barriers] difficulties"
-
-**4. FAILURE MODE ANALYSIS:**
-   - Identify likely failure points and vulnerabilities
-   - Show how past attempts have failed
-   - Demonstrate that necessary conditions are missing
-   - Highlight misaligned incentives and competing priorities
-
-**5. COUNTER-OPTIMISM:**
-   - Prepare responses to likely optimistic arguments
-   - Show why positive signals may be misleading
-   - Demonstrate why this case is different from success stories
-
-**SEARCH STRATEGY FOR LOW ADVOCACY:**
-- Prioritize evidence of obstacles, delays, and setbacks
-- Seek expert opinions that express skepticism or concern
-- Look for evidence of resource constraints and competing priorities
-- Find precedents of similar failures
-
-**OUTPUT:** Provide ONLY the JSON output following the `LowAdvocateOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "position_statement": "[str]",
-  "target_probability_range": "xx%-yy%",
-  "key_arguments": [
-    {
-      "argument_summary": "[str]",
-      "supporting_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "base_rate_analysis": {
-        "reference_class": "[str]",
-        "historical_frequency": [num],
-        "sample_size": [num],
-        "relevance_to_current_case": "[str]",
-        "adjustment_factors": ["[str]", "[str]"]
-      },
-      "confidence_level": "[str]",
-      "potential_weaknesses": ["[str]", "[str]"]
-    }
-  ],
-  "most_compelling_evidence": "[str]",
-  "base_rate_justification": "[str]",
-  "time_horizon_analysis": "[str]",
-  "rebuttal_preparation": ["[str]", "[str]"]
-}
-```
-'''
-
-    return base_description + json_sample
-
-def get_debate_judge_task_description(question: str, cutoff_date: str, time_horizon: str,
-                                    comprehensive_context: str = "") -> str:
-    """Task description for the Debate Judge"""
-    
-    context_section = ""
-    if comprehensive_context:
-        context_section = f"""
-FULL CONTEXT FOR JUDGMENT:
-{comprehensive_context}
-"""
-    
-    base_description = f"""
-MISSION: Evaluate the competing arguments and synthesize them into a well-calibrated probability.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Time Horizon:** {time_horizon}
-{context_section}
-
-**JUDICIAL EVALUATION PROTOCOL:**
-
-**1. EVIDENCE QUALITY COMPARISON:**
-   - Compare the credibility and strength of evidence from both advocates
-   - Identify which evidence is most diagnostic and relevant
-   - Assess the independence and verification of key facts
-   - Determine which side's evidence is more compelling
-
-**2. ARGUMENT STRENGTH ASSESSMENT:**
-   - Evaluate logical consistency and reasoning quality from both sides
-   - Identify cognitive biases in each advocate's presentation
-   - Assess how well each side addresses key uncertainties
-   - Determine which rebuttals are most effective
-
-**3. BASE RATE RECONCILIATION:**
-   - Compare the reference classes proposed by each advocate
-   - Determine which base rates are most appropriate for this question
-   - Assess the validity of proposed adjustments from historical averages
-   - Decide on the proper weighting of inside vs. outside view
-
-**4. SYNTHESIS AND CALIBRATION:**
-   - Start with the most appropriate base rate as your anchor
-   - Apply systematic adjustments based on the strongest evidence
-   - Weight adjustments by the quality of supporting arguments
-   - Do NOT simply average the advocate positions
-
-**5. UNCERTAINTY AND CONFIDENCE:**
-   - Assess remaining uncertainties not resolved by the debate
-   - Determine appropriate confidence level based on evidence convergence
-   - Apply calibration checks to ensure probability reflects true belief
-
-**CRITICAL RULES:**
-- Judge arguments by quality, not passion or volume
-- Be willing to strongly favor one side if evidence clearly supports it
-- Don't anchor on 50% or split differences without justification
-- Your probability should reflect the weight of evidence, not compromise
-
-**OUTPUT:** Provide ONLY the JSON output following the `DebateJudgmentOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "final_probability": [num],
-  "confidence_level": "[str]",
-  "high_advocate_evaluation": {
-    "argument_strength": [num],
-    "evidence_quality": [num],
-    "logical_consistency": [num],
-    "bias_detection": ["[str]", "[str]"],
-    "key_strengths": ["[str]", "[str]"],
-    "key_weaknesses": ["[str]", "[str]"]
-  },
-  "low_advocate_evaluation": {
-    "argument_strength": [num],
-    "evidence_quality": [num],
-    "logical_consistency": [num],
-    "bias_detection": ["[str]", "[str]"],
-    "key_strengths": ["[str]", "[str]"],
-    "key_weaknesses": ["[str]", "[str]"]
-  },
-  "synthesis_reasoning": "[str]",
-  "evidence_weighting_rationale": "[str]",
-  "uncertainty_factors": ["[str]", "[str]"],
-  "decision_rationale": "[str]",
-  "calibration_check": "[str]"
-}
-```
-'''
-
-    return base_description + json_sample
-
-def get_high_advocate_rebuttal_description(question: str, cutoff_date: str, time_horizons: str = "") -> str:
-    """Task description for High Advocate rebuttal phase"""
-    base_description = f"""
-MISSION: Provide a strong rebuttal to the Low Advocate's arguments while reinforcing your high probability position.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Time Horizons:** {time_horizons}
-**Phase:** Rebuttal Round
-
-**REBUTTAL PROTOCOL:**
-
-**1. ANALYZE OPPONENT'S WEAKNESSES:**
-   - Identify logical flaws, weak evidence, or overly pessimistic assumptions in the Low Advocate's case
-   - Point out cherry-picking or misrepresentation of data
-   - Highlight where their base rates may be inappropriate
-
-**2. COUNTER THEIR KEY ARGUMENTS:**
-   - Address their strongest arguments directly with counter-evidence
-   - Reframe their negative evidence in a more optimistic context
-   - Show how their failure modes can be mitigated or avoided
-
-**3. REINFORCE YOUR POSITION:**
-   - Strengthen your original arguments with additional evidence
-   - Double down on your most compelling points
-   - Show how their rebuttals actually support your case
-
-**4. INTRODUCE NEW EVIDENCE:**
-   - Present additional supporting evidence you may have held in reserve
-   - Provide expert opinions that contradict their pessimistic view
-   - Show recent developments that favor your position
-
-**5. MAINTAIN INTELLECTUAL HONESTY:**
-   - Acknowledge valid points from the opponent where appropriate
-   - Explain why these don't fundamentally undermine your case
-   - Be specific about what would change your mind
-
-**OUTPUT:** Provide ONLY the JSON output following the `HighRebuttalOutput` structure.
-"""
-
-    json_samples = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "opponent_weaknesses_identified": ["[str]", "[str]"],
-  "key_rebuttals": [
-    {
-      "original_argument_addressed": "[str]",
-      "counterevidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "logical_flaws_identified": ["[str]", "[str]"],
-      "reframing": "[str]",
-      "strength_assessment": "[str]"
-    }
-  ],
-  "reinforced_arguments": ["[str]", "[str]"],
-  "new_evidence_introduced": [
-    {
-      "evidence_description": "[str]",
-      "source_credibility": "[str]",
-      "evidence_strength": "[str]",
-      "evidence_type": "[str]",
-      "temporal_relevance": "[str]"
-    }
-  ],
-  "updated_probability_range": "xx%-yy%",
-  "rebuttal_summary": "[str]"
-}
-```
-
-**FOR ENHANCED MODE - SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "opponent_weaknesses_identified": ["[str]", "[str]"],
-  "key_rebuttals": [
-    {
-      "original_argument_addressed": "[str]",
-      "counterevidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "logical_flaws_identified": ["[str]", "[str]"],
-      "reframing": "[str]",
-      "strength_assessment": "[str]"
-    }
-  ],
-  "reinforced_arguments": ["[str]", "[str]"],
-  "new_evidence_introduced": [
-    {
-      "evidence_description": "[str]",
-      "source_credibility": "[str]",
-      "evidence_strength": "[str]",
-      "evidence_type": "[str]",
-      "temporal_relevance": "[str]"
-    }
-  ],
-  "updated_probability_range": "xx%-yy%",
-  "rebuttal_summary": "[str]",
-  "quality_pruning": {
-    "original_argument_quality": [num],
-    "pruned_elements": [
-      {
-        "pruned_content": "[str]",
-        "pruning_reason": "[str]",
-        "replacement_suggestion": "[str]",
-        "impact_assessment": "[str]"
-      }
-    ],
-    "refined_argument_quality": [num],
-    "quality_improvement_summary": "[str]",
-    "remaining_weaknesses": ["[str]", "[str]"]
-  },
-  "misconception_refuting": {
-    "misconceptions_identified": [
-      {
-        "misconception_description": "[str]",
-        "misconception_type": "[str]",
-        "refutation_evidence": [
-          {
-            "evidence_description": "[str]",
-            "source_credibility": "[str]",
-            "evidence_strength": "[str]",
-            "evidence_type": "[str]",
-            "temporal_relevance": "[str]"
-          }
-        ],
-        "corrected_understanding": "[str]",
-        "confidence_in_refutation": "[str]"
-      }
-    ],
-    "bias_patterns_detected": ["[str]", "[str]"],
-    "factual_corrections": ["[str]", "[str]"],
-    "logical_corrections": ["[str]", "[str]"],
-    "overall_reliability_improvement": "[str]"
-  },
-  "opponent_misconceptions_refuted": [
-    {
-      "misconception_description": "[str]",
-      "misconception_type": "[str]",
-      "refutation_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "corrected_understanding": "[str]",
-      "confidence_in_refutation": "[str]"
-    }
-  ]
-}
-```
-'''
-    
-    return base_description + json_samples
-
-def get_low_advocate_rebuttal_description(question: str, cutoff_date: str, time_horizons: str = "") -> str:
-    """Task description for Low Advocate rebuttal phase"""
-    base_description = f"""
-MISSION: Provide a strong rebuttal to the High Advocate's arguments while reinforcing your low probability position.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Time Horizons:** {time_horizons}
-**Phase:** Rebuttal Round
-
-**REBUTTAL PROTOCOL:**
-
-**1. ANALYZE OPPONENT'S WEAKNESSES:**
-   - Identify logical flaws, weak evidence, or overly optimistic assumptions in the High Advocate's case
-   - Point out cherry-picking or misrepresentation of data
-   - Highlight where their base rates may be too favorable
-
-**2. COUNTER THEIR KEY ARGUMENTS:**
-   - Address their strongest arguments directly with counter-evidence
-   - Reframe their positive evidence as misleading or insufficient
-   - Show how their success scenarios are unrealistic or unlikely
-
-**3. REINFORCE YOUR POSITION:**
-   - Strengthen your original arguments with additional evidence
-   - Double down on your most compelling points about barriers and obstacles
-   - Show how their rebuttals actually support your pessimistic case
-
-**4. INTRODUCE NEW EVIDENCE:**
-   - Present additional contrary evidence you may have held in reserve
-   - Provide expert opinions that contradict their optimistic view
-   - Show recent setbacks or challenges that favor your position
-
-**5. MAINTAIN INTELLECTUAL HONESTY:**
-   - Acknowledge valid points from the opponent where appropriate
-   - Explain why these don't fundamentally undermine your case
-   - Be specific about what would change your mind
-
-**OUTPUT:** Provide ONLY the JSON output following the `LowRebuttalOutput` structure.
-"""
-
-    json_samples = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "opponent_weaknesses_identified": ["[str]", "[str]"],
-  "key_rebuttals": [
-    {
-      "original_argument_addressed": "[str]",
-      "counterevidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "logical_flaws_identified": ["[str]", "[str]"],
-      "reframing": "[str]",
-      "strength_assessment": "[str]"
-    }
-  ],
-  "reinforced_arguments": ["[str]", "[str]"],
-  "new_evidence_introduced": [
-    {
-      "evidence_description": "[str]",
-      "source_credibility": "[str]",
-      "evidence_strength": "[str]",
-      "evidence_type": "[str]",
-      "temporal_relevance": "[str]"
-    }
-  ],
-  "updated_probability_range": "xx%-yy%",
-  "rebuttal_summary": "[str]"
-}
-```
-
-**FOR ENHANCED MODE - SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "opponent_weaknesses_identified": ["[str]", "[str]"],
-  "key_rebuttals": [
-    {
-      "original_argument_addressed": "[str]",
-      "counterevidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "logical_flaws_identified": ["[str]", "[str]"],
-      "reframing": "[str]",
-      "strength_assessment": "[str]"
-    }
-  ],
-  "reinforced_arguments": ["[str]", "[str]"],
-  "new_evidence_introduced": [
-    {
-      "evidence_description": "[str]",
-      "source_credibility": "[str]",
-      "evidence_strength": "[str]",
-      "evidence_type": "[str]",
-      "temporal_relevance": "[str]"
-    }
-  ],
-  "updated_probability_range": "xx%-yy%",
-  "rebuttal_summary": "[str]",
-  "quality_pruning": {
-    "original_argument_quality": [num],
-    "pruned_elements": [
-      {
-        "pruned_content": "[str]",
-        "pruning_reason": "[str]",
-        "replacement_suggestion": "[str]",
-        "impact_assessment": "[str]"
-      }
-    ],
-    "refined_argument_quality": [num],
-    "quality_improvement_summary": "[str]",
-    "remaining_weaknesses": ["[str]", "[str]"]
-  },
-  "misconception_refuting": {
-    "misconceptions_identified": [
-      {
-        "misconception_description": "[str]",
-        "misconception_type": "[str]",
-        "refutation_evidence": [
-          {
-            "evidence_description": "[str]",
-            "source_credibility": "[str]",
-            "evidence_strength": "[str]",
-            "evidence_type": "[str]",
-            "temporal_relevance": "[str]"
-          }
-        ],
-        "corrected_understanding": "[str]",
-        "confidence_in_refutation": "[str]"
-      }
-    ],
-    "bias_patterns_detected": ["[str]", "[str]"],
-    "factual_corrections": ["[str]", "[str]"],
-    "logical_corrections": ["[str]", "[str]"],
-    "overall_reliability_improvement": "[str]"
-  },
-  "opponent_misconceptions_refuted": [
-    {
-      "misconception_description": "[str]",
-      "misconception_type": "[str]",
-      "refutation_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "corrected_understanding": "[str]",
-      "confidence_in_refutation": "[str]"
-    }
-  ]
-}
-```
-'''
-
-    return base_description + json_samples
-
-def get_judge_intermediate_description(question: str, cutoff_date: str) -> str:
-    """Task description for Judge intermediate evaluation phase"""
-    base_description = f"""
-MISSION: Evaluate the rebuttal round and provide intermediate assessment before final judgment.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Phase:** Post-Rebuttal Evaluation
-
-**INTERMEDIATE EVALUATION PROTOCOL:**
-
-**1. ASSESS REBUTTAL QUALITY:**
-   - Determine which advocate provided stronger rebuttals
-   - Identify which original arguments were successfully defended vs. undermined
-   - Assess the quality of new evidence introduced in rebuttals
-
-**2. IDENTIFY CONVERGENCE AND DIVERGENCE:**
-   - Note areas where the advocates are beginning to agree
-   - Highlight remaining areas of substantial disagreement
-   - Identify which disagreements are most crucial to the final probability
-
-**3. TRACK EVIDENCE EVOLUTION:**
-   - Assess how the evidence base has been strengthened or weakened
-   - Determine if new evidence significantly changes the picture
-   - Identify which side's evidence is more compelling after rebuttals
-
-**4. PRELIMINARY PROBABILITY ASSESSMENT:**
-   - Note how your probability estimate is shifting (if at all)
-   - Identify what additional clarification would be most helpful
-   - Assess whether another round of debate would be beneficial
-
-**5. IDENTIFY AREAS FOR CLARIFICATION:**
-   - List specific points that need further exploration
-   - Identify ambiguities that should be resolved before final judgment
-   - Note any logical inconsistencies that need addressing
-
-**OUTPUT:** Provide ONLY the JSON output following the `JudgeIntermediateOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "round_summary": "[str]",
-  "emerging_consensus_areas": ["[str]", "[str]"],
-  "remaining_disagreements": ["[str]", "[str]"],
-  "evidence_quality_shift": "[str]",
-  "preliminary_probability_trend": "[str]",
-  "areas_needing_clarification": ["[str]", "[str]"]
-}
-```
-'''
-
-    return base_description + json_sample
-
-# Enhanced Task Descriptions with Quality Pruning and Misconception Refuting
-
-def get_enhanced_high_advocate_task_description(question: str, search_timeframe: Dict, cutoff_date: str, 
-                                              search_strategy: str, query_limit: str, article_target: str, 
-                                              background: str = "", comprehensive_context: str = "",
-                                              total_rounds: int = 3, search_budget_per_advocate: int = 10,
-                                              searches_used_so_far: int = 0) -> str:
-    """Enhanced task description for High Probability Advocate with quality pruning and misconception refuting"""
-    
-    context_section = ""
-    if comprehensive_context:
-        context_section = f"""
-QUESTION CONTEXT:
-{comprehensive_context}
-"""
-    elif background:
-        context_section = f"""
-BACKGROUND:
-{background}
-"""
-
-    # Calculate remaining search budget and provide strategic guidance
-    remaining_searches = search_budget_per_advocate - searches_used_so_far
-    remaining_rounds = total_rounds - 1  # Subtract 1 because current round is included
-    suggested_searches_this_round = max(1, remaining_searches // max(1, remaining_rounds)) if remaining_rounds > 0 else remaining_searches
-    
-    search_budget_section = f"""
-🔍 **SEARCH BUDGET ALLOCATION:**
-- **Total search budget**: {search_budget_per_advocate} searches across all {total_rounds} rounds
-- **Searches used so far**: {searches_used_so_far}
-- **Remaining searches**: {remaining_searches}
-- **Remaining rounds after this**: {remaining_rounds}
-- **Suggested searches this round**: {suggested_searches_this_round}
-
-**STRATEGIC SEARCH ALLOCATION:**
-- Round 1 (Initial): Use ~30-40% of budget for comprehensive baseline research
-- Rebuttal rounds: Use ~20-30% per round for targeted counter-evidence  
-- Final round: Reserve ~20% for last-minute critical evidence
-- **WARNING**: Exceeding your search budget will result in quality penalties in final evaluation
-"""
-    
-    base_description = f"""
-MISSION: Build the strongest possible case for a HIGH probability outcome while applying rigorous quality pruning and misconception refuting.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Search Period:** {search_timeframe['start']} to {search_timeframe['end']}
-**Search Strategy:** {search_strategy} ({query_limit}, {article_target})
-{context_section}
-{search_budget_section}
-
-**ENHANCED HIGH PROBABILITY ADVOCACY PROTOCOL:**
-
-**PHASE 1: INITIAL ARGUMENT CONSTRUCTION**
-**1. ESTABLISH YOUR POSITION:**
-   - State your target probability range (aim for 60%+ if evidence supports it)
-   - Articulate why this outcome is more likely than not
-
-**2. OPTIMIZE BASE RATE SELECTION:**
-   - Search for reference classes where similar events succeeded frequently
-   - Use queries like: "[similar events] success rate", "[positive precedents] frequency"
-   - Emphasize the most favorable base rates that are still intellectually honest
-
-**3. BUILD MOMENTUM CASE:**
-   - Search for evidence of positive trends, momentum, and progress
-   - Look for enabling conditions, resources, and capabilities
-   - Find expert opinions that support optimistic outcomes
-
-**PHASE 2: QUALITY PRUNING**
-**4. SYSTEMATIC ARGUMENT PRUNING:**
-   - Identify and remove weak evidence (correlation without causation, anecdotal evidence)
-   - Eliminate circular reasoning and tautological arguments
-   - Remove unsupported claims lacking credible evidence
-   - Flag and remove logical fallacies (hasty generalization, false cause, etc.)
-   - Replace pruned elements with stronger, evidence-based alternatives
-
-**5. EVIDENCE QUALITY ASSESSMENT:**
-   - Rate original argument quality (0-10 scale)
-   - Document all pruned elements with reasons
-   - Assess quality improvement after pruning
-   - Identify remaining weaknesses
-
-**PHASE 3: MISCONCEPTION REFUTING**
-**6. FACTUAL ERROR CORRECTION:**
-   - Identify and correct any factual inaccuracies
-   - Verify claims against authoritative sources
-   - Update outdated information
-
-**7. BIAS DETECTION AND MITIGATION:**
-   - Detect confirmation bias (cherry-picking favorable evidence)
-   - Identify availability heuristic (overweighting recent/memorable events)
-   - Address anchoring bias (over-reliance on initial estimates)
-   - Correct base rate neglect and representativeness heuristic
-
-**8. LOGICAL FALLACY ELIMINATION:**
-   - Remove ad hominem arguments
-   - Eliminate false dichotomies
-   - Correct slippery slope reasoning
-   - Address straw man characterizations
-
-**SEARCH STRATEGY:**
-- Prioritize high-quality, peer-reviewed sources
-- Seek diverse perspectives to avoid echo chambers
-- Look for disconfirming evidence to test argument strength
-- Find base rate data from authoritative statistical sources
-
-**OUTPUT:** Provide ONLY the JSON output following the `EnhancedHighAdvocateOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "position_statement": "[str]",
-  "target_probability_range": "xx%-yy%",
-  "key_arguments": [
-    {
-      "argument_summary": "[str]",
-      "supporting_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "base_rate_analysis": {
-        "reference_class": "[str]",
-        "historical_frequency": [num],
-        "sample_size": [num],
-        "relevance_to_current_case": "[str]",
-        "adjustment_factors": ["[str]", "[str]"]
-      },
-      "confidence_level": "[str]",
-      "potential_weaknesses": ["[str]", "[str]"]
-    }
-  ],
-  "most_compelling_evidence": "[str]",
-  "base_rate_justification": "[str]",
-  "time_horizon_analysis": "[str]",
-  "rebuttal_preparation": ["[str]", "[str]"],
-  "quality_pruning": {
-    "original_argument_quality": [num],
-    "pruned_elements": [
-      {
-        "pruned_content": "[str]",
-        "pruning_reason": "[str]",
-        "replacement_suggestion": "[str]",
-        "impact_assessment": "[str]"
-      }
-    ],
-    "refined_argument_quality": [num],
-    "quality_improvement_summary": "[str]",
-    "remaining_weaknesses": ["[str]", "[str]"]
-  },
-  "misconception_refuting": {
-    "misconceptions_identified": [
-      {
-        "misconception_description": "[str]",
-        "misconception_type": "[str]",
-        "refutation_evidence": [
-          {
-            "evidence_description": "[str]",
-            "source_credibility": "[str]",
-            "evidence_strength": "[str]",
-            "evidence_type": "[str]",
-            "temporal_relevance": "[str]"
-          }
-        ],
-        "corrected_understanding": "[str]",
-        "confidence_in_refutation": "[str]"
-      }
-    ],
-    "bias_patterns_detected": ["[str]", "[str]"],
-    "factual_corrections": ["[str]", "[str]"],
-    "logical_corrections": ["[str]", "[str]"],
-    "overall_reliability_improvement": "[str]"
-  }
-}
-```
-'''
-
-    return base_description + json_sample
-
-def get_enhanced_low_advocate_task_description(question: str, search_timeframe: Dict, cutoff_date: str,
-                                             search_strategy: str, query_limit: str, article_target: str,
-                                             background: str = "", comprehensive_context: str = "",
-                                             total_rounds: int = 3, search_budget_per_advocate: int = 10,
-                                             searches_used_so_far: int = 0) -> str:
-    """Enhanced task description for Low Probability Advocate with quality pruning and misconception refuting"""
-    
-    context_section = ""
-    if comprehensive_context:
-        context_section = f"""
-QUESTION CONTEXT:
-{comprehensive_context}
-"""
-    elif background:
-        context_section = f"""
-BACKGROUND:
-{background}
-"""
-
-    # Calculate remaining search budget and provide strategic guidance
-    remaining_searches = search_budget_per_advocate - searches_used_so_far
-    remaining_rounds = total_rounds - 1  # Subtract 1 because current round is included
-    suggested_searches_this_round = max(1, remaining_searches // max(1, remaining_rounds)) if remaining_rounds > 0 else remaining_searches
-    
-    search_budget_section = f"""
-🔍 **SEARCH BUDGET ALLOCATION:**
-- **Total search budget**: {search_budget_per_advocate} searches across all {total_rounds} rounds
-- **Searches used so far**: {searches_used_so_far}
-- **Remaining searches**: {remaining_searches}
-- **Remaining rounds after this**: {remaining_rounds}
-- **Suggested searches this round**: {suggested_searches_this_round}
-
-**STRATEGIC SEARCH ALLOCATION:**
-- Round 1 (Initial): Use ~30-40% of budget for comprehensive baseline research
-- Rebuttal rounds: Use ~20-30% per round for targeted counter-evidence  
-- Final round: Reserve ~20% for last-minute critical evidence
-- **WARNING**: Exceeding your search budget will result in quality penalties in final evaluation
-"""
-
-    base_description = f"""
-MISSION: Build the strongest possible case for a LOW probability outcome while applying rigorous quality pruning and misconception refuting.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Search Period:** {search_timeframe['start']} to {search_timeframe['end']}
-**Search Strategy:** {search_strategy} ({query_limit}, {article_target})
-{context_section}
-{search_budget_section}
-
-**ENHANCED LOW PROBABILITY ADVOCACY PROTOCOL:**
-
-**PHASE 1: INITIAL ARGUMENT CONSTRUCTION**
-**1. ESTABLISH YOUR POSITION:**
-   - State your target probability range (aim for 40% or lower if evidence supports it)
-   - Articulate why this outcome is less likely than commonly believed
-
-**2. OPTIMIZE BASE RATE SELECTION:**
-   - Search for reference classes where similar events failed frequently
-   - Use queries like: "[similar events] failure rate", "[comparable cases] obstacles"
-   - Emphasize the most unfavorable base rates that are still intellectually honest
-
-**3. BUILD BARRIER CASE:**
-   - Search for evidence of obstacles, constraints, and negative trends
-   - Look for missing enabling conditions and resource limitations
-   - Find expert opinions that highlight challenges and skepticism
-
-**PHASE 2: QUALITY PRUNING**
-**4. SYSTEMATIC ARGUMENT PRUNING:**
-   - Identify and remove weak evidence (correlation without causation, anecdotal evidence)
-   - Eliminate circular reasoning and tautological arguments
-   - Remove unsupported claims lacking credible evidence
-   - Flag and remove logical fallacies (hasty generalization, false cause, etc.)
-   - Replace pruned elements with stronger, evidence-based alternatives
-
-**5. EVIDENCE QUALITY ASSESSMENT:**
-   - Rate original argument quality (0-10 scale)
-   - Document all pruned elements with reasons
-   - Assess quality improvement after pruning
-   - Identify remaining weaknesses
-
-**PHASE 3: MISCONCEPTION REFUTING**
-**6. FACTUAL ERROR CORRECTION:**
-   - Identify and correct any factual inaccuracies
-   - Verify claims against authoritative sources
-   - Update outdated information
-
-**7. BIAS DETECTION AND MITIGATION:**
-   - Detect confirmation bias (cherry-picking favorable evidence)
-   - Identify availability heuristic (overweighting recent/memorable events)
-   - Address anchoring bias (over-reliance on initial estimates)
-   - Correct base rate neglect and representativeness heuristic
-
-**8. LOGICAL FALLACY ELIMINATION:**
-   - Remove ad hominem arguments
-   - Eliminate false dichotomies
-   - Correct slippery slope reasoning
-   - Address straw man characterizations
-
-**SEARCH STRATEGY:**
-- Prioritize high-quality, peer-reviewed sources
-- Seek diverse perspectives to avoid echo chambers
-- Look for confirming evidence to test argument strength
-- Find base rate data from authoritative statistical sources
-
-**OUTPUT:** Provide ONLY the JSON output following the `EnhancedLowAdvocateOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "position_statement": "[str]",
-  "target_probability_range": "xx%-yy%",
-  "key_arguments": [
-    {
-      "argument_summary": "[str]",
-      "supporting_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "base_rate_analysis": {
-        "reference_class": "[str]",
-        "historical_frequency": [num],
-        "sample_size": [num],
-        "relevance_to_current_case": "[str]",
-        "adjustment_factors": ["[str]", "[str]"]
-      },
-      "confidence_level": "[str]",
-      "potential_weaknesses": ["[str]", "[str]"]
-    }
-  ],
-  "most_compelling_evidence": "[str]",
-  "base_rate_justification": "[str]",
-  "time_horizon_analysis": "[str]",
-  "rebuttal_preparation": ["[str]", "[str]"],
-  "quality_pruning": {
-    "original_argument_quality": [num],
-    "pruned_elements": [
-      {
-        "pruned_content": "[str]",
-        "pruning_reason": "[str]",
-        "replacement_suggestion": "[str]",
-        "impact_assessment": "[str]"
-      }
-    ],
-    "refined_argument_quality": [num],
-    "quality_improvement_summary": "[str]",
-    "remaining_weaknesses": ["[str]", "[str]"]
-  },
-  "misconception_refuting": {
-    "misconceptions_identified": [
-      {
-        "misconception_description": "[str]",
-        "misconception_type": "[str]",
-        "refutation_evidence": [
-          {
-            "evidence_description": "[str]",
-            "source_credibility": "[str]",
-            "evidence_strength": "[str]",
-            "evidence_type": "[str]",
-            "temporal_relevance": "[str]"
-          }
-        ],
-        "corrected_understanding": "[str]",
-        "confidence_in_refutation": "[str]"
-      }
-    ],
-    "bias_patterns_detected": ["[str]", "[str]"],
-    "factual_corrections": ["[str]", "[str]"],
-    "logical_corrections": ["[str]", "[str]"],
-    "overall_reliability_improvement": "[str]"
-  }
-}
-```
-'''
-
-    return base_description + json_sample
-
-def get_enhanced_judge_task_description(question: str, cutoff_date: str, time_horizon: str,
-                                      comprehensive_context: str = "") -> str:
-    """Enhanced task description for Judge with quality assessment and misconception resolution"""
-    
-    context_section = ""
-    if comprehensive_context:
-        context_section = f"""
-FULL CONTEXT FOR JUDGMENT:
-{comprehensive_context}
-"""
-    
-    base_description = f"""
-MISSION: Evaluate competing arguments and synthesize them into well-calibrated probabilities with comprehensive quality assessment and misconception resolution.
-
-**Question:** {question}
-**Current Date:** {cutoff_date}
-**Time Horizon:** {time_horizon}
-{context_section}
-
-**ENHANCED JUDICIAL EVALUATION PROTOCOL:**
-
-**PHASE 1: ARGUMENT QUALITY ASSESSMENT**
-**1. EVALUATE QUALITY PRUNING EFFECTIVENESS:**
-   - Assess how well each advocate pruned weak arguments
-   - Evaluate the quality of replacement evidence
-   - Determine if key logical flaws were identified and corrected
-   - Compare argument strength before and after pruning
-
-**2. MISCONCEPTION RESOLUTION ANALYSIS:**
-   - Review misconceptions identified by each advocate
-   - Assess the accuracy of bias detection
-   - Evaluate the effectiveness of factual corrections
-   - Identify any misconceptions missed by both advocates
-
-**PHASE 2: EVIDENCE SYNTHESIS**
-**3. EVIDENCE QUALITY COMPARISON:**
-   - Compare the credibility and strength of evidence from both advocates
-   - Weight evidence based on source quality and methodology
-   - Assess the independence and verification of key facts
-   - Determine which side's evidence is more compelling after quality improvements
-
-**4. BIAS MITIGATION ASSESSMENT:**
-   - Evaluate how well each side mitigated cognitive biases
-   - Assess remaining biases not addressed by advocates
-   - Determine the overall bias reduction achieved through the debate
-
-**PHASE 3: PROBABILITY SYNTHESIS**
-**5. BASE RATE RECONCILIATION:**
-   - Compare the reference classes proposed by each advocate
-   - Determine which base rates are most appropriate after quality improvements
-   - Assess the validity of proposed adjustments from historical averages
-   - Weight inside view vs. outside view appropriately
-
-**6. FINAL CALIBRATION:**
-   - Start with the most appropriate base rate as anchor
-   - Apply systematic adjustments based on highest-quality evidence
-   - Weight adjustments by argument quality after pruning
-   - Account for uncertainty and remaining misconceptions
-
-**7. QUALITY ASSURANCE:**
-   - Conduct final check for logical consistency
-   - Verify no major misconceptions remain unresolved
-   - Assess overall reliability improvement from the enhanced debate process
-   - Validate probability reflects true confidence level
-
-**CRITICAL RULES:**
-- Judge arguments by their refined quality, not original passion
-- Weight evidence heavily toward sources that survived quality pruning
-- Be willing to strongly favor the side with better misconception refuting
-- Don't anchor on 50% without justification
-
-**OUTPUT:** Provide ONLY the JSON output following the `EnhancedJudgeOutput` structure.
-"""
-
-    json_sample = '''
-**SAMPLE JSON OUTPUT FORMAT:**
-```json
-{
-  "final_probability": [num],
-  "confidence_level": "[str]",
-  "high_advocate_evaluation": {
-    "argument_strength": [num],
-    "evidence_quality": [num],
-    "logical_consistency": [num],
-    "bias_detection": ["[str]", "[str]"],
-    "key_strengths": ["[str]", "[str]"],
-    "key_weaknesses": ["[str]", "[str]"]
-  },
-  "low_advocate_evaluation": {
-    "argument_strength": [num],
-    "evidence_quality": [num],
-    "logical_consistency": [num],
-    "bias_detection": ["[str]", "[str]"],
-    "key_strengths": ["[str]", "[str]"],
-    "key_weaknesses": ["[str]", "[str]"]
-  },
-  "synthesis_reasoning": "[str]",
-  "evidence_weighting_rationale": "[str]",
-  "uncertainty_factors": ["[str]", "[str]"],
-  "decision_rationale": "[str]",
-  "calibration_check": "[str]",
-  "overall_quality_assessment": "[str]",
-  "misconceptions_resolved": [
-    {
-      "misconception_description": "[str]",
-      "misconception_type": "[str]",
-      "refutation_evidence": [
-        {
-          "evidence_description": "[str]",
-          "source_credibility": "[str]",
-          "evidence_strength": "[str]",
-          "evidence_type": "[str]",
-          "temporal_relevance": "[str]"
-        }
-      ],
-      "corrected_understanding": "[str]",
-      "confidence_in_refutation": "[str]"
-    }
-  ],
-  "bias_mitigation_summary": "[str]"
-}
-```
-'''
-
-    return base_description + json_sample
+- Final probability: precise percentage with rationale
+- Confidence interval: 90% range (e.g., "45% [30%-65%]")
+- Confidence level: LOW/MEDIUM/HIGH with specific justification
+- Synthesis method comparison table
+- Key factors table with directional impact on probability
+- Frequency validation: "xxx of 1000 similar cases"
+- Sensitivity analysis: ±1 standard deviation scenarios"""

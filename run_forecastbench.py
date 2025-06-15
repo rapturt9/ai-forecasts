@@ -79,11 +79,13 @@ class EnhancedForecastBenchRunner:
         self.search_budget = search_budget  # Search budget per question
         self.debate_turns = debate_turns  # Number of debate turns
         
-        # Create logs and checkpoints directories
+        # Create logs, checkpoints, and results directories
         self.logs_dir = Path("logs")
         self.logs_dir.mkdir(exist_ok=True)
         self.checkpoints_dir = Path("checkpoints")
         self.checkpoints_dir.mkdir(exist_ok=True)
+        self.results_dir = Path("results")
+        self.results_dir.mkdir(exist_ok=True)
     
     def info(self, message: str):
         """Simple info logger"""
@@ -897,7 +899,7 @@ def main():
     
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"enhanced_forecastbench_results_{timestamp}.json"
+    output_file = runner.results_dir / f"enhanced_forecastbench_results_{timestamp}.json"
     
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=2, default=str)

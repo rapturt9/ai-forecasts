@@ -1,0 +1,1 @@
+python run_forecastbench.py --max-questions 1 --time-horizons 7 30 90 180 --search-budget 5 --debate-turns 3

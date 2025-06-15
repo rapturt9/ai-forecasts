@@ -21,15 +21,6 @@ from .debate_forecasting_prompts import (
     get_high_advocate_backstory,
     get_low_advocate_backstory,
     get_debate_judge_backstory,
-    get_high_advocate_task_description,
-    get_low_advocate_task_description,
-    get_debate_judge_task_description,
-    HighAdvocateOutput,
-    LowAdvocateOutput,
-    DebateJudgmentOutput,
-    EnhancedHighAdvocateOutput,
-    EnhancedLowAdvocateOutput,
-    EnhancedJudgeOutput
 )
 
 # Define ForecastResult locally for compatibility

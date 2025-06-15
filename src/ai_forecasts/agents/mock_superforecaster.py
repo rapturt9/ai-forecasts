@@ -13,10 +13,12 @@ class MockSuperforecaster:
     """Mock superforecaster that generates random predictions for testing"""
     
     def __init__(self, openrouter_api_key: str = None, serp_api_key: str = None, 
-                 recommended_articles: int = 5, max_queries: int = 10):
+                 search_budget: int = 10, debate_turns: int = 2, 
+                 time_horizons: List[int] = None, **kwargs):
         """Initialize mock superforecaster"""
-        self.recommended_articles = recommended_articles
-        self.max_queries = max_queries
+        self.search_budget = search_budget
+        self.debate_turns = debate_turns
+        self.time_horizons = time_horizons or [7, 30, 90, 180]
         logger.info("✅ Mock Superforecaster initialized successfully")
     
     def forecast_multi_horizon(self, question: str, comprehensive_context: str, 
@@ -41,6 +43,46 @@ class MockSuperforecaster:
             }
             results.append(result)
             logger.info(f"🎯 Mock forecast for {horizon}: {prediction:.3f} (confidence: {confidence:.3f})")
+        
+        return results
+    
+    def forecast_with_google_news(self, question: str, background: str = "", 
+                                 time_horizons: List[str] = None, cutoff_date: datetime = None,
+                                 **kwargs) -> List:
+        """Generate mock forecasts using the new interface"""
+        from dataclasses import dataclass
+        
+        @dataclass
+        class MockForecastResult:
+            question: str
+            prediction: float
+            confidence: str
+            reasoning: str
+            
+        if time_horizons is None:
+            time_horizons = [f"{h}d" for h in self.time_horizons]
+        
+        logger.info(f"🎯 Mock debate forecasting for {len(time_horizons)} time horizons with {self.debate_turns} turns")
+        
+        results = []
+        for horizon in time_horizons:
+            # Generate random but reasonable prediction
+            prediction = random.uniform(0.1, 0.9)
+            confidence_levels = ["Low", "Medium", "High"]
+            confidence = random.choice(confidence_levels)
+            
+            reasoning = f"Mock {self.debate_turns}-turn debate result for {horizon} horizon: " \
+                       f"After simulated debate with search budget of {self.search_budget}, " \
+                       f"probability estimated at {prediction:.3f}"
+            
+            result = MockForecastResult(
+                question=question,
+                prediction=prediction,
+                confidence=confidence,
+                reasoning=reasoning
+            )
+            results.append(result)
+            logger.info(f"🎯 Mock forecast for {horizon}: {prediction:.3f} (confidence: {confidence})")
         
         return results
     

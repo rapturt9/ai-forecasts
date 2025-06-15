@@ -3,3 +3,5 @@
 /cache/google_news
 /logs
 /checkpoints
+/trading-interface/.next
+/trading-interface/node_modules

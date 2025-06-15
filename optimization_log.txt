@@ -1,0 +1,197 @@
+🚀 CLEAN Advanced Prompt Optimization System
+================================================================================
+📋 USER REQUIREMENTS IMPLEMENTATION:
+   ✅ Run random seed on 5 questions for 5 in parallel
+   ✅ Iterate on prompts until average Brier score < 0.06
+   ✅ Do this 5 times (5 complete cycles)
+   ✅ Use superforecasting techniques with debate methodology
+   ✅ Include search limits (10 searches soft limit) with penalties
+   ✅ Do not hardcode prompts - dynamic generation
+   ✅ ONLY Inspect AI and debate (no CrewAI)
+================================================================================
+🚀 Clean Prompt Optimizer initialized
+   Max questions: 5
+   Max workers: 5
+   Results directory: optimization_results
+🚀 Starting FULL OPTIMIZATION CYCLE
+   Number of cycles: 5
+   Target Brier score: < 0.06
+================================================================================
+
+🔄 CYCLE 1/5
+----------------------------------------
+🎯 Starting optimization to achieve Brier score < 0.06
+   Max iterations: 20
+============================================================
+🚀 Running iteration 1 with 5 seeds in parallel...
+   Seeds: [8028, 2624, 7448, 6783, 2031]
+   ✅ Seed 7448: Brier 0.1753 (penalty: 0.000, searches: 0)
+   ✅ Seed 8028: Brier 0.1978 (penalty: 0.000, searches: 0)
+   ✅ Seed 2624: Brier 0.2174 (penalty: 0.000, searches: 0)
+   ✅ Seed 6783: Brier 0.2860 (penalty: 0.000, searches: 0)
+   ✅ Seed 2031: Brier 0.1668 (penalty: 0.000, searches: 0)
+
+📊 Iteration 1 Results:
+   Average Brier Score: 0.2087
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+   🎉 New best score: 0.2087
+🚀 Running iteration 2 with 5 seeds in parallel...
+   Seeds: [8563, 7811, 4293, 1381, 9778]
+   ✅ Seed 1381: Brier 0.1939 (penalty: 0.000, searches: 0)
+   ✅ Seed 7811: Brier 0.1197 (penalty: 0.000, searches: 0)
+   ✅ Seed 4293: Brier 0.1862 (penalty: 0.000, searches: 0)
+   ✅ Seed 9778: Brier 0.1393 (penalty: 0.000, searches: 0)
+   ✅ Seed 8563: Brier 0.1549 (penalty: 0.000, searches: 0)
+
+📊 Iteration 2 Results:
+   Average Brier Score: 0.1588
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+   🎉 New best score: 0.1588
+🚀 Running iteration 3 with 5 seeds in parallel...
+   Seeds: [5784, 7244, 6233, 4737, 4793]
+   ✅ Seed 4737: Brier 0.2172 (penalty: 0.000, searches: 0)
+   ✅ Seed 7244: Brier 0.1397 (penalty: 0.000, searches: 0)
+   ✅ Seed 6233: Brier 0.1572 (penalty: 0.000, searches: 0)
+   ✅ Seed 5784: Brier 0.1681 (penalty: 0.000, searches: 0)
+   ✅ Seed 4793: Brier 0.1536 (penalty: 0.000, searches: 0)
+
+📊 Iteration 3 Results:
+   Average Brier Score: 0.1672
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 4 with 5 seeds in parallel...
+   Seeds: [5785, 1412, 7068, 3070, 4363]
+   ✅ Seed 7068: Brier 0.1596 (penalty: 0.000, searches: 0)
+   ✅ Seed 5785: Brier 0.1908 (penalty: 0.000, searches: 0)
+   ✅ Seed 3070: Brier 0.2573 (penalty: 0.000, searches: 0)
+   ✅ Seed 4363: Brier 0.1543 (penalty: 0.000, searches: 0)
+   ✅ Seed 1412: Brier 0.1971 (penalty: 0.000, searches: 0)
+
+📊 Iteration 4 Results:
+   Average Brier Score: 0.1918
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 5 with 5 seeds in parallel...
+   Seeds: [3712, 2623, 8965, 7684, 8670]
+   ✅ Seed 7684: Brier 0.1519 (penalty: 0.000, searches: 0)
+   ✅ Seed 8965: Brier 0.1530 (penalty: 0.000, searches: 0)
+   ✅ Seed 8670: Brier 0.1521 (penalty: 0.000, searches: 0)
+   ✅ Seed 3712: Brier 0.2163 (penalty: 0.000, searches: 0)
+   ✅ Seed 2623: Brier 0.2020 (penalty: 0.000, searches: 0)
+
+📊 Iteration 5 Results:
+   Average Brier Score: 0.1751
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 6 with 5 seeds in parallel...
+   Seeds: [6581, 2676, 4446, 1852, 3601]
+   ✅ Seed 4446: Brier 0.2605 (penalty: 0.000, searches: 0)
+   ✅ Seed 1852: Brier 0.1879 (penalty: 0.000, searches: 0)
+   ✅ Seed 3601: Brier 0.1878 (penalty: 0.000, searches: 0)
+   ✅ Seed 2676: Brier 0.2027 (penalty: 0.000, searches: 0)
+   ✅ Seed 6581: Brier 0.2052 (penalty: 0.000, searches: 0)
+
+📊 Iteration 6 Results:
+   Average Brier Score: 0.2088
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 7 with 5 seeds in parallel...
+   Seeds: [8829, 3748, 5331, 9494, 7656]
+   ✅ Seed 3748: Brier 0.1596 (penalty: 0.000, searches: 0)
+   ✅ Seed 7656: Brier 0.1329 (penalty: 0.000, searches: 0)
+   ✅ Seed 5331: Brier 0.1487 (penalty: 0.000, searches: 0)
+   ✅ Seed 8829: Brier 0.1957 (penalty: 0.000, searches: 0)
+   ✅ Seed 9494: Brier 0.1419 (penalty: 0.000, searches: 0)
+
+📊 Iteration 7 Results:
+   Average Brier Score: 0.1558
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+   🎉 New best score: 0.1558
+🚀 Running iteration 8 with 5 seeds in parallel...
+   Seeds: [4773, 6546, 4648, 1144, 4658]
+   ✅ Seed 4658: Brier 0.2064 (penalty: 0.000, searches: 0)
+   ✅ Seed 1144: Brier 0.1389 (penalty: 0.000, searches: 0)
+   ✅ Seed 6546: Brier 0.2038 (penalty: 0.000, searches: 0)
+   ✅ Seed 4648: Brier 0.1632 (penalty: 0.000, searches: 0)
+   ✅ Seed 4773: Brier 0.1767 (penalty: 0.000, searches: 0)
+
+📊 Iteration 8 Results:
+   Average Brier Score: 0.1778
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 9 with 5 seeds in parallel...
+   Seeds: [6125, 7589, 6263, 8952, 8104]
+   ✅ Seed 6263: Brier 0.2472 (penalty: 0.000, searches: 0)
+   ✅ Seed 8104: Brier 0.2007 (penalty: 0.000, searches: 0)
+   ✅ Seed 6125: Brier 0.1525 (penalty: 0.000, searches: 0)
+   ✅ Seed 8952: Brier 0.1777 (penalty: 0.000, searches: 0)
+   ✅ Seed 7589: Brier 0.1868 (penalty: 0.000, searches: 0)
+
+📊 Iteration 9 Results:
+   Average Brier Score: 0.1930
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 10 with 5 seeds in parallel...
+   Seeds: [2241, 6666, 9875, 9568, 2504]
+   ✅ Seed 9875: Brier 0.2291 (penalty: 0.000, searches: 0)
+   ✅ Seed 2504: Brier 0.2738 (penalty: 0.000, searches: 0)
+   ✅ Seed 2241: Brier 0.2524 (penalty: 0.000, searches: 0)
+   ✅ Seed 9568: Brier 0.2123 (penalty: 0.000, searches: 0)
+   ✅ Seed 6666: Brier 0.2025 (penalty: 0.000, searches: 0)
+
+📊 Iteration 10 Results:
+   Average Brier Score: 0.2340
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 11 with 5 seeds in parallel...
+   Seeds: [7120, 7298, 9522, 7724, 8555]
+   ✅ Seed 9522: Brier 0.1193 (penalty: 0.000, searches: 0)
+   ✅ Seed 7120: Brier 0.1873 (penalty: 0.000, searches: 0)
+   ✅ Seed 7298: Brier 0.1832 (penalty: 0.000, searches: 0)
+   ✅ Seed 7724: Brier 0.1824 (penalty: 0.000, searches: 0)
+   ✅ Seed 8555: Brier 0.1238 (penalty: 0.000, searches: 0)
+
+📊 Iteration 11 Results:
+   Average Brier Score: 0.1592
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+🚀 Running iteration 12 with 5 seeds in parallel...
+   Seeds: [9201, 4588, 9152, 5826, 6114]
+   ✅ Seed 6114: Brier 0.1279 (penalty: 0.000, searches: 0)
+   ✅ Seed 5826: Brier 0.1364 (penalty: 0.000, searches: 0)
+   ✅ Seed 9201: Brier 0.1401 (penalty: 0.000, searches: 0)
+   ✅ Seed 9152: Brier 0.1935 (penalty: 0.000, searches: 0)
+   ✅ Seed 4588: Brier 0.1803 (penalty: 0.000, searches: 0)
+
+📊 Iteration 12 Results:
+   Average Brier Score: 0.1556
+   Average Search Penalty: 0.000
+   Average Searches: 0.0
+   Success Rate: 5/5
+   🎉 New best score: 0.1556
+🚀 Running iteration 13 with 5 seeds in parallel...
+   Seeds: [4098, 6726, 3008, 9870, 3285]
+   ✅ Seed 4098: Brier 0.1492 (penalty: 0.000, searches: 0)
+   ✅ Seed 3008: Brier 0.1731 (penalty: 0.000, searches: 0)
+   ✅ Seed 6726: Brier 0.1860 (penalty: 0.000, searches: 0)
+   ✅ Seed 9870: Brier 0.2776 (penalty: 0.000, searches: 0)
+   ✅ Seed 3285: Brier 0.1867 (penalty: 0.000, searches: 0)
+
+📊 Iteration 13 Results:
+   Average Brier Score: 0.1945
+   Average Search Penalty: 0.000
+   Average Searches: 0.0

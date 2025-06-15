@@ -1,0 +1,117 @@
+🎲 Random seed set to: 42
+🚀 Starting benchmark with 1 questions and 20 workers
+[  0.00s] session_start: Starting ForecastBench_Run analysis
+[  0.00s] system: 🚀 Starting Enhanced ForecastBench evaluation with comprehensive context
+[  0.00s] system:    Questions: 1, Workers: 20
+[  0.00s] system:    Time horizons: [7, 30, 90, 180] days
+[  0.00s] system:    Master log: logs/benchmark_run_20250614_224146.json
+[  0.00s] system:    Individual logs: logs/question_*_20250614_224146.json
+[  0.00s] system:    Checkpoint file: checkpoints/benchmark_checkpoint_20250614_224146.json
+[  0.00s] system: ✅ Loaded 200 questions from local file
+[  0.00s] system: ✅ Loaded 9040 resolutions from local file
+[  0.00s] system: ✅ Forecast due date: 2024-07-21
+[  0.02s] data_loading: Loaded 200 questions and 9040 resolutions, forecast due date: 2024-07-21
+[  0.02s] question_selection: Processing 1 questions
+[  0.02s] base_date: Using base date: 2024-07-21
+[  0.00s] system: 📋 Processing 1 remaining questions (out of 1 total)
+✅ SERP API client ready for Google News search
+🗄️ Google News cache initialized at: cache/google_news
+[  0.00s] system: ✅ Inspect AI Superforecaster initialized successfully
+[  0.00s] session_start: Starting ForecastBench_Question analysis
+[  0.00s] system: Processing question 1: Will the average global temperature in 2024 exceed 2023?...
+[  0.00s] system: Comprehensive context length: 893 characters
+[  0.00s] system: Question logs: logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250614_224146.json
+[  0.00s] system:   📅 Using forecast due date as cutoff: 2024-07-21
+[  0.00s] system:   📅 Cutoff date object: 2024-07-21
+[  0.00s] system:     🔄 Forecasting attempt 1/3
+🛡️ Benchmark cutoff date set: 2024-07-21 (searches will be limited to 1 day before)
+[  0.00s] system: 🎯 Starting forecast for time horizon: 7d
+[  0.00s] system: 🗣️ Running debate-based forecast
+[  8.92s] error: Error in Inspect AI debate forecast: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[  8.92s] error: ❌ Error forecasting for 7d: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[  0.00s] error:     ❌ Attempt 1 failed with exception: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[  8.92s] error: Forecast attempt 1 failed
+[  0.00s] system:     🔄 Forecasting attempt 2/3
+🛡️ Benchmark cutoff date set: 2024-07-21 (searches will be limited to 1 day before)
+[ 10.92s] system: 🎯 Starting forecast for time horizon: 7d
+[ 10.92s] system: 🗣️ Running debate-based forecast
+[ 18.77s] error: Error in Inspect AI debate forecast: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[ 18.77s] error: ❌ Error forecasting for 7d: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[  0.00s] error:     ❌ Attempt 2 failed with exception: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[ 18.77s] error: Forecast attempt 2 failed
+[  0.00s] system:     🔄 Forecasting attempt 3/3
+🛡️ Benchmark cutoff date set: 2024-07-21 (searches will be limited to 1 day before)
+[ 20.78s] system: 🎯 Starting forecast for time horizon: 7d
+[ 20.78s] system: 🗣️ Running debate-based forecast
+[ 31.04s] error: Error in Inspect AI debate forecast: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[ 31.04s] error: ❌ Error forecasting for 7d: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[  0.00s] error:     ❌ Attempt 3 failed with exception: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[ 31.04s] error: Forecast attempt 3 failed
+[  0.00s] error: Multi-horizon forecasting failed for question 1: ForecastResult.__init__() got an unexpected keyword argument 'probability'
+[ 31.04s] error: Multi-horizon forecasting failed
+[ 31.04s] session_end: Session completed in 31.04s
+📁 Logs saved to: logs/question_1_TPkEjiNb1wVCIGFnPcDD_20250614_224146.json
+[  0.00s] system: ✅ Completed question 1/1 (1/1)
+[ 31.38s] question_completed: Question 1 completed
+[  0.00s] system: 💾 Checkpoint saved: checkpoints/benchmark_checkpoint_20250614_224146.json
+[ 31.38s] benchmark_completed: Benchmark completed in 31.4s
+[ 31.38s] final_summary: Benchmark run completed
+[ 31.38s] session_end: Session completed in 31.38s
+📁 Logs saved to: logs/benchmark_run_20250614_224146.json
+[  0.00s] system: 🎯 Enhanced ForecastBench Evaluation Complete!
+[  0.00s] system:    Questions processed: 1/1 (100.0%)
+[  0.00s] system:    Forecast due date (cutoff): 2024-07-21
+[  0.00s] system:    Total predictions: 4
+[  0.00s] system:    Total Brier scores: 0
+[  0.00s] system:    Overall Average Brier Score: N/A
+[  0.00s] system:    Sum of All Brier Scores: N/A
+[  0.00s] system:    Duration: 31.4s (1.9 questions/minute)
+[  0.00s] system:    📁 Master log: logs/benchmark_run_20250614_224146.json
+[  0.00s] system:    📁 Individual logs: logs/question_*_20250614_224146.json
+[  0.00s] system:    7-day Brier Score: N/A (no resolutions)
+[  0.00s] system:    30-day Brier Score: N/A (no resolutions)
+[  0.00s] system:    90-day Brier Score: N/A (no resolutions)
+[  0.00s] system:    180-day Brier Score: N/A (no resolutions)
+[  0.00s] system: 💾 Checkpoint saved: checkpoints/benchmark_checkpoint_20250614_224146.json
+📊 Results saved to: enhanced_forecastbench_results_20250614_224217.json
+
+📁 LOGGING INFORMATION:
+   Master log: logs/benchmark_run_20250614_224146.json
+   Individual logs directory: logs
+   Log files pattern: question_*_20250614_224146.json
+   Individual log files created: 1
+
+🎯 DETAILED RESULTS: Predictions, Actual Values, and Reasoning
+========================================================================================================================
+
+Question 1: TPkEjiNb1wVCIGFnPcDD
+Question Text: Will the average global temperature in 2024 exceed 2023?
+Market Freeze Value: 0.7566
+
+  7-day horizon:
+    Brier Score: N/A
+    Prediction: N/A
+    Actual Value: N/A
+    Reasoning: N/A
+
+  30-day horizon:
+    Brier Score: N/A
+    Prediction: N/A
+    Actual Value: N/A
+    Reasoning: N/A
+
+  90-day horizon:
+    Brier Score: N/A
+    Prediction: N/A
+    Actual Value: N/A
+    Reasoning: N/A
+
+  180-day horizon:
+    Brier Score: N/A
+    Prediction: N/A
+    Actual Value: N/A
+    Reasoning: N/A
+
+----------------------------------------------------------------------------------------------------
+
+❌ No valid Brier scores calculated

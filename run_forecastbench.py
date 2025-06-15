@@ -66,14 +66,18 @@ class EnhancedForecastBenchRunner:
     QUESTIONS_FILE = "forecastbench_human_2024.json"
     RESOLUTIONS_FILE = "forecast_human_resolution_2024.json"
     
-    # Time horizons for predictions (in days)
-    TIME_HORIZONS = [7, 30, 90, 180]
-    
-    def __init__(self, openrouter_api_key: str, serp_api_key: str = None):
+    def __init__(self, openrouter_api_key: str, serp_api_key: str = None, 
+                 time_horizons: List[int] = None, search_budget: int = 10, 
+                 debate_turns: int = 2):
         self.openrouter_api_key = openrouter_api_key
         self.serp_api_key = serp_api_key
         # Simple logger replacement
         self.logger = self
+        
+        # Configurable parameters
+        self.time_horizons = time_horizons or [7, 30, 90, 180]  # Time horizons for predictions (in days)
+        self.search_budget = search_budget  # Search budget per question
+        self.debate_turns = debate_turns  # Number of debate turns
         
         # Create logs and checkpoints directories
         self.logs_dir = Path("logs")
@@ -187,7 +191,7 @@ class EnhancedForecastBenchRunner:
     
     def _has_valid_predictions(self, horizon_results: List) -> bool:
         """Check if all horizon results have valid probability values (not None/N/A)"""
-        if not horizon_results or len(horizon_results) != len(self.TIME_HORIZONS):
+        if not horizon_results or len(horizon_results) != len(self.time_horizons):
             return False
         
         for result in horizon_results:
@@ -278,7 +282,10 @@ class EnhancedForecastBenchRunner:
                 openrouter_api_key=self.openrouter_api_key,
                 serp_api_key=self.serp_api_key,
                 logger=None,  # Use default logger
-                debate_mode=True
+                debate_mode=True,
+                search_budget=self.search_budget,
+                debate_turns=self.debate_turns,
+                time_horizons=self.time_horizons
             )
             
             question = question_data.get('question', '')
@@ -296,7 +303,7 @@ class EnhancedForecastBenchRunner:
             
             # Calculate resolution dates for all time horizons
             resolution_dates = []
-            for horizon_days in self.TIME_HORIZONS:
+            for horizon_days in self.time_horizons:
                 res_date = base_date + timedelta(days=horizon_days)
                 resolution_dates.append(res_date.strftime('%Y-%m-%d'))
             
@@ -308,7 +315,7 @@ class EnhancedForecastBenchRunner:
             self.logger.info(f"  📅 Cutoff date object: {cutoff_date.strftime('%Y-%m-%d')}")
             
             # Use the updated forecast_with_google_news method for all time horizons at once
-            time_horizons_str = [f"{h}d" for h in self.TIME_HORIZONS]
+            time_horizons_str = [f"{h}d" for h in self.time_horizons]
             
             # Default parameters for multi-horizon forecasting
             effective_recommended_articles = 10
@@ -335,7 +342,7 @@ class EnhancedForecastBenchRunner:
                 brier_scores = {}
                 actual_values = {}
                 
-                for i, (horizon_days, resolution_date, result) in enumerate(zip(self.TIME_HORIZONS, resolution_dates, horizon_results)):
+                for i, (horizon_days, resolution_date, result) in enumerate(zip(self.time_horizons, resolution_dates, horizon_results)):
                     # Get actual resolution value
                     actual_value = self.get_resolution_for_question_and_date(question_id, resolution_date, resolutions_data)
                     
@@ -391,7 +398,7 @@ class EnhancedForecastBenchRunner:
                 brier_scores = {}
                 actual_values = {}
                 
-                for horizon_days in self.TIME_HORIZONS:
+                for horizon_days in self.time_horizons:
                     horizon_key = f"{horizon_days}d"
                     predictions[horizon_key] = {'error': str(e)}
                     brier_scores[horizon_key] = None
@@ -477,7 +484,7 @@ class EnhancedForecastBenchRunner:
         
         self.logger.info(f"🚀 Starting Enhanced ForecastBench evaluation with comprehensive context")
         self.logger.info(f"   Questions: {max_questions}, Workers: {max_workers}")
-        self.logger.info(f"   Time horizons: {self.TIME_HORIZONS} days")
+        self.logger.info(f"   Time horizons: {self.time_horizons} days")
         self.logger.info(f"   Master log: {master_log_file}")
         self.logger.info(f"   Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
         self.logger.info(f"   Checkpoint file: {checkpoint_file}")
@@ -585,7 +592,7 @@ class EnhancedForecastBenchRunner:
                         if result['success']:
                             # Show progress with Brier scores for each horizon
                             brier_info = []
-                            for horizon in self.TIME_HORIZONS:
+                            for horizon in self.time_horizons:
                                 brier = result['brier_scores'].get(f"{horizon}d")
                                 if brier is not None:
                                     brier_info.append(f"{horizon}d:{brier:.3f}")
@@ -610,7 +617,7 @@ class EnhancedForecastBenchRunner:
                             'base_date': base_date.strftime('%Y-%m-%d'),
                             'max_questions': max_questions,
                             'max_workers': max_workers,
-                            'time_horizons': self.TIME_HORIZONS,
+                            'time_horizons': self.time_horizons,
                             'total_questions': len(questions),
                             'completed_count': completed_count,
                             'results': results
@@ -635,7 +642,7 @@ class EnhancedForecastBenchRunner:
                             'base_date': base_date.strftime('%Y-%m-%d'),
                             'max_questions': max_questions,
                             'max_workers': max_workers,
-                            'time_horizons': self.TIME_HORIZONS,
+                            'time_horizons': self.time_horizons,
                             'total_questions': len(questions),
                             'completed_count': completed_count,
                             'results': results
@@ -659,7 +666,7 @@ class EnhancedForecastBenchRunner:
         horizon_stats = {}
         all_brier_scores = []
         
-        for horizon in self.TIME_HORIZONS:
+        for horizon in self.time_horizons:
             horizon_key = f"{horizon}d"
             brier_scores = []
             predictions = []
@@ -689,7 +696,7 @@ class EnhancedForecastBenchRunner:
             }
         
         # Overall statistics
-        total_predictions = sum(len([r for r in successful_results if r['predictions'].get(f"{h}d")]) for h in self.TIME_HORIZONS)
+        total_predictions = sum(len([r for r in successful_results if r['predictions'].get(f"{h}d")]) for h in self.time_horizons)
         total_brier_scores = len(all_brier_scores)
         overall_avg_brier = statistics.mean(all_brier_scores) if all_brier_scores else None
         sum_brier_scores = sum(all_brier_scores) if all_brier_scores else None
@@ -697,7 +704,7 @@ class EnhancedForecastBenchRunner:
         summary = {
             'base_date': base_date.strftime("%Y-%m-%d"),
             'forecast_due_date': forecast_due_date,
-            'time_horizons': self.TIME_HORIZONS,
+            'time_horizons': self.time_horizons,
             'total_questions': len(questions),
             'successful_forecasts': len(successful_results),
             'success_rate': success_rate,
@@ -735,7 +742,7 @@ class EnhancedForecastBenchRunner:
         self.logger.info(f"   📁 Individual logs: {self.logs_dir}/question_*_{run_timestamp}.json")
         
         # Log Brier scores by time horizon
-        for horizon in self.TIME_HORIZONS:
+        for horizon in self.time_horizons:
             horizon_key = f"{horizon}d"
             stats = horizon_stats[horizon_key]
             if stats['avg_brier_score'] is not None:
@@ -802,6 +809,9 @@ def main():
     parser.add_argument('--question-ids', type=str, nargs='+', help='Specific question IDs to test (space-separated)')
     parser.add_argument('--failure-questions', action='store_true', help='Test only questions from failure.txt (excludes YulPWDHFTUkekmrO3v4J)')
     parser.add_argument('--seed', type=int, help='Random seed for reproducible results')
+    parser.add_argument('--time-horizons', type=int, nargs='+', default=[7, 30, 90, 180], help='Time horizons for predictions (in days)')
+    parser.add_argument('--search-budget', type=int, default=10, help='Search budget per question')
+    parser.add_argument('--debate-turns', type=int, default=2, help='Number of debate turns')
     
     args = parser.parse_args()
     
@@ -829,7 +839,10 @@ def main():
     # Create runner
     runner = EnhancedForecastBenchRunner(
         openrouter_api_key=openrouter_api_key,
-        serp_api_key=serp_api_key
+        serp_api_key=serp_api_key,
+        time_horizons=args.time_horizons,
+        search_budget=args.search_budget,
+        debate_turns=args.debate_turns
     )
     
     # Handle checkpoint listing

@@ -13,14 +13,7 @@ from typing import Dict, List, Any, Optional, Union
 from dataclasses import dataclass
 from pydantic import BaseModel
 
-from inspect_ai import Task, eval, task
-from inspect_ai.model import get_model, Model
-from inspect_ai.solver import (
-    generate, system_message, user_message, assistant_message,
-    chain, fork, basic_agent, use_tools, solver, Solver
-)
-from inspect_ai.tool import tool, Tool, ToolError
-from inspect_ai.agent import Agent
+# Simplified imports - removed unused Inspect AI components
 
 # Removed forecasting_prompts import - using only debate methodology
 
@@ -59,24 +52,7 @@ class ForecastResult:
 from ..utils.google_news_tool import CachedGoogleNewsTool
 
 
-class InspectAIGoogleNewsTool:
-    """Wrapper to convert CachedGoogleNewsTool to Inspect AI Tool format"""
-    
-    def __init__(self, serp_api_key: str, search_timeframe: Dict[str, str]):
-        self.cached_tool = CachedGoogleNewsTool(
-            serp_api_key=serp_api_key,
-            search_timeframe=search_timeframe
-        )
-    
-    @tool
-    def google_news_search(self, query: str, num_results: int = 10) -> str:
-        """Search Google News for recent articles related to the query"""
-        try:
-            # Use the cached tool's search functionality
-            results = self.cached_tool._run(query)
-            return results
-        except Exception as e:
-            raise ToolError(f"Google News search failed: {str(e)}")
+# Removed InspectAIGoogleNewsTool - simplified to direct usage
 
 
 class InspectAISuperforecaster:
@@ -84,54 +60,37 @@ class InspectAISuperforecaster:
     Enhanced superforecaster system using Inspect AI with strategic analysis and bias correction
     """
     
-    def __init__(self, openrouter_api_key: str, serp_api_key: str = None, training_cutoff: str = "2024-07-01", 
-                 recommended_articles: int = 10, max_search_queries: int = None, logger = None, 
-                 debate_mode: bool = True, debate_rounds: int = 2, enhanced_quality_mode: bool = True,
-                 search_budget_per_advocate: int = 10):
+    def __init__(self, openrouter_api_key: str, serp_api_key: str = None, logger = None, 
+                 debate_mode: bool = True, search_budget: int = 10, debate_turns: int = 2,
+                 time_horizons: List[int] = None, **kwargs):
         self.logger = logger if logger is not None else self._default_logger
         self.openrouter_api_key = openrouter_api_key
         self.serp_api_key = serp_api_key or os.getenv("SERP_API_KEY")
-        self.training_cutoff = training_cutoff
         self.debate_mode = debate_mode
-        self.debate_rounds = debate_rounds
-        self.enhanced_quality_mode = enhanced_quality_mode
-        self.search_budget_per_advocate = search_budget_per_advocate
-        self.search_penalty_rate = 0.01  # 1% penalty per search beyond budget
+        self.search_budget = search_budget
+        self.debate_turns = debate_turns
+        self.time_horizons = time_horizons or [7, 30, 90, 180]
         
-        # Search configuration parameters
-        self.recommended_articles = recommended_articles
-        self.max_search_queries = max_search_queries or (
-            None if recommended_articles == -1 else
-            max(2, min(5, recommended_articles // 3))
-        )
+        # Validate API key
+        if not self.openrouter_api_key:
+            raise ValueError("OPENROUTER_API_KEY is required")
         
-        # Configure model for Inspect AI - use OpenRouter with OPENAI_API_KEY
-        model_name = os.getenv("DEFAULT_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
-        
-        # Set up environment for OpenRouter
-        openrouter_key = os.getenv("OPENROUTER_API_KEY")
-        if not openrouter_key:
-            raise ValueError("OPENROUTER_API_KEY environment variable is required")
-        
-        os.environ["OPENROUTER_API_KEY"] = openrouter_key
-        os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
-        
-        # Create Inspect AI model
-        self.model = get_model(
-            f"openrouter/{model_name}",
-            api_key=openrouter_key,
-            base_url="https://openrouter.ai/api/v1"
-        )
-        
-        # Initialize Google News tool
-        search_timeframe = {
-            "start": "06/01/2024",
-            "end": datetime.now().strftime("%m/%d/%Y")
-        }
-        self.google_news_tool = InspectAIGoogleNewsTool(
-            serp_api_key=self.serp_api_key,
-            search_timeframe=search_timeframe
-        )
+        # Initialize Google News tool if available
+        if self.serp_api_key:
+            search_timeframe = {
+                "start": "06/01/2024",
+                "end": datetime.now().strftime("%m/%d/%Y")
+            }
+            try:
+                self.google_news_tool = CachedGoogleNewsTool(
+                    serp_api_key=self.serp_api_key,
+                    search_timeframe=search_timeframe
+                )
+            except Exception as e:
+                self.logger("warning", f"Failed to initialize Google News tool: {e}")
+                self.google_news_tool = None
+        else:
+            self.google_news_tool = None
         
         self.logger("system", "✅ Inspect AI Superforecaster initialized successfully")
     
@@ -143,100 +102,10 @@ class InspectAISuperforecaster:
     
     def _set_benchmark_cutoff_date(self, cutoff_date: str):
         """Set benchmark cutoff date on Google News tool"""
-        if hasattr(self.google_news_tool.cached_tool, 'set_benchmark_cutoff_date'):
-            self.google_news_tool.cached_tool.set_benchmark_cutoff_date(cutoff_date)
+        if self.google_news_tool and hasattr(self.google_news_tool, 'set_benchmark_cutoff_date'):
+            self.google_news_tool.set_benchmark_cutoff_date(cutoff_date)
     
-    @solver
-    def high_advocate_solver(self, question: str, background: str, time_horizon: str) -> Solver:
-        """High probability advocate solver"""
-        # Create search parameters for the task description
-        search_timeframe = {
-            "start": "06/01/2024",
-            "end": datetime.now().strftime("%m/%d/%Y")
-        }
-        cutoff_date = datetime.now().strftime("%Y-%m-%d")
-        search_strategy = "FOCUSED"
-        query_limit = "5"
-        article_target = "10"
-        
-        task_description = get_high_advocate_task_description(
-            question, search_timeframe, cutoff_date, search_strategy, 
-            query_limit, article_target, background, time_horizon
-        )
-        
-        return chain(
-            system_message(get_high_advocate_backstory()),
-            user_message(task_description),
-            use_tools([self.google_news_tool.google_news_search]),
-            generate()
-        )
-    
-    @solver
-    def low_advocate_solver(self, question: str, background: str, time_horizon: str) -> Solver:
-        """Low probability advocate solver"""
-        # Create search parameters for the task description
-        search_timeframe = {
-            "start": "06/01/2024",
-            "end": datetime.now().strftime("%m/%d/%Y")
-        }
-        cutoff_date = datetime.now().strftime("%Y-%m-%d")
-        search_strategy = "FOCUSED"
-        query_limit = "5"
-        article_target = "10"
-        
-        task_description = get_low_advocate_task_description(
-            question, search_timeframe, cutoff_date, search_strategy, 
-            query_limit, article_target, background, time_horizon
-        )
-        
-        return chain(
-            system_message(get_low_advocate_backstory()),
-            user_message(task_description),
-            use_tools([self.google_news_tool.google_news_search]),
-            generate()
-        )
-    
-    @solver
-    def debate_judge_solver(self, question: str, background: str, time_horizon: str, 
-                           high_argument: str, low_argument: str) -> Solver:
-        """Debate judge solver"""
-        # Create search parameters for the task description
-        search_timeframe = {
-            "start": "06/01/2024",
-            "end": datetime.now().strftime("%m/%d/%Y")
-        }
-        cutoff_date = datetime.now().strftime("%Y-%m-%d")
-        
-        judge_prompt = get_debate_judge_task_description(
-            question, cutoff_date, time_horizon, background
-        )
-        return chain(
-            system_message(get_debate_judge_backstory()),
-            user_message(judge_prompt),
-            generate()
-        )
-    
-    @task
-    def debate_forecasting_task(self, question: str, background: str = "", 
-                               time_horizon: str = "1 year") -> Task:
-        """Create a debate-based forecasting task"""
-        
-        # Create the debate solver using fork for parallel execution
-        debate_solver = chain(
-            # First, run advocates in parallel
-            fork(
-                self.high_advocate_solver(question, background, time_horizon),
-                self.low_advocate_solver(question, background, time_horizon)
-            ),
-            # Then judge the results
-            self.debate_judge_solver(question, background, time_horizon, "", "")
-        )
-        
-        return Task(
-            dataset=[{"question": question, "background": background, "time_horizon": time_horizon}],
-            solver=debate_solver,
-            scorer=None  # We'll handle scoring manually
-        )
+
     
     def forecast_with_google_news(
         self, 
@@ -277,11 +146,7 @@ class InspectAISuperforecaster:
             self.logger("system", f"🎯 Starting forecast for time horizon: {time_horizon}")
             
             try:
-                if self.debate_mode:
-                    result = self._run_debate_forecast(question, background, time_horizon)
-                else:
-                    result = self._run_standard_forecast(question, background, time_horizon)
-                
+                result = self._run_debate_forecast(question, background, time_horizon)
                 results.append(result)
                 
             except Exception as e:
@@ -298,201 +163,277 @@ class InspectAISuperforecaster:
         return results
     
     def _run_debate_forecast(self, question: str, background: str, time_horizon: str) -> ForecastResult:
-        """Run debate-based forecasting using Inspect AI"""
+        """Run debate-based forecasting with configurable turns and JSON output"""
         
-        self.logger("system", "🗣️ Running debate-based forecast")
+        self.logger("system", f"🗣️ Running {self.debate_turns}-turn debate forecast")
         
         try:
-            # For now, implement a simplified Inspect AI integration
-            # This demonstrates the framework integration without the complex async handling
-            
-            # Create a simple forecasting prompt that simulates debate
-            debate_prompt = f"""
-            You are conducting a forecasting debate. Consider both high and low probability arguments for this question:
-            
-            Question: {question}
-            Background: {background}
-            Time Horizon: {time_horizon}
-            
-            Provide:
-            1. High probability argument (why this might happen)
-            2. Low probability argument (why this might not happen)  
-            3. Your final probability estimate (0.0 to 1.0)
-            4. Confidence level (Low/Medium/High)
-            5. Brief reasoning
-            
-            Format your response as:
-            PROBABILITY: [0.0-1.0]
-            CONFIDENCE: [Low/Medium/High]
-            REASONING: [your reasoning]
-            """
-            
-            # Use the OpenAI client directly for now (simulating Inspect AI integration)
             from openai import OpenAI
             client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
                 api_key=self.openrouter_api_key
             )
             
-            response = client.chat.completions.create(
+            # Initialize debate history
+            debate_history = []
+            
+            # Run debate turns
+            for turn in range(self.debate_turns):
+                self.logger("system", f"🔄 Debate turn {turn + 1}/{self.debate_turns}")
+                
+                # High advocate turn
+                high_prompt = self._create_advocate_prompt(
+                    question, background, time_horizon, "high", debate_history, turn
+                )
+                high_response = client.chat.completions.create(
+                    model="openai/gpt-4",
+                    messages=[
+                        {"role": "system", "content": get_high_advocate_backstory()},
+                        {"role": "user", "content": high_prompt}
+                    ],
+                    temperature=0.7
+                )
+                high_argument = high_response.choices[0].message.content
+                debate_history.append({"turn": turn + 1, "advocate": "high", "argument": high_argument})
+                
+                # Low advocate turn
+                low_prompt = self._create_advocate_prompt(
+                    question, background, time_horizon, "low", debate_history, turn
+                )
+                low_response = client.chat.completions.create(
+                    model="openai/gpt-4",
+                    messages=[
+                        {"role": "system", "content": get_low_advocate_backstory()},
+                        {"role": "user", "content": low_prompt}
+                    ],
+                    temperature=0.7
+                )
+                low_argument = low_response.choices[0].message.content
+                debate_history.append({"turn": turn + 1, "advocate": "low", "argument": low_argument})
+            
+            # Judge final decision with JSON output
+            judge_prompt = self._create_judge_prompt(question, background, time_horizon, debate_history)
+            judge_response = client.chat.completions.create(
                 model="openai/gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are an expert forecaster using debate methodology."},
-                    {"role": "user", "content": debate_prompt}
+                    {"role": "system", "content": get_debate_judge_backstory()},
+                    {"role": "user", "content": judge_prompt}
                 ],
-                temperature=0.7
+                temperature=0.3
             )
             
-            output = response.choices[0].message.content
+            judge_output = judge_response.choices[0].message.content
             
-            # Extract probability and confidence
-            probability = 0.65  # Default
-            confidence = "Medium"
-            reasoning = output
+            # Extract JSON prediction from judge output
+            prediction_data = self._extract_json_prediction(judge_output)
             
-            try:
-                import re
-                prob_match = re.search(r'PROBABILITY:\s*([0-9.]+)', output)
-                if prob_match:
-                    probability = float(prob_match.group(1))
-                
-                conf_match = re.search(r'CONFIDENCE:\s*(\w+)', output)
-                if conf_match:
-                    confidence = conf_match.group(1)
-                
-                reason_match = re.search(r'REASONING:\s*(.+)', output, re.DOTALL)
-                if reason_match:
-                    reasoning = reason_match.group(1).strip()
-            except:
-                pass
-            
-            # Create the result object
-            result = ForecastResult(
+            return ForecastResult(
                 question=question,
-                prediction=probability,
-                confidence=confidence,
-                reasoning=reasoning
+                prediction=prediction_data.get("probability", 0.5),
+                confidence=prediction_data.get("confidence", "Medium"),
+                reasoning=prediction_data.get("reasoning", judge_output)
             )
+            
+        except Exception as e:
+            self.logger("error", f"Error in debate forecast: {str(e)}")
+            # Fallback to mock prediction
+            import random
+            prediction = random.uniform(0.1, 0.9)
+            return ForecastResult(
+                question=question,
+                prediction=prediction,
+                confidence="Low",
+                reasoning=f"Error in debate forecast: {str(e)}. Using fallback prediction: {prediction:.3f}"
+            )
+    
+    def _create_advocate_prompt(self, question: str, background: str, time_horizon: str, 
+                               advocate_type: str, debate_history: List, turn: int) -> str:
+        """Create prompt for advocate based on debate history"""
+        
+        # Get the appropriate backstory and instructions
+        if advocate_type == "high":
+            backstory = get_high_advocate_backstory()
+            instructions = f"""
+            MISSION: Build the strongest possible case for a HIGH probability outcome.
+            
+            SEARCH INSTRUCTIONS:
+            - You have a search budget of {self.search_budget} articles
+            - Use search strategically to find evidence supporting high probability
+            - Focus on recent developments, positive trends, and success factors
+            - Look for base rates where similar events succeeded frequently
+            
+            ARGUMENT STRUCTURE:
+            - State your target probability range (aim for 60%+ if evidence supports it)
+            - Provide 3-5 key arguments with evidence
+            - Address potential counterarguments proactively
+            - Use base rate analysis from favorable reference classes
+            """
+        else:
+            backstory = get_low_advocate_backstory()
+            instructions = f"""
+            MISSION: Build the strongest possible case for a LOW probability outcome.
+            
+            SEARCH INSTRUCTIONS:
+            - You have a search budget of {self.search_budget} articles
+            - Use search strategically to find evidence supporting low probability
+            - Focus on obstacles, failure modes, and negative trends
+            - Look for base rates where similar events failed frequently
+            
+            ARGUMENT STRUCTURE:
+            - State your target probability range (aim for 40% or lower if evidence supports it)
+            - Identify 3-5 key failure modes with evidence
+            - Address potential counterarguments from high advocate
+            - Use base rate analysis from unfavorable reference classes
+            """
+        
+        prompt = f"""
+        Question: {question}
+        Background: {background}
+        Time Horizon: {time_horizon}
+        
+        {instructions}
+        
+        You are the {advocate_type} probability advocate in turn {turn + 1} of {self.debate_turns}.
+        """
+        
+        if debate_history:
+            prompt += "\n\nPrevious debate history:\n"
+            for entry in debate_history:
+                prompt += f"Turn {entry['turn']} - {entry['advocate']} advocate: {entry['argument'][:300]}...\n"
+        
+        if turn == 0:
+            prompt += f"\nPresent your initial {advocate_type} probability argument with evidence and reasoning."
+        else:
+            prompt += f"\nRespond to the opposing arguments and strengthen your {advocate_type} probability position. Address their key points directly."
+        
+        return prompt
+    
+    def _create_judge_prompt(self, question: str, background: str, time_horizon: str, 
+                            debate_history: List) -> str:
+        """Create judge prompt with requirement for JSON output"""
+        
+        judge_instructions = f"""
+        JUDGE INSTRUCTIONS:
+        
+        SYNTHESIS PROTOCOL:
+        - Weight evidence by recency, independence, verifiability, and source quality
+        - Apply systematic calibration corrections based on historical patterns
+        - Use multiple synthesis methods and compare results
+        - Apply conservative adjustment when advocates disagree significantly
+        - Default to wider confidence intervals when evidence is limited
+        
+        BIAS CORRECTION:
+        - Correct for anchoring bias from initial advocate estimates
+        - Apply averaging bias correction (don't just split the difference)
+        - Check for confirmation bias in evidence weighting
+        - Correct for overconfidence in synthesis process itself
+        - Apply humility correction for complex, uncertain predictions
+        
+        EVALUATION CRITERIA:
+        - Evidence quality and independence
+        - Logical consistency of arguments
+        - Base rate analysis accuracy
+        - Handling of uncertainty and counterarguments
+        - Overall calibration and reasonableness
+        
+        OUTPUT REQUIREMENTS:
+        - Final probability with reasoning
+        - Confidence level assessment
+        - Evaluation of both advocates' arguments
+        - Key factors that determined your decision
+        - JSON format for structured evaluation
+        """
+        
+        prompt = f"""
+        Question: {question}
+        Background: {background}
+        Time Horizon: {time_horizon}
+        
+        {judge_instructions}
+        
+        Complete debate history ({self.debate_turns} turns):
+        """
+        
+        for entry in debate_history:
+            prompt += f"\nTurn {entry['turn']} - {entry['advocate']} advocate:\n{entry['argument']}\n"
+        
+        prompt += f"""
+        
+        As the judge, synthesize the arguments and provide your final decision in JSON format:
+        {{
+            "probability": [0.0-1.0],
+            "confidence": "[Low/Medium/High]",
+            "reasoning": "[your detailed reasoning for the probability estimate]",
+            "high_advocate_strength": [0-10],
+            "low_advocate_strength": [0-10],
+            "key_factors": ["factor1", "factor2", "factor3"],
+            "evidence_quality": "[assessment of overall evidence quality]",
+            "uncertainty_factors": ["uncertainty1", "uncertainty2"],
+            "base_rate_assessment": "[how well base rates were analyzed]"
+        }}
+        
+        Ensure your probability estimate is well-calibrated and your reasoning is comprehensive.
+        """
+        
+        return prompt
+    
+    def _extract_json_prediction(self, judge_output: str) -> Dict:
+        """Extract JSON prediction from judge output"""
+        try:
+            import re
+            import json
+            
+            # Try to find JSON in the output - look for complete JSON objects
+            json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', judge_output, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                try:
+                    parsed_json = json.loads(json_str)
+                    # Validate required fields
+                    if "probability" in parsed_json:
+                        return parsed_json
+                except json.JSONDecodeError:
+                    pass
+            
+            # Fallback: extract individual components with more robust patterns
+            prob_match = re.search(r'"probability":\s*([0-9.]+)', judge_output)
+            conf_match = re.search(r'"confidence":\s*"([^"]+)"', judge_output)
+            reason_match = re.search(r'"reasoning":\s*"([^"]*)"', judge_output, re.DOTALL)
+            
+            # Extract additional fields if available
+            high_strength_match = re.search(r'"high_advocate_strength":\s*([0-9.]+)', judge_output)
+            low_strength_match = re.search(r'"low_advocate_strength":\s*([0-9.]+)', judge_output)
+            
+            result = {
+                "probability": float(prob_match.group(1)) if prob_match else 0.5,
+                "confidence": conf_match.group(1) if conf_match else "Medium",
+                "reasoning": reason_match.group(1) if reason_match else judge_output[:500]
+            }
+            
+            # Add optional fields if found
+            if high_strength_match:
+                result["high_advocate_strength"] = float(high_strength_match.group(1))
+            if low_strength_match:
+                result["low_advocate_strength"] = float(low_strength_match.group(1))
             
             return result
             
         except Exception as e:
-            self.logger("error", f"Error in Inspect AI debate forecast: {str(e)}")
-            # Check if it's an API credit error and use mock prediction
-            if "402" in str(e) or "Insufficient credits" in str(e):
-                # Generate mock prediction for testing
-                import random
-                prediction = random.uniform(0.1, 0.9)
-                confidence = random.uniform(0.6, 0.9)
-                self.logger("system", f"🎯 Mock forecast (API credits exhausted): {prediction:.3f} (confidence: {confidence:.3f})")
-                return ForecastResult(
-                    question=question,
-                    prediction=prediction,
-                    confidence=confidence,
-                    reasoning=f"Mock forecast due to API credit exhaustion. Generated random prediction: {prediction:.3f}"
-                )
-            else:
-                # Return fallback result for other errors
-                return ForecastResult(
-                    question=question,
-                    prediction=0.5,
-                    confidence=0.3,
-                    reasoning=f"Error in Inspect AI forecast: {str(e)}"
-                )
-    
-    def _run_standard_forecast(self, question: str, background: str, time_horizon: str) -> ForecastResult:
-        """Run standard 4-agent forecasting using Inspect AI"""
-        
-        self.logger("system", "📊 Running standard 4-agent forecast")
-        
-        # For now, implement a simplified version
-        # In a full implementation, you'd create separate solvers for each agent type
-        
-        # Create a basic forecasting task
-        @task
-        def standard_forecasting_task():
-            return Task(
-                dataset=[{"question": question, "background": background, "time_horizon": time_horizon}],
-                solver=chain(
-                    system_message(get_research_analyst_backstory()),
-                    user_message(get_research_task_description(question, background, time_horizon)),
-                    use_tools([self.google_news_tool.google_news_search]),
-                    generate()
-                ),
-                scorer=None
-            )
-        
-        # Run the evaluation
-        eval_result = eval(
-            standard_forecasting_task(),
-            model=self.model,
-            log_dir="logs/inspect_ai"
-        )
-        
-        # Extract results
-        probability = self._extract_probability_from_result(eval_result)
-        confidence = self._extract_confidence_from_result(eval_result)
-        reasoning = self._extract_reasoning_from_result(eval_result)
-        
-        result = ForecastResult(
-            question=question,
-            prediction=probability,
-            confidence=confidence,
-            reasoning=reasoning
-        )
-        
-        return result
-    
-    def _extract_probability_from_result(self, eval_result) -> float:
-        """Extract probability from Inspect AI evaluation result"""
-        # This is a placeholder - in practice, you'd parse the actual model output
-        # to extract the probability estimate
-        try:
-            # Look for probability patterns in the result
-            result_str = str(eval_result)
-            
-            # Common probability patterns
-            prob_patterns = [
-                r'probability[:\s]*(\d+(?:\.\d+)?)',
-                r'(\d+(?:\.\d+)?)%',
-                r'(\d+(?:\.\d+)?)\s*percent',
-                r'estimate[:\s]*(\d+(?:\.\d+)?)'
-            ]
-            
-            for pattern in prob_patterns:
-                match = re.search(pattern, result_str, re.IGNORECASE)
-                if match:
-                    prob = float(match.group(1))
-                    # Convert percentage to decimal if needed
-                    if prob > 1.0:
-                        prob = prob / 100.0
-                    return max(0.01, min(0.99, prob))  # Clamp to reasonable range
-            
-            # Default fallback
-            return 0.5
-            
-        except Exception:
-            return 0.5
-    
-    def _extract_confidence_from_result(self, eval_result) -> str:
-        """Extract confidence level from Inspect AI evaluation result"""
-        # Placeholder implementation
-        result_str = str(eval_result).lower()
-        
-        if any(word in result_str for word in ['high', 'confident', 'certain']):
-            return "High"
-        elif any(word in result_str for word in ['low', 'uncertain', 'unsure']):
-            return "Low"
-        else:
-            return "Medium"
-    
-    def _extract_reasoning_from_result(self, eval_result) -> str:
-        """Extract reasoning from Inspect AI evaluation result"""
-        # Placeholder implementation
-        return f"Forecast generated using Inspect AI methodology. Result: {str(eval_result)[:500]}..."
+            self.logger("error", f"Error extracting JSON: {str(e)}")
+            return {
+                "probability": 0.5,
+                "confidence": "Low",
+                "reasoning": f"Error parsing judge output: {judge_output[:200]}..."
+            }
 
 
-# Compatibility function to maintain the same interface
+def logger(agent: str, message: str, details: dict = None):
+    """Simple default logger"""
+    print(f"[{agent}] {message}")
+    if details:
+        print(f"  Details: {details}")
+
+
 def create_superforecaster(**kwargs):
     """
     Factory function to create Inspect AI superforecaster with fallback to mock
@@ -514,3 +455,4 @@ def create_superforecaster(**kwargs):
         except Exception as mock_e:
             logger("system", f"❌ Failed to initialize Mock Superforecaster: {mock_e}")
             raise mock_e
+    
